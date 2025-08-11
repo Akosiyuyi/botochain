@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -32,6 +33,17 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // /** @var \App\Models\User $user */
+        $user = Auth::user();
+        
+
+
+        if($user->hasRole('admin')){
+            return redirect()->route('admin.dashboard');
+        } else if ($user->hasRole('voter')){
+            return redirect()->route('voter.dashboard');
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

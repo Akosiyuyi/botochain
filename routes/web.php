@@ -4,8 +4,22 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use PHPUnit\Framework\Attributes\Group;
 
 Route::redirect('/', '/login');
+
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return Inertia::render('Admin/Dashboard')
+        ;
+    })->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
+    Route::get('/voter/dashboard', function () {
+        return Inertia::render('Voter/Dashboard');
+    })->name('voter.dashboard');
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -17,4 +31,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
