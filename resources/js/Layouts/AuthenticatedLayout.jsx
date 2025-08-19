@@ -7,6 +7,9 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const userRoles = user?.roles || [];
+
+    const dashboardRoute = userRoles.includes('admin') ? 'admin.dashboard' : 'voter.dashboard';
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -18,15 +21,15 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/">
+                                <Link href={route(dashboardRoute)}>
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    href={route(dashboardRoute)}
+                                    active={route().current(dashboardRoute)}
                                 >
                                     Dashboard
                                 </NavLink>
@@ -129,8 +132,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            href={route(dashboardRoute)}
+                            active={route().current(dashboardRoute)}
                         >
                             Dashboard
                         </ResponsiveNavLink>
