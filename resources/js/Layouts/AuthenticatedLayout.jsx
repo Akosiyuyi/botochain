@@ -2,6 +2,7 @@ import NavBar from "@/Components/NavBar";
 import SideBar from "@/Components/SideBar";
 import { usePage, Link } from "@inertiajs/react";
 import { useState } from "react";
+import { LayoutDashboard, GraduationCap, Upload } from "lucide-react";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -12,13 +13,29 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const [showSidebar, setShowSidebar] = useState(false);
 
-    const adminButtons = {
-        'admin.dashboard': 'Dashboard',
-        'admin.students.index': 'Students List',
-    };
-    const voterButtons = {
-        'voter.dashboard': 'Dashboard',
-    };
+    const adminButtons = [
+        {
+            title: "Dashboard",
+            route: "admin.dashboard",
+            icon: LayoutDashboard,
+        },
+        {
+            title: "Students",
+            icon: GraduationCap,
+            children: [
+                { title: "Students List", route: "admin.students.index", icon: GraduationCap },
+                { title: "Bulk Upload", route: "admin.dashboard", icon: Upload },
+            ],
+        },
+    ];
+
+    const voterButtons = [
+        {
+            title: "Dashboard",
+            route: "admin.dashboard",
+            icon: LayoutDashboard,
+        },];
+        
     const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
 
     return (
