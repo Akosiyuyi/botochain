@@ -47,11 +47,11 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                     Update Password
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-gray-400">
                     Ensure your account is using a long, random password to stay
                     secure.
                 </p>
@@ -68,6 +68,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         id="current_password"
                         ref={currentPasswordInput}
                         value={data.current_password}
+                        placeholder="Enter your current password"
                         onChange={(e) =>
                             setData('current_password', e.target.value)
                         }
@@ -89,6 +90,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         id="password"
                         ref={passwordInput}
                         value={data.password}
+                        placeholder="Enter your new password"
                         onChange={(e) => setData('password', e.target.value)}
                         type="password"
                         className="mt-1 block w-full"
@@ -107,6 +109,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <TextInput
                         id="password_confirmation"
                         value={data.password_confirmation}
+                        placeholder="Confirm your new password"
                         onChange={(e) =>
                             setData('password_confirmation', e.target.value)
                         }

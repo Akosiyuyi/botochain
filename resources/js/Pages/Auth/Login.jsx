@@ -31,7 +31,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
-            <div className="mb-3">
+            <div className="mb-3 ">
                 <h1 className="text-xl font-bold">SIGN IN to your registered account</h1>
                 <h2 className="text-md">
                     Sign in using your registered email address to continue
@@ -78,7 +78,7 @@ export default function Login({ status, canResetPassword }) {
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
-                            className='focus:ring-green-700'
+                            className=''
                             checked={data.remember}
                             onChange={(e) =>
                                 setData('remember', e.target.checked)
@@ -106,7 +106,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             </form>
             <div className='mt-4 flex justify-center text-sm'>
-                <p>Doesn't have an account? <a className="text-green-600 hover:text-green-800" href={route('register')}>Register</a></p>
+                <p >Doesn't have an account? <a className="text-green-600 hover:text-green-800" href={route('register')}>Register</a></p>
             </div>
         </GuestLayout>
     );

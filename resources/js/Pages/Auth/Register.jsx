@@ -64,9 +64,9 @@ export default function Register() {
             )}
 
             <div className='flex justify-center'>
-                <ol className=" flex justify-center items-center w-full text-sm text-gray-500 dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 pt-2 pb-4 space-x-4 rtl:space-x-reverse">
-                    <li className="flex items-center text-green-600 dark:text-green-500">
-                        <span className="flex items-center justify-center w-5 h-5 me-2 text-xs border border-green-600 rounded-full shrink-0 dark:border-green-500">
+                <ol className=" flex justify-center items-center w-full text-sm text-gray-500 sm:text-base pt-2 pb-4 space-x-4 rtl:space-x-reverse">
+                    <li className="flex items-center text-green-600">
+                        <span className="flex items-center justify-center w-5 h-5 me-2 text-xs border border-green-600 rounded-full shrink-0">
                             {step === 2 ?
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -88,8 +88,8 @@ export default function Register() {
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4" />
                         </svg>
                     </li>
-                    <li className={`flex items-center ${step === 2 ? 'text-green-600 dark:text-green-500' : ''}`}>
-                        <span className={`flex items-center justify-center w-5 h-5 me-2 text-xs shrink-0 rounded-full border ${step === 2 ? 'border-green-600 dark:border-green-500' : 'border-gray-500 rounded-full dark:border-gray-400'}`}>
+                    <li className={`flex items-center ${step === 2 ? 'text-green-600' : ''}`}>
+                        <span className={`flex items-center justify-center w-5 h-5 me-2 text-xs shrink-0 rounded-full border ${step === 2 ? 'border-green-600' : 'border-gray-500 rounded-full'}`}>
                             2
                         </span>
                         Register <span className="hidden sm:inline-flex sm:ms-2">Account</span>
