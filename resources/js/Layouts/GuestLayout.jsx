@@ -19,7 +19,7 @@ export default function GuestLayout({ children }) {
                 <div className='w-36 mb-8 lg:hidden'>
                     <img src={spusmLogo} alt="School Logo" />
                 </div>
-                <div className=" w-full max-w-2xl lg:max-w-2xl h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-lg lg:max-w-max">
+                <div className=" w-full max-w-2xl h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-lg lg:max-w-max">
                     {children}
                 </div>
             </div>

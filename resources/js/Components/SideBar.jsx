@@ -29,7 +29,7 @@ export default function SideBar({ showSidebar, setShowSidebar, sidebarButtons })
             ref={sidebarRef}
             className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform 
             bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700
-            ${showSidebar ? "translate-x-0" : "-translate-x-full sm:translate-x-0"}`}
+            ${showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
             aria-label="Sidebar"
         >
             <div className="h-full px-3 pb-4 overflow-y-auto">
@@ -48,15 +48,15 @@ export default function SideBar({ showSidebar, setShowSidebar, sidebarButtons })
                                         }
                                     >
                                         {item.icon && (
-                                            <item.icon className="w-5 h-5 text-gray-500 dark:text-gray-300" />
+                                            <item.icon className="w-5 h-5 text-inherit dark:text-inherit" />
                                         )}
                                         <span className="ms-3 flex-1 text-left">
                                             {item.title}
                                         </span>
                                         {openMenu === idx ? (
-                                            <ChevronUp className="w-4 h-4 ml-auto" />
+                                            <ChevronUp className="w-4 h-4 ml-auto text-inherit" />
                                         ) : (
-                                            <ChevronDown className="w-4 h-4 ml-auto" />
+                                            <ChevronDown className="w-4 h-4 ml-auto text inherit" />
                                         )}
                                     </button>
 
@@ -67,13 +67,13 @@ export default function SideBar({ showSidebar, setShowSidebar, sidebarButtons })
                                                 <li key={cIdx}>
                                                     <Link
                                                         href={route(child.route)}
-                                                        className="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 
-                                                                    hover:bg-green-600 hover:text-white"
+                                                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white 
+                                                                    hover:bg-green-700 hover:text-white"
                                                     >
                                                         {child.icon && (
-                                                            <child.icon className="w-5 h-5 text-gray-500 dark:text-gray-300" />
+                                                            <child.icon className="w-5 h-5 text-inherit" />
                                                         )}
-                                                        <span className="ms-3">
+                                                        <span className="ms-3 text-inherit">
                                                             {child.title}
                                                         </span>
                                                     </Link>
@@ -89,9 +89,9 @@ export default function SideBar({ showSidebar, setShowSidebar, sidebarButtons })
                                                hover:bg-green-700 hover:text-white"
                                 >
                                     {item.icon && (
-                                        <item.icon className="w-5 h-5 text-gray-500 dark:text-gray-300" />
+                                        <item.icon className="w-5 h-5 text-inherit dark:text-inherit " />
                                     )}
-                                    <span className="ms-3">{item.title}</span>
+                                    <span className="ms-3 text-inherit">{item.title}</span>
                                 </Link>
                             )}
                         </li>

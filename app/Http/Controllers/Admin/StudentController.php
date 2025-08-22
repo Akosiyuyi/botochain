@@ -13,7 +13,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return Inertia::render("Admin/Students/Index");
+        return Inertia::render("Admin/Students/StudentsList");
     }
 
     /**

@@ -2,7 +2,7 @@ import NavBar from "@/Components/NavBar";
 import SideBar from "@/Components/SideBar";
 import { usePage, Link } from "@inertiajs/react";
 import { useState } from "react";
-import { LayoutDashboard, GraduationCap, Upload } from "lucide-react";
+import { LayoutDashboard, GraduationCap, Upload, BookUser } from "lucide-react";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -23,8 +23,8 @@ export default function AuthenticatedLayout({ header, children }) {
             title: "Students",
             icon: GraduationCap,
             children: [
-                { title: "Students List", route: "admin.students.index", icon: GraduationCap },
-                { title: "Bulk Upload", route: "admin.dashboard", icon: Upload },
+                { title: "Students List", route: "admin.students.index", icon: BookUser },
+                { title: "Bulk Upload", route: "admin.bulk-upload", icon: Upload },
             ],
         },
     ];
@@ -32,10 +32,10 @@ export default function AuthenticatedLayout({ header, children }) {
     const voterButtons = [
         {
             title: "Dashboard",
-            route: "admin.dashboard",
+            route: "voter.dashboard",
             icon: LayoutDashboard,
         },];
-        
+
     const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
 
     return (
@@ -50,7 +50,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 setShowSidebar={setShowSidebar}
                 sidebarButtons={sidebarButtons}
             />
-            <div className="sm:ml-64">
+            <div className="md:ml-64">
                 <div className="mt-14">
                     {header && (
                         <header>
@@ -59,7 +59,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </header>
                     )}
-                    <main className="pb-6">{children}</main>
+                    <main className="pb-6 mx-4 sm:mx-0">{children}</main>
                 </div>
             </div>
         </div>
