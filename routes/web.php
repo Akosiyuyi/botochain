@@ -8,18 +8,18 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VoterController;
+use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    
-    Route::get('students/bulkUpload', [BulkUploadController::class, 'index'])
-        ->name('bulk-upload');
-    Route::resource('students', StudentController::class);
 
     // Bulk upload route
-    
+    Route::get('students/bulkUpload', [BulkUploadController::class, 'index'])
+        ->name('bulk-upload');
+
+    Route::resource('students', StudentController::class);
 });
 
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {

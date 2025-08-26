@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +23,25 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
+
+        // to redirect to designated dashboard when accessing guest only urls
+        $middleware->redirectUsersTo(function (Request $request): string {
+            if (Auth::check()) {
+                /** @var \App\Models\User $user */
+                $user = Auth::user();
+
+                if ($user->hasRole('admin')) {
+                    return route('admin.dashboard');
+                }
+                if ($user->hasRole('voter')) {
+                    return route('voter.dashboard');
+                }
+                return '/';
+            }
+            // if guest, keep them on intended URL (usually /login)
+            return $request->fullUrl();
+        });
+
 
         //
     })
