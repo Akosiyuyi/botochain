@@ -29,7 +29,7 @@ export default function NavBar({ dashboardRoute, showSidebar, setShowSidebar }) 
                         <button
                             onClick={() => setShowSidebar(!showSidebar)}
                             type="button"
-                            className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 
+                            className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 
                             focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white
                             dark:focus:ring-gray-600"
                         >
@@ -63,7 +63,7 @@ export default function NavBar({ dashboardRoute, showSidebar, setShowSidebar }) 
                                 alt="Logo"
                             />
                             <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                                E<span className='text-green-700'>Boto</span>
+                                E<span className='text-green-700'>BOTO</span>
                             </span>
                         </Link>
                     </div>

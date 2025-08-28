@@ -4,7 +4,7 @@ import DangerButton from "@/Components/DangerButton";
 
 export default function ListPreview() {
     return (
-        <div className="mt-6 overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+        <div className="mt-6 overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg">
             {/* Top bar */}
             <div className="flex justify-between items-center px-4 py-6">
                 <div className="text-gray-900 dark:text-white font-semibold text-lg">
