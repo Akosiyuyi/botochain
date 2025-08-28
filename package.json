@@ -25,6 +25,7 @@
     "dependencies": {
         "flowbite": "^3.1.2",
         "flowbite-react": "^0.12.7",
-        "lucide-react": "^0.540.0"
+        "lucide-react": "^0.540.0",
+        "simple-datatables": "^10.0.0"
     }
 }
