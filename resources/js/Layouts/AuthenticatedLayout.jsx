@@ -4,7 +4,7 @@ import { usePage, Link } from "@inertiajs/react";
 import { useState } from "react";
 import { LayoutDashboard, GraduationCap, Upload, BookUser } from "lucide-react";
 
-export default function AuthenticatedLayout({ header, children }) {
+export default function AuthenticatedLayout({ header, children, button = false }) {
     const user = usePage().props.auth.user;
     const userRoles = user?.roles || [];
     const dashboardRoute = userRoles.includes("admin")
@@ -54,8 +54,13 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mt-14">
                     {header && (
                         <header>
-                            <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
+                            <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 flex justify-between">
                                 {header}
+                                {button && (
+                                    <div>
+                                        {button}
+                                    </div>
+                                )}
                             </div>
                         </header>
                     )}

@@ -1,59 +1,110 @@
 import { useState } from "react";
+import { ChevronUp, ChevronDown } from "lucide-react"; // install lucide-react if not yet
+import SelectInput from "./SelectInput";
 
 export default function StudentsTable({ students }) {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [statusFilter, setStatusFilter] = useState("all"); // all | active | inactive
+    const [statusFilter, setStatusFilter] = useState("All");
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+    // 🔹 Handle Sorting
+    const handleSort = (key) => {
+        setSortConfig((prev) => {
+            if (prev.key === key) {
+                // toggle direction
+                return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+            }
+            return { key, direction: "asc" };
+        });
+        setPage(1);
+    };
 
     // 🔍 Search + Status Filter
-    const filtered = students.filter((s) => {
+    let filtered = students.filter((s) => {
         const matchesSearch = Object.values(s).some((val) =>
             String(val).toLowerCase().includes(search.toLowerCase())
         );
 
         const matchesStatus =
-            statusFilter === "all"
+            statusFilter === "All"
                 ? true
-                : statusFilter === "active"
+                : statusFilter === "Active"
                     ? !s.is_graduated
                     : s.is_graduated;
 
         return matchesSearch && matchesStatus;
     });
 
+    // 🔹 Apply Sorting
+    if (sortConfig.key) {
+        filtered = [...filtered].sort((a, b) => {
+            const valA = a[sortConfig.key] ?? "";
+            const valB = b[sortConfig.key] ?? "";
+
+            if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+            if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+            return 0;
+        });
+    }
+
     // 📑 Pagination
     const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
     const start = (page - 1) * rowsPerPage;
     const paginated = filtered.slice(start, start + rowsPerPage);
 
+    const headerTitle =
+        statusFilter === "All"
+            ? "All Students (Current & Former)"
+            : statusFilter === "Active"
+                ? "Enrolled Students This School Year"
+                : "Inactive Students (Graduated or Not Enrolled)";
+
+    const headerSubtitle =
+        statusFilter === "All"
+            ? "Includes all registered students, both currently enrolled and previously enrolled."
+            : statusFilter === "Active"
+                ? "List of students actively enrolled for the current school year."
+                : "List of students who have graduated or did not enroll this year.";
+
+    // 🔹 Utility to show chevron
+    const renderSortIcon = (key) => {
+        if (sortConfig.key !== key) return <ChevronUp className="w-4 h-4 opacity-30" />;
+        return sortConfig.direction === "asc" ? (
+            <ChevronUp className="w-4 h-4" />
+        ) : (
+            <ChevronDown className="w-4 h-4" />
+        );
+    };
+
+    // handle editing rows
+    const handleEdit = () => {
+
+    }
+
     return (
-        <div className="rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
+        <div className="rounded-lg overflow-hidden">
             {/* 🔹 Header */}
-            <div className="px-4 py-3 bg-gray-100 dark:bg-gray-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="p-4 bg-white dark:bg-gray-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <div className="font-semibold text-lg">Students List</div>
+                    <div className="font-semibold text-lg dark:text-white">{headerTitle}</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Complete list of students for this school year.
+                        {headerSubtitle}
                     </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
                     {/* Status Filter */}
-                    <select
-                        id="status-filter"
-                        name="statusFilter"
+                    <SelectInput
+                    id="status-filter"
                         value={statusFilter}
-                        onChange={(e) => {
-                            setStatusFilter(e.target.value);
+                        onChange={(val) => {
+                            setStatusFilter(val);
                             setPage(1);
                         }}
-                        className="border rounded-lg px-3 py-1.5 min-w-[120px] text-sm bg-white dark:bg-gray-900 dark:border-gray-600 dark:text-white"
-                    >
-                        <option value="all">All</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
+                        options={["All", "Active", "Inactive"]}
+                    />
 
                     {/* Search Input */}
                     <div className="relative w-full sm:w-64">
@@ -64,10 +115,10 @@ export default function StudentsTable({ students }) {
                             value={search}
                             onChange={(e) => {
                                 setSearch(e.target.value);
-                                setPage(1); // reset to first page after search
+                                setPage(1);
                             }}
                             placeholder="Search students..."
-                            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full rounded-lg border dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:ring-green-600"
                         />
                     </div>
                 </div>
@@ -76,20 +127,35 @@ export default function StudentsTable({ students }) {
             {/* 🔹 Table */}
             <div className="overflow-x-auto">
                 <table className="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
-                    <thead className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                    <thead className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
                         <tr>
-                            <th className="px-4 py-2 font-bold">Student ID</th>
-                            <th className="px-4 py-2 font-bold">Full Name</th>
-                            <th className="px-4 py-2 font-bold">School Level</th>
-                            <th className="px-4 py-2 font-bold">Grade/Year</th>
-                            <th className="px-4 py-2 font-bold">Course</th>
-                            <th className="px-4 py-2 font-bold">Section</th>
-                            <th className="px-4 py-2 font-bold">Status</th>
+                            {[
+                                { key: "student_id", label: "Student ID", sortable: true },
+                                { key: "full_name", label: "Full Name", sortable: true },
+                                { key: "school_level", label: "School Level" },
+                                { key: "grade_year", label: "Grade/Year" },
+                                { key: "course", label: "Course" },
+                                { key: "section", label: "Section" },
+                                { key: "status", label: "Status" },
+                                { key: "action", label: "Action" },
+                            ].map((col) => (
+                                <th
+                                    key={col.key}
+                                    onClick={col.sortable ? () => handleSort(col.key) : undefined}
+                                    className={`px-4 py-2 font-bold ${col.sortable ? "cursor-pointer" : ""}`}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        {col.label}
+                                        {col.sortable && renderSortIcon(col.key)}
+                                    </div>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
+
                     <tbody>
                         {paginated.map((student, idx) => (
-                            <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <td className="px-4 py-2">{student.student_id}</td>
                                 <td className="px-4 py-2">{student.full_name}</td>
                                 <td className="px-4 py-2 capitalize">{student.school_level}</td>
@@ -103,12 +169,20 @@ export default function StudentsTable({ students }) {
                                         <span className="text-green-600">Active</span>
                                     )}
                                 </td>
+                                <td className="px-4 py-2">
+                                    <button
+                                        onClick={() => handleEdit(student)}
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        Edit
+                                    </button>
+                                </td>
                             </tr>
                         ))}
 
                         {paginated.length === 0 && (
                             <tr>
-                                <td colSpan="7" className="px-4 py-6 text-center text-gray-500">
+                                <td colSpan="9" className="px-4 py-6 text-center text-gray-500">
                                     No students found.
                                 </td>
                             </tr>
@@ -118,8 +192,7 @@ export default function StudentsTable({ students }) {
             </div>
 
             {/* 🔹 Footer */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 text-sm bg-gray-100 dark:bg-gray-800">
-                {/* Page info + Rows per page */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 text-sm bg-white dark:bg-gray-800 border-t dark:border-gray-600">
                 <div className="flex items-center gap-3">
                     <span className="dark:text-white">
                         Page {page} of {totalPages}
@@ -131,38 +204,27 @@ export default function StudentsTable({ students }) {
                         >
                             Rows per page:
                         </label>
-                        <select
-                            id="rows-per-page"
-                            name="rowsPerPage"
+                        <SelectInput
+                        id= "rows-per-page"
                             value={rowsPerPage}
-                            onChange={(e) => {
-                                setRowsPerPage(Number(e.target.value));
-                                setPage(1); // reset to first page after changing rows
-                            }}
-                            className="border rounded-lg px-3 py-1.5 min-w-[90px] text-sm bg-white dark:bg-gray-900 dark:border-gray-600"
-                        >
-                            {[5, 10, 25, 50, 100].map((n) => (
-                                <option key={n} value={n}>
-                                    {n}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={(val) => setRowsPerPage(val)}
+                            options={[10, 25, 50, 100]}
+                        />
                     </div>
                 </div>
 
-                {/* Pagination controls */}
                 <div className="space-x-2">
                     <button
                         onClick={() => setPage((p) => Math.max(p - 1, 1))}
                         disabled={page === 1}
-                        className="px-3 py-1 rounded bg-white dark:bg-gray-900 border disabled:opacity-50"
+                        className="px-3 py-1 rounded bg-white dark:text-white dark:bg-gray-900 border disabled:opacity-50 enabled:hover:border-green-600"
                     >
                         Prev
                     </button>
                     <button
                         onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                         disabled={page === totalPages}
-                        className="px-3 py-1 rounded bg-white dark:bg-gray-900 border disabled:opacity-50"
+                        className="px-3 py-1 rounded bg-white dark:text-white dark:bg-gray-900 border disabled:opacity-50 enabled:hover:border-green-600"
                     >
                         Next
                     </button>

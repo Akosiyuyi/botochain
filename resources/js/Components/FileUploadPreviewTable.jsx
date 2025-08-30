@@ -76,8 +76,8 @@ export default function FileUploadPreviewTable({ students, variant = "new" }) {
 
             {/* Table wrapper with horizontal scroll */}
             <div className="overflow-x-auto">
-                <table className="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
-                    <thead className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                <table className="min-w-full bg-white dark:bg-gray-800 text-sm text-left text-gray-700 dark:text-gray-300">
+                    <thead className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                         <tr>
                             <th className="px-4 py-2 font-bold">Student ID</th>
                             <th className="px-4 py-2 font-bold">Full Name</th>
@@ -89,7 +89,7 @@ export default function FileUploadPreviewTable({ students, variant = "new" }) {
                     </thead>
                     <tbody>
                         {paginated.map((student, idx) => (
-                            <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr key={idx} className="">
                                 <td className="px-4 py-2">{student.student_id}</td>
                                 <td className="px-4 py-2">{student.full_name}</td>
                                 <td className="px-4 py-2 capitalize">{student.school_level}</td>
