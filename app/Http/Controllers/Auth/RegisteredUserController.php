@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
             'id_number' => $request->id_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_active' => true,
         ]);
 
         $user->assignRole('voter');

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\BulkUploadController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
         ->name('bulk-upload');
 
     Route::resource('students', StudentController::class);
+
+    Route::resource('users', UserController::class);
 });
 
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {

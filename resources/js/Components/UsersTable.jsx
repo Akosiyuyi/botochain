@@ -2,11 +2,11 @@ import { useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react"; // install lucide-react if not yet
 import SelectInput from "./SelectInput";
 
-export default function StudentsTable({ students = [] }) {
+export default function UsersTable({ users = [] }) {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [statusFilter, setStatusFilter] = useState("All");
+    const [roleFilter, setRoleFilter] = useState("All");
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
     // 🔹 Handle Sorting
@@ -21,21 +21,22 @@ export default function StudentsTable({ students = [] }) {
         setPage(1);
     };
 
-    // 🔍 Search + Status Filter
-    let filtered = students.filter((s) => {
-        const matchesSearch = Object.values(s).some((val) =>
+    // 🔍 Search + Role Filter
+    let filtered = users.filter((u) => {
+        const matchesSearch = Object.values(u).some((val) =>
             String(val).toLowerCase().includes(search.toLowerCase())
         );
 
-        const matchesStatus =
-            statusFilter === "All"
+        const matchesRole =
+            roleFilter === "All"
                 ? true
-                : statusFilter === "Active"
-                    ? !s.is_graduated
-                    : s.is_graduated;
+                : u.roles.some(
+                    (r) => r.name.toLowerCase() === roleFilter.toLowerCase()
+                );
 
-        return matchesSearch && matchesStatus;
+        return matchesSearch && matchesRole;
     });
+
 
     // 🔹 Apply Sorting
     if (sortConfig.key) {
@@ -55,18 +56,18 @@ export default function StudentsTable({ students = [] }) {
     const paginated = filtered.slice(start, start + rowsPerPage);
 
     const headerTitle =
-        statusFilter === "All"
-            ? "All Students (Current & Former)"
-            : statusFilter === "Active"
-                ? "Enrolled Students This School Year"
-                : "Inactive Students (Graduated or Not Enrolled)";
+        roleFilter === "All"
+            ? "All Users"
+            : roleFilter === "Voter"
+                ? "Voter List"
+                : "Admin";
 
     const headerSubtitle =
-        statusFilter === "All"
-            ? "Includes all registered students, both currently enrolled and previously enrolled."
-            : statusFilter === "Active"
-                ? "List of students actively enrolled for the current school year."
-                : "List of students who have graduated or did not enroll this year.";
+        roleFilter === "All"
+            ? "Includes all registered users, voters and admins."
+            : roleFilter === "Voter"
+                ? "List of all voters."
+                : "List of all admins.";
 
     // 🔹 Utility to show chevron
     const renderSortIcon = (key) => {
@@ -95,15 +96,15 @@ export default function StudentsTable({ students = [] }) {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                    {/* Status Filter */}
+                    {/* Role Filter */}
                     <SelectInput
-                    id="status-filter"
-                        value={statusFilter}
+                        id="status-filter"
+                        value={roleFilter}
                         onChange={(val) => {
-                            setStatusFilter(val);
+                            setRoleFilter(val);
                             setPage(1);
                         }}
-                        options={["All", "Active", "Inactive"]}
+                        options={["All", "Voter", "Admin"]}
                     />
 
                     {/* Search Input */}
@@ -117,7 +118,7 @@ export default function StudentsTable({ students = [] }) {
                                 setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            placeholder="Search students..."
+                            placeholder="Search users..."
                             className="w-full rounded-lg border dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:ring-green-600"
                         />
                     </div>
@@ -130,12 +131,11 @@ export default function StudentsTable({ students = [] }) {
                     <thead className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
                         <tr>
                             {[
-                                { key: "student_id", label: "Student ID", sortable: true },
-                                { key: "full_name", label: "Full Name", sortable: true },
-                                { key: "school_level", label: "School Level" },
-                                { key: "grade_year", label: "Grade/Year" },
-                                { key: "course", label: "Course" },
-                                { key: "section", label: "Section" },
+                                { key: "id", label: "No.", sortable: true },
+                                { key: "id_number", label: "ID Number", sortable: true },
+                                { key: "name", label: "Full Name", sortable: true },
+                                { key: "email", label: "Email Address" },
+                                { key: "role", label: "Role" },
                                 { key: "status", label: "Status" },
                                 { key: "action", label: "Action" },
                             ].map((col) => (
@@ -154,19 +154,18 @@ export default function StudentsTable({ students = [] }) {
                     </thead>
 
                     <tbody>
-                        {paginated.map((student, idx) => (
+                        {paginated.map((user, idx) => (
                             <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-4 py-2">{student.student_id}</td>
-                                <td className="px-4 py-2">{student.full_name}</td>
-                                <td className="px-4 py-2 capitalize">{student.school_level}</td>
-                                <td className="px-4 py-2">{student.grade_year}</td>
-                                <td className="px-4 py-2">{student.course || "-"}</td>
-                                <td className="px-4 py-2">{student.section}</td>
+                                <td className="px-4 py-2">{user.id}</td>
+                                <td className="px-4 py-2">{user.id_number}</td>
+                                <td className="px-4 py-2">{user.name}</td>
+                                <td className="px-4 py-2">{user.email}</td>
+                                <td className="px-4 py-2">{user.roles.map(r => r.name.charAt(0).toUpperCase() + r.name.slice(1)).join(', ')}</td>
                                 <td className="px-4 py-2">
-                                    {student.is_graduated ? (
-                                        <span className="text-red-500">Inactive</span>
-                                    ) : (
+                                    {user.is_active ? (
                                         <span className="text-green-600">Active</span>
+                                    ) : (
+                                        <span className="text-red-500">Inactive</span>
                                     )}
                                 </td>
                                 <td className="px-4 py-2">
@@ -183,7 +182,7 @@ export default function StudentsTable({ students = [] }) {
                         {paginated.length === 0 && (
                             <tr>
                                 <td colSpan="9" className="px-4 py-6 text-center text-gray-500">
-                                    No students found.
+                                    No users found.
                                 </td>
                             </tr>
                         )}
@@ -205,7 +204,7 @@ export default function StudentsTable({ students = [] }) {
                             Rows per page:
                         </label>
                         <SelectInput
-                        id= "rows-per-page"
+                            id="rows-per-page"
                             value={rowsPerPage}
                             onChange={(val) => setRowsPerPage(val)}
                             options={[10, 25, 50, 100]}

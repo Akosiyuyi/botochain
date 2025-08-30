@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             'id_number' => '1000-00000',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
+            'is_active' => true,
             'email_verified_at' => now(),
         ])->assignRole('admin');
     }
