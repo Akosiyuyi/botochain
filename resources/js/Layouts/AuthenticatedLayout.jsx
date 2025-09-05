@@ -2,7 +2,7 @@ import NavBar from "@/Components/NavBar";
 import SideBar from "@/Components/SideBar";
 import { usePage, Link } from "@inertiajs/react";
 import { useState } from "react";
-import { LayoutDashboard, GraduationCap, Upload, BookUser, User } from "lucide-react";
+import { LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
 
 export default function AuthenticatedLayout({ header, children, button = false }) {
     const user = usePage().props.auth.user;
@@ -18,6 +18,11 @@ export default function AuthenticatedLayout({ header, children, button = false }
             title: "Dashboard",
             route: "admin.dashboard",
             icon: LayoutDashboard,
+        },
+        {
+            title: "Election",
+            route: "admin.election.index",
+            icon: VoteIcon,
         },
         {
             title: "Student",

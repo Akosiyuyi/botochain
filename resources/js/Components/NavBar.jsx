@@ -1,6 +1,7 @@
 import { Link, usePage } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "@/Components/ThemeToggle";
+import ebotoLogoWithColor from '../../images/EBOTO_logo_withColor.png';
 
 export default function NavBar({ dashboardRoute, showSidebar, setShowSidebar }) {
     const user = usePage().props.auth.user;
@@ -58,7 +59,7 @@ export default function NavBar({ dashboardRoute, showSidebar, setShowSidebar }) 
                         {/* Logo */}
                         <Link href={route(dashboardRoute)} className="flex ms-2 md:me-24">
                             <img
-                                src="https://flowbite.com/docs/images/logo.svg"
+                                src={ebotoLogoWithColor}
                                 className="h-8 me-3"
                                 alt="Logo"
                             />

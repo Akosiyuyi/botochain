@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\BulkUploadController;
+use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -20,15 +21,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('students/bulkUpload', [BulkUploadController::class, 'index'])
         ->name('bulk-upload');
 
+    // student resource route
     Route::resource('students', StudentController::class);
 
+    // user resource route
     Route::resource('users', UserController::class);
+
+    // election resource route
+    Route::resource('election', ElectionController::class);
 });
 
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
     Route::get('/voter/dashboard', [VoterController::class, 'dashboard'])->name('voter.dashboard');
-
-
 });
 
 Route::middleware('auth')->group(function () {
