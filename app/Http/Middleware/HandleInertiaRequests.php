@@ -43,6 +43,12 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $user->getAllPermissions()->pluck('name')->toArray(), // 👈 ONLY names
                 ] : null,
             ],
+
+            // toast messages
+            'flash' => [
+            'success' => fn () => $request->session()->get('success'),
+            'error' => fn () => $request->session()->get('error'),
+        ],
         ]);
     }
 }

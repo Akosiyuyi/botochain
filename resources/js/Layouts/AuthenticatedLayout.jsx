@@ -1,8 +1,9 @@
 import NavBar from "@/Components/NavBar";
 import SideBar from "@/Components/SideBar";
 import { usePage, Link } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function AuthenticatedLayout({ header, children, button = false }) {
     const user = usePage().props.auth.user;
@@ -48,8 +49,33 @@ export default function AuthenticatedLayout({ header, children, button = false }
 
     const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
 
+
+    // toast function
+    const flash = usePage().props.flash ?? {}; // default to empty object
+    const { errors } = usePage().props;
+
+    useEffect(() => {
+        if (flash.success) toast.success(flash.success);
+        if (flash.error) toast.error(flash.error);
+
+        // Show validation errors
+        if (errors && Object.keys(errors).length > 0) {
+            Object.values(errors).forEach((errMsg) => {
+                toast.error(errMsg);
+            });
+        }
+    }, [flash, errors]);
+
+
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+            {/* Toast container */}
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+                containerStyle={{ zIndex: 9999 }}
+            />
+
             <NavBar
                 dashboardRoute={dashboardRoute}
                 showSidebar={showSidebar}
