@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->string('id_number')->unique();
             $table->string('name');
-            $table->enum('school_level', ['grade_school', 'junior_high', 'senior_high', 'college']);
+            $table->enum('school_level', ['Grade School', 'Junior High', 'Senior High', 'College']);
             $table->integer('year_level');
             $table->string('course')->nullable();
             $table->string('section')->nullable();

@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('election_school_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('election_id')->constrained()->cascadeOnDelete();
-            $table->enum('school_level', ['grade_school', 'junior_high', 'senior_high', 'college']);
+            $table->enum('school_level', ['Grade School', 'Junior High', 'Senior High', 'College']);
             $table->timestamps();
 
             $table->unique(['election_id', 'school_level']); // avoid duplicates

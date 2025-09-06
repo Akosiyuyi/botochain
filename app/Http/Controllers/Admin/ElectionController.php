@@ -10,6 +10,7 @@ use App\Models\Election;
 use App\Models\ElectionSchoolLevel;
 use App\Models\ElectionSetup;
 use App\Models\ColorTheme;
+use Carbon\Carbon;
 
 class ElectionController extends Controller
 {
@@ -18,7 +19,25 @@ class ElectionController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Admin/Election/Election');
+        $elections = Election::with('setup.colorTheme', 'schoolLevels')
+            ->get()
+            ->map(function ($election) {
+                $created_at = $this->dateFormat($election);
+                return [
+                    'id' => $election->id,
+                    'title' => $election->title,
+                    'image_path' => $election->setup->colorTheme->image_url,
+                    'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+                    'status' => $election->status,
+                    'created_at' => $created_at,
+                ];
+            });
+        return Inertia::render(
+            'Admin/Election/Election',
+            [
+                "elections" => $elections,
+            ]
+        );
     }
 
     /**
@@ -38,7 +57,7 @@ class ElectionController extends Controller
         $validated = $request->validate([
             'title' => 'required|unique:elections,title',
             'school_levels' => 'required|array|min:1',
-            'school_levels.*' => 'in:grade_school,junior_high,senior_high,college',
+            'school_levels.*' => 'in:Grade School,Junior High,Senior High,College',
         ]);
 
         // 2. Create the election
@@ -104,5 +123,21 @@ class ElectionController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function dateFormat(Election $election)
+    {
+        $created = Carbon::parse($election->created_at);
+        if ($created->isToday()) {
+            return 'Today';
+        }
+        if ($created->isYesterday()) {
+            return 'Yesterday';
+        }
+        $days = $created->diffInDays(); // always 2–6
+        if ($days <= 6) {
+            return "{$days} days ago";
+        }
+        return $created->format('M d, Y');
     }
 }

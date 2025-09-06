@@ -4,7 +4,8 @@ import { Head } from '@inertiajs/react';
 import ElectionCard from '@/Components/ElectionCard';
 import { ModalLink } from '@inertiaui/modal-react';
 
-export default function Election() {
+export default function Election({ elections }) {
+    console.log(elections);
     return (
         <AuthenticatedLayout
             header={
@@ -25,8 +26,16 @@ export default function Election() {
             <Head title="Election" />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <ElectionCard />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {elections.map((election) => (
+                        <ElectionCard
+                            key={election.id}
+                            imagePath={election.image_path}
+                            title={election.title}
+                            schoolLevels={election.school_levels}
+                            created_at={election.created_at}
+                        />
+                    ))}
                 </div>
             </div>
         </AuthenticatedLayout>

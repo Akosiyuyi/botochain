@@ -86,7 +86,7 @@ export default function AuthenticatedLayout({ header, children, button = false }
                 setShowSidebar={setShowSidebar}
                 sidebarButtons={sidebarButtons}
             />
-            <div className="lg:ml-64">
+            <div className="xl:ml-64">
                 <div className="mt-14">
                     {header && (
                         <header>

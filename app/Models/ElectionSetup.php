@@ -36,7 +36,7 @@ class ElectionSetup extends Model
         return $this->belongsTo(Election::class);
     }
 
-    public function theme()
+    public function colorTheme()
     {
         return $this->belongsTo(ColorTheme::class, 'theme_id');
     }

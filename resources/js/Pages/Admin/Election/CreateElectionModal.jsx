@@ -15,10 +15,10 @@ export default function CreateElectionModal() {
   });
 
   const schoolLevelOptions = [
-    { id: 1, label: "Grade School", value: "grade_school" },
-    { id: 2, label: "Junior High", value: "junior_high" },
-    { id: 3, label: "Senior High", value: "senior_high" },
-    { id: 4, label: "College", value: "college" },
+    { id: 1, label: "Grade School", value: "Grade School" },
+    { id: 2, label: "Junior High", value: "Junior High" },
+    { id: 3, label: "Senior High", value: "Senior High" },
+    { id: 4, label: "College", value: "College" },
   ];
 
   return (
