@@ -3,9 +3,15 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import { Head } from '@inertiajs/react';
 import ElectionCard from '@/Components/ElectionCard';
 import { ModalLink } from '@inertiaui/modal-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
+import { useState } from 'react';
 
 export default function Election({ elections }) {
+    const [showPending, setShowPending] = useState(true);
+    const [showActive, setShowActive] = useState(true);
     console.log(elections);
+    console.log(elections.length)
     return (
         <AuthenticatedLayout
             header={
@@ -26,17 +32,86 @@ export default function Election({ elections }) {
             <Head title="Election" />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {elections.map((election) => (
-                        <ElectionCard
-                            key={election.id}
-                            imagePath={election.image_path}
-                            title={election.title}
-                            schoolLevels={election.school_levels}
-                            created_at={election.created_at}
-                        />
-                    ))}
+                <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+                    <div
+                        className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white"
+                        onClick={() => setShowPending(!showPending)}
+                    >
+                        <span className="">
+                            Pending Elections
+                        </span>
+                        {showPending ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
                 </div>
+                {showPending && (
+                    <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {elections.some(election => election.status === "pending") ? (
+                            elections
+                                .filter(election => election.status === "pending")
+                                .map(election => (
+                                    <ElectionCard
+                                        key={election.id}
+                                        imagePath={election.image_path}
+                                        title={election.title}
+                                        schoolLevels={election.school_levels}
+                                        created_at={election.created_at}
+                                    />
+                                ))
+                        ) : (
+                            <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
+                                <img
+                                    src={noElectionsFlat}
+                                    alt="No Elections"
+                                    className="w-80"
+                                />
+                                <div className="text-gray-500 text-lg">
+                                    There are no pending elections.
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <div className="mt-4 overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+                    <div
+                        className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white"
+                        onClick={() => setShowActive(!showActive)}
+                    >
+                        <span className="">
+                            Active Elections
+                        </span>
+                        {showActive ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
+                </div>
+                {showActive && (
+                    <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {elections.some(election => election.status === "active") ? (
+                            elections
+                                .filter(election => election.status === "active")
+                                .map(election => (
+                                    <ElectionCard
+                                        key={election.id}
+                                        imagePath={election.image_path}
+                                        title={election.title}
+                                        schoolLevels={election.school_levels}
+                                        created_at={election.created_at}
+                                    />
+                                ))
+                        ) : (
+                            <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
+                                <img
+                                    src={noElectionsFlat}
+                                    alt="No Elections"
+                                    className="w-80"
+                                />
+                                <div className="text-gray-500 text-lg">
+                                    There are no active elections.
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
             </div>
         </AuthenticatedLayout>
     );
