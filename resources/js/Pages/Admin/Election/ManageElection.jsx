@@ -1,17 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Ellipsis } from 'lucide-react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
+import ManageElectionHeader from '@/Components/ManageElectionHeader';
 
 export default function ManageElection({ election, positions = [] }) {
-    const [showPosition, setShowPosition] = useState(true);
-    const [showPartylist, setShowPartylist] = useState(true);
+    const [showPosition, setShowPosition] = useState(false);
+    const [showPartylist, setShowPartylist] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         position: '',
@@ -45,8 +46,11 @@ export default function ManageElection({ election, positions = [] }) {
             <Head title={election.title} />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <ManageElectionHeader election={election} />
+
+
                 <div
-                    className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg"
+                    className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg mt-4"
                     onClick={() => setShowPosition(!showPosition)}
                 >
                     <div className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white">

@@ -29,7 +29,7 @@ export default function ElectionCard({
 
             {/* Mobile Overlay (text inside image) */}
             <Link href={link}>
-                <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-black/60 to-transparent p-4 md:hidden">
+                <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-b from-black/60 to-transparent p-4 md:hidden">
                     <div>
                         <h5 className="text-lg font-bold text-white">{title}</h5>
                         <h1 className="text-sm text-gray-100">
@@ -52,7 +52,6 @@ export default function ElectionCard({
                             <span className="text-xs text-gray-200">No school levels</span>
                         )}
                     </div>
-
                 </div>
             </Link>
 

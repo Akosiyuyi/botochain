@@ -99,9 +99,20 @@ class ElectionController extends Controller
      */
     public function show(string $id)
     {
-        $election = Election::findOrFail($id);
+        $election = Election::with('setup.colorTheme', 'schoolLevels')
+            ->findOrFail($id);
+
+        $created_at = $this->dateFormat($election);
+
+        $electionData = [
+            'id' => $election->id,
+            'title' => $election->title,
+            'image_path' => $election->setup->colorTheme->image_url,
+            'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+            'created_at' => $created_at,
+        ];
         return Inertia::render('Admin/Election/ManageElection', [
-            'election' => $election,
+            'election' => $electionData,
             'positions' => $election->positions()->oldest()->get(),
         ]);
     }
