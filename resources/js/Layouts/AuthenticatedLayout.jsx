@@ -2,53 +2,10 @@ import NavBar from "@/Components/NavBar";
 import SideBar from "@/Components/SideBar";
 import { usePage, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
-import { LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AuthenticatedLayout({ header, children, button = false }) {
-    const user = usePage().props.auth.user;
-    const userRoles = user?.roles || [];
-    const dashboardRoute = userRoles.includes("admin")
-        ? "admin.dashboard"
-        : "voter.dashboard";
-
-    const [showSidebar, setShowSidebar] = useState(false);
-
-    const adminButtons = [
-        {
-            title: "Dashboard",
-            route: "admin.dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            title: "Election",
-            route: "admin.election.index",
-            icon: VoteIcon,
-        },
-        {
-            title: "Student",
-            icon: GraduationCap,
-            children: [
-                { title: "Students List", route: "admin.students.index", icon: BookUser },
-                { title: "Bulk Upload", route: "admin.bulk-upload", icon: Upload },
-            ],
-        },
-        {
-            title: "User",
-            route: "admin.users.index",
-            icon: User,
-        },
-    ];
-
-    const voterButtons = [
-        {
-            title: "Dashboard",
-            route: "voter.dashboard",
-            icon: LayoutDashboard,
-        },];
-
-    const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
-
+    const [showSidebar, setShowSidebar] = useState(false);  // side bar state management
 
     // toast function
     const flash = usePage().props.flash ?? {}; // default to empty object
@@ -77,14 +34,12 @@ export default function AuthenticatedLayout({ header, children, button = false }
             />
 
             <NavBar
-                dashboardRoute={dashboardRoute}
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
             />
             <SideBar
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
-                sidebarButtons={sidebarButtons}
             />
             <div className="xl:ml-64">
                 <div className="mt-14">

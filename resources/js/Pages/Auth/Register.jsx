@@ -73,9 +73,9 @@ export default function Register() {
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                     className="w-4 h-4"
                                 >
                                     <path d="M5 13l4 4L19 7" />
@@ -85,7 +85,7 @@ export default function Register() {
                         </span>
                         Personal <span className="hidden sm:inline-flex sm:ms-2">Info</span>
                         <svg className="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4" />
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m7 9 4-4-4-4M1 9l4-4-4-4" />
                         </svg>
                     </li>
                     <li className={`flex items-center ${step === 2 ? 'text-green-600' : ''}`}>
@@ -94,7 +94,7 @@ export default function Register() {
                         </span>
                         Register <span className="hidden sm:inline-flex sm:ms-2">Account</span>
                         <svg className="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4" />
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m7 9 4-4-4-4M1 9l4-4-4-4" />
                         </svg>
                     </li>
                 </ol>

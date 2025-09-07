@@ -3,8 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "@/Components/ThemeToggle";
 import ebotoLogoWithColor from '../../images/EBOTO_logo_withColor.png';
 
-export default function NavBar({ dashboardRoute, showSidebar, setShowSidebar }) {
-    const user = usePage().props.auth.user;
+export default function NavBar({ showSidebar, setShowSidebar }) {
+    const user = usePage().props.auth.user; // get user details
+    const userRoles = user?.roles || [];    // get user roles
+    const dashboardRoute = userRoles.includes("admin") ? "admin.dashboard" : "voter.dashboard"; // route for logo
+
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef(null);
 

@@ -1,10 +1,50 @@
-import { Link } from "@inertiajs/react";
+import { usePage, Link } from "@inertiajs/react";
 import { useRef, useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react"; // ⬅️ import arrows
+import { ChevronDown, ChevronUp, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
 
-export default function SideBar({ showSidebar, setShowSidebar, sidebarButtons }) {
+export default function SideBar({ showSidebar, setShowSidebar }) {
     const sidebarRef = useRef(null);
     const [openMenu, setOpenMenu] = useState(null);
+
+    const user = usePage().props.auth.user;
+    const userRoles = user?.roles || [];
+
+    // side bar buttons
+    const adminButtons = [
+        {
+            title: "Dashboard",
+            route: "admin.dashboard",
+            icon: LayoutDashboard,
+        },
+        {
+            title: "Election",
+            route: "admin.election.index",
+            icon: VoteIcon,
+        },
+        {
+            title: "Student",
+            icon: GraduationCap,
+            children: [
+                { title: "Students List", route: "admin.students.index", icon: BookUser },
+                { title: "Bulk Upload", route: "admin.bulk-upload", icon: Upload },
+            ],
+        },
+        {
+            title: "User",
+            route: "admin.users.index",
+            icon: User,
+        },
+    ];
+
+    const voterButtons = [
+        {
+            title: "Dashboard",
+            route: "voter.dashboard",
+            icon: LayoutDashboard,
+        },];
+
+    const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
+    // side bar buttons end
 
     useEffect(() => {
         function handleClickOutside(event) {
