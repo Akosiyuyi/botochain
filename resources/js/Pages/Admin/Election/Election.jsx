@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
 import { useState } from 'react';
 
-export default function Election({ elections }) {
+export default function Election({ elections, routes }) {
     const [showPending, setShowPending] = useState(true);
     const [showActive, setShowActive] = useState(true);
     console.log(elections);
@@ -55,6 +55,8 @@ export default function Election({ elections }) {
                                         title={election.title}
                                         schoolLevels={election.school_levels}
                                         created_at={election.created_at}
+                                        button_label='Manage'
+                                        link={election.link}
                                     />
                                 ))
                         ) : (
@@ -64,7 +66,7 @@ export default function Election({ elections }) {
                                     alt="No Elections"
                                     className="w-80"
                                 />
-                                <div className="text-gray-500 text-lg">
+                                <div className="text-gray-500 dark:text-gray-200 text-lg">
                                     There are no pending elections.
                                 </div>
                             </div>
@@ -95,6 +97,7 @@ export default function Election({ elections }) {
                                         title={election.title}
                                         schoolLevels={election.school_levels}
                                         created_at={election.created_at}
+                                        button_label='View'
                                     />
                                 ))
                         ) : (
@@ -104,7 +107,7 @@ export default function Election({ elections }) {
                                     alt="No Elections"
                                     className="w-80"
                                 />
-                                <div className="text-gray-500 text-lg">
+                                <div className="text-gray-500 dark:text-gray-200 text-lg">
                                     There are no active elections.
                                 </div>
                             </div>

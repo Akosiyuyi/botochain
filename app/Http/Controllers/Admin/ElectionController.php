@@ -30,6 +30,7 @@ class ElectionController extends Controller
                     'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
                     'status' => $election->status,
                     'created_at' => $created_at,
+                    'link' => route("admin.election.show", ['election' => $election->id]),
                 ];
             });
         return Inertia::render(
@@ -98,7 +99,11 @@ class ElectionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $election = Election::findOrFail($id);
+        return Inertia::render('Admin/Election/ManageElection', [
+            'election' => $election,
+            'positions' => $election->positions()->oldest()->get(),
+        ]);
     }
 
     /**

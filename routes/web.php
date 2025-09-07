@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\BulkUploadController;
 use App\Http\Controllers\Admin\ElectionController;
+use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -29,6 +30,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
     // election resource route
     Route::resource('election', ElectionController::class);
+    Route::resource('election.positions', PositionController::class)->only(['store', 'destroy']);
 });
 
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {

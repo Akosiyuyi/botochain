@@ -7,7 +7,8 @@ export default function ElectionCard({
     title = "Untitled Election",
     schoolLevels = [],
     created_at = "No date",
-    onClickReadMore = () => { },
+    button_label = "Unlabeled",
+    link = "#",
 }) {
     // Define colors per level
     const levelColors = {
@@ -27,7 +28,7 @@ export default function ElectionCard({
             />
 
             {/* Mobile Overlay (text inside image) */}
-            <Link href="#">
+            <Link href={link}>
                 <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-black/60 to-transparent p-4 md:hidden">
                     <div>
                         <h5 className="text-lg font-bold text-white">{title}</h5>
@@ -81,24 +82,26 @@ export default function ElectionCard({
                     <h1 className="text-sm text-gray-600 dark:text-gray-400">
                         Created <span>{created_at}</span>
                     </h1>
-                    <PrimaryButton onClick={onClickReadMore}>
-                        Read more
-                        <svg
-                            className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 14 10"
-                        >
-                            <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                            />
-                        </svg>
-                    </PrimaryButton>
+                    <Link href={link}>
+                        <PrimaryButton>
+                            {button_label}
+                            <svg
+                                className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 14 10"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M1 5h12m0 0L9 1m4 4L9 9"
+                                />
+                            </svg>
+                        </PrimaryButton>
+                    </Link>
                 </div>
             </div>
         </div>
