@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import ManageElectionHeader from '@/Components/ManageElectionHeader';
 import ManagePosition from '@/Components/ManagePosition';
+import ManagePartylist from '@/Components/ManagePartylist';
 
-export default function ManageElection({ election, positions = [] }) {
+export default function ManageElection({ election, positions = [], partylists = [] }) {
     const [showPartylist, setShowPartylist] = useState(false);
 
     return (
@@ -25,15 +26,7 @@ export default function ManageElection({ election, positions = [] }) {
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <ManageElectionHeader election={election} />
                 <ManagePosition election={election} positions={positions} />
-                <div
-                    className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg mt-4"
-                    onClick={() => setShowPartylist(!showPartylist)}
-                >
-                    <div className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white">
-                        Manage Partylists
-                        {showPartylist ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                    </div>
-                </div>
+                <ManagePartylist election={election} partylists={partylists} />
             </div>
         </AuthenticatedLayout>
     );
