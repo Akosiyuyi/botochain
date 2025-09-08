@@ -6,12 +6,11 @@ import { ModalLink } from '@inertiaui/modal-react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
 import { useState } from 'react';
+import LongDropdown from '@/Components/LongDropdown';
 
 export default function Election({ elections, routes }) {
     const [showPending, setShowPending] = useState(true);
     const [showActive, setShowActive] = useState(true);
-    console.log(elections);
-    console.log(elections.length)
     return (
         <AuthenticatedLayout
             header={
@@ -32,17 +31,7 @@ export default function Election({ elections, routes }) {
             <Head title="Election" />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <div
-                        className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white"
-                        onClick={() => setShowPending(!showPending)}
-                    >
-                        <span className="">
-                            Pending Elections
-                        </span>
-                        {showPending ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                    </div>
-                </div>
+                <LongDropdown componentName={"Pending Elections"} showComponent={showPending} setShowComponent={setShowPending} />
                 {showPending && (
                     <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                         {elections.some(election => election.status === "pending") ? (
@@ -74,17 +63,7 @@ export default function Election({ elections, routes }) {
                     </div>
                 )}
 
-                <div className="mt-4 overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <div
-                        className="flex items-center justify-between px-6 py-5 cursor-pointer text-gray-900 dark:text-white"
-                        onClick={() => setShowActive(!showActive)}
-                    >
-                        <span className="">
-                            Active Elections
-                        </span>
-                        {showActive ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                    </div>
-                </div>
+                <LongDropdown className="mt-4" componentName={"Active Elections"} showComponent={showActive} setShowComponent={setShowActive} />
                 {showActive && (
                     <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                         {elections.some(election => election.status === "active") ? (
