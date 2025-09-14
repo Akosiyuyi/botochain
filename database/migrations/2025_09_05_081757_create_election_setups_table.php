@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->boolean('setup_partylist')->default(false);
             $table->boolean('setup_candidates')->default(false);
             $table->boolean('setup_finalized')->default(false);
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('end_time')->nullable();
             $table->timestamps();
 
             $table->index('election_id');

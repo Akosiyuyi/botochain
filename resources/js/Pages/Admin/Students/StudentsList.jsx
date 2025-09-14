@@ -131,7 +131,7 @@ export default function StudentsList() {
             button={
                 <div className="flex gap-4">
                     <PrimaryButton>Add Student</PrimaryButton>
-                    <Link href={route("admin.bulk-upload")}>
+                    <Link href={route("admin.bulk-upload.index")}>
                         <SecondaryButton>Upload CSV</SecondaryButton>
                     </Link>
                     

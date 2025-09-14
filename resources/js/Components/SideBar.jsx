@@ -26,7 +26,7 @@ export default function SideBar({ showSidebar, setShowSidebar }) {
             icon: GraduationCap,
             children: [
                 { title: "Students List", route: "admin.students.index", icon: BookUser },
-                { title: "Bulk Upload", route: "admin.bulk-upload", icon: Upload },
+                { title: "Bulk Upload", route: "admin.bulk-upload.index", icon: Upload },
             ],
         },
         {

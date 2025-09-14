@@ -25,7 +25,8 @@ export default function AuthenticatedLayout({ header, children, button = false }
 
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        // relative z-0 is just for ui-stacking to make modal in front
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 relative z-0"> 
             {/* Toast container */}
             <Toaster
                 position="top-center"

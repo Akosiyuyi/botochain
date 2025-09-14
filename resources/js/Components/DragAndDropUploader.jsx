@@ -22,10 +22,7 @@ export default function DragAndDropUploader() {
   };
 
   const handleDownloadExcel = () => {
-    const link = document.createElement("a");
-    link.href = "/files/template.xlsx"; // Change this to your file URL
-    link.download = "template.xlsx";
-    link.click();
+    window.location.href = route('admin.bulk-upload.template');
   };
 
   return (

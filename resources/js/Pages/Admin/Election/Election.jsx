@@ -3,7 +3,6 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import { Head } from '@inertiajs/react';
 import ElectionCard from '@/Components/ElectionCard';
 import { ModalLink } from '@inertiaui/modal-react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
 import { useState } from 'react';
 import LongDropdown from '@/Components/LongDropdown';

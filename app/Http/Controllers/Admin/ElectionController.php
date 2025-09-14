@@ -49,9 +49,6 @@ class ElectionController extends Controller
         return Inertia::render('Admin/Election/CreateElectionModal');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // 1. Validate input
@@ -85,9 +82,7 @@ class ElectionController extends Controller
             'setup_positions' => false,
             'setup_partylist' => false,
             'setup_candidates' => false,
-            'setup_finalized' => false,
-            'start_time' => now(),
-            'end_time' => now()->addDays(7), // example
+            'setup_finalized' => false, 
         ]);
 
         return redirect()->route('admin.election.index')
@@ -150,7 +145,7 @@ class ElectionController extends Controller
         if ($created->isYesterday()) {
             return 'Yesterday';
         }
-        $days = $created->diffInDays(); // always 2–6
+        $days = floor($created->diffInDays(Carbon::now())); // always 2–6
         if ($days <= 6) {
             return "{$days} days ago";
         }

@@ -6,9 +6,14 @@ import TextInput from '@/Components/TextInput';
 import noElectionsFlat from '../../images/NoElectionsFlat.png';
 import PrimaryButton from '@/Components/PrimaryButton';
 import LongDropdown from './LongDropdown';
+import DeleteModal from './DeleteModal';
+import { Pencil, Trash2 } from 'lucide-react';
 
 export default function ManagePosition({ election, positions }) {
     const [showPosition, setShowPosition] = useState(false); // position component state management
+    const [confirmingPositionDeletion, setConfirmingPositionDeletion] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         position: '',
     });
@@ -21,9 +26,8 @@ export default function ManagePosition({ election, positions }) {
     };
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this position?')) {
-            router.delete(route('admin.election.positions.destroy', [election.id, id]));
-        }
+        setSelectedId(id);
+        setConfirmingPositionDeletion(true);
     };
 
     return (
@@ -77,18 +81,33 @@ export default function ManagePosition({ election, positions }) {
                                         <div className="px-4 py-2 bg-green-600 text-white dark:text-black">{index + 1}</div>
                                         <span className="text-black dark:text-white">{pos.name}</span>
                                     </div>
-                                    <button
-                                        onClick={() => handleDelete(pos.id)}
-                                        className="pr-3 text-red-600 hover:underline"
-                                    >
-                                        Delete
-                                    </button>
+                                    <div className="flex items-center">
+                                        <button className="pr-3 text-yellow-600 dark:text-yellow-500">
+                                            <Pencil className="size-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(pos.id)}
+                                            className="pr-3 text-red-600 dark:text-red-500"
+                                        >
+                                            <Trash2 className="size-4" />
+                                        </button>
+                                    </div>
+
                                 </li>
                             ))}
                         </ul>
                     </div>
                 </div>
             )}
+
+            {/* delete position modal */}
+            <DeleteModal
+                entityName="position"
+                deleteRoute="admin.election.positions.destroy"
+                params={[election.id, selectedId]}
+                confirmingDeletion={confirmingPositionDeletion}
+                setConfirmingDeletion={setConfirmingPositionDeletion}
+            />
         </div>
     );
 }

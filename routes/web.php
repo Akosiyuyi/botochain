@@ -18,12 +18,13 @@ Route::redirect('/', '/login');
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-    // Bulk upload route
-    Route::get('students/bulkUpload', [BulkUploadController::class, 'index'])
-        ->name('bulk-upload');
-
     // student resource route
     Route::resource('students', StudentController::class);
+
+    // bulk upload resource
+    Route::get('/bulk-upload/template', [BulkUploadController::class, 'downloadTemplate'])
+    ->name('bulk-upload.template');
+    Route::resource('bulk-upload', BulkUploadController::class);
 
     // user resource route
     Route::resource('users', UserController::class);
