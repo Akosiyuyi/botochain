@@ -1,26 +1,66 @@
 import { useState } from "react";
 import { FileInput, Label } from "flowbite-react";
 import { Upload, Download, Trash2 } from "lucide-react";
+import { useForm } from '@inertiajs/react';
+import { toast } from 'react-hot-toast';
 
 export default function DragAndDropUploader() {
   const [file, setFile] = useState(null);
+  const { setData, post, reset } = useForm({
+    file: null
+  });
 
+  //  --- file change or file selection ---
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile || null);
+
+    if (!selectedFile) {
+      setFile(null);
+      setData('file', null);
+      return;
+    }
+
+    const validExtensions = ['xlsx', 'csv'];
+    const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+
+    if (!validExtensions.includes(fileExtension)) {
+      toast.error('Invalid file type. Please upload a .xlsx or .csv file.');
+      setFile(null);
+      setData('file', null);
+      return;
+    }
+
+    setFile(selectedFile);
+    setData('file', selectedFile);
   };
 
+  //  --- file removal ---
   const handleRemoveFile = () => {
     setFile(null);
     document.getElementById("dropzone-file").value = "";
   };
 
+  //  --- file upload ---
   const handleUpload = () => {
-    if (!file) return;
-    alert(`Uploading file: ${file.name}`);
-    // Your upload logic here
+    if (!file) {
+      toast.error('No file selected.');
+      return;
+    }
+
+    post(route('admin.bulk-upload.store'), {
+      preserveScroll: true,
+      forceFormData: true, // 👈 tells Inertia to use FormData
+      onSuccess: () => {
+        toast.success('File uploaded successfully!');
+        reset();
+        setFile(null);
+        document.getElementById("dropzone-file").value = "";
+      },
+      onError: () => toast.error('Upload failed. Please try again.')
+    });
   };
 
+  //  --- download excel format ---
   const handleDownloadExcel = () => {
     window.location.href = route('admin.bulk-upload.template');
   };

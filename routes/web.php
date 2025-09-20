@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
 
+    // admin routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -23,7 +24,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
     // bulk upload resource
     Route::get('/bulk-upload/template', [BulkUploadController::class, 'downloadTemplate'])
-    ->name('bulk-upload.template');
+        ->name('bulk-upload.template');
+    Route::post('/bulk-upload/upload', [BulkUploadController::class, 'upload'])
+        ->name('bulk-upload.upload');
     Route::resource('bulk-upload', BulkUploadController::class);
 
     // user resource route
@@ -34,10 +37,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('election.positions', PositionController::class)->only(['store', 'destroy']);
 });
 
+    // voter routes
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
     Route::get('/voter/dashboard', [VoterController::class, 'dashboard'])->name('voter.dashboard');
 });
 
+    // shared routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

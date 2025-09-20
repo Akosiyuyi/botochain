@@ -18,7 +18,7 @@ export default function StatsBox({stats = []}) {
                     key={idx}
                     className={`p-4 md:p-6 border border-${item.color}-500 bg-${item.color}-50 dark:bg-${item.color}-900/30 rounded-lg text-center`}
                 >
-                    <div className={`text-2xl font-extrabold text-${item.color}-800 dark:text-${item.color}-300`}>
+                    <div className={`text-2xl font-extrabold text-${item.color}-700 dark:text-${item.color}-200`}>
                         {item.value}
                     </div>
                     <div className={`text-sm font-semibold text-${item.color}-700 dark:text-${item.color}-200`}>

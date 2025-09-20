@@ -12,7 +12,7 @@ export default function ListPreview() {
                     List Preview
                 </div>
                 <div className="space-x-2">
-                    <PrimaryButton className="h-8 w-32 flex items-center justify-center space-x-2">
+                    {/* <PrimaryButton className="h-8 w-32 flex items-center justify-center space-x-2">
                         <Send className="w-4 h-4" />
                         <span>
                             Push <span className="hidden md:inline">List</span>
@@ -23,7 +23,7 @@ export default function ListPreview() {
                         <span className="whitespace-nowrap">
                             Remove <span className="hidden md:inline">List</span>
                         </span>
-                    </DangerButton>
+                    </DangerButton> */}
                 </div>
             </div>
 

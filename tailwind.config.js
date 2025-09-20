@@ -30,6 +30,22 @@ export default {
         },
     },
 
+    safelist: [
+        {
+            pattern: /^(dark:)?bg-(blue|green|yellow|red)-(50|900)$/,
+        },
+        {
+            pattern: /^(dark:)?border-(blue|green|yellow|red)-500$/,
+        },
+        {
+            pattern: /^(dark:)?text-(blue|green|yellow|red)-(800|700|300|200)$/,
+        },
+        // Arbitrary value classes must be listed explicitly
+        'dark:bg-blue-900/30',
+        'dark:bg-green-900/30',
+        'dark:bg-yellow-900/30',
+        'dark:bg-red-900/30',
+    ],
 
     plugins: [forms],
 };

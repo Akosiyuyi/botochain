@@ -17,7 +17,11 @@ class BulkUploadController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv',
+        ]);
 
+        $file = $request->file('file');
     }
 
     public function downloadTemplate()
@@ -30,4 +34,15 @@ class BulkUploadController extends Controller
 
         return Response::download($path, 'template.xlsx');
     }
+
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv',
+        ]);
+
+        $file = $request->file('file');
+    }
+
+
 }
