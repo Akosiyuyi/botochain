@@ -30,6 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 /** @var \App\Models\User $user */
                 $user = Auth::user();
 
+                
+                if ($user->hasRole('super-admin')) {
+                    return route('admin.dashboard');
+                }
                 if ($user->hasRole('admin')) {
                     return route('admin.dashboard');
                 }
