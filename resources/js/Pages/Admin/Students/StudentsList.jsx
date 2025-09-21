@@ -2,9 +2,9 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import StatsBox from '@/Components/StatsBox';
 import { Link } from '@inertiajs/react';
-import StudentsTable from '@/Components/StudentsTable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import Table from '@/Components/Table';
 
 export default function StudentsList() {
 
@@ -134,7 +134,7 @@ export default function StudentsList() {
                     <Link href={route("admin.bulk-upload.index")}>
                         <SecondaryButton>Upload CSV</SecondaryButton>
                     </Link>
-                    
+
                 </div>
             }
         >
@@ -144,7 +144,53 @@ export default function StudentsList() {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <StatsBox />
                     <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mt-6">
-                        <StudentsTable students={dummyStudents} />
+                        <Table
+                            rows={dummyStudents}
+                            header={[
+                                { key: "student_id", label: "Student ID", sortable: true },
+                                { key: "full_name", label: "Full Name", sortable: true },
+                                { key: "school_level", label: "School Level" },
+                                { key: "grade_year", label: "Grade/Year" },
+                                { key: "course", label: "Course" },
+                                { key: "section", label: "Section" },
+                                { key: "status", label: "Status" },
+                                { key: "action", label: "Action" },
+                            ]}
+                            optionList={["All", "Enrolled", "Unenrolled"]}
+                            defaultOption="All"
+                            onEdit={(student) => console.log("Edit student:", student)}
+                            renderCell={(row, key, { onEdit }) => {
+                                if (key === "status") {
+                                    return row.is_graduated ? (
+                                        <span className="text-red-600">Unenrolled</span>
+                                    ) : (
+                                        <span className="text-green-600">Enrolled</span>
+                                    );
+                                }
+                                if (key === "action") {
+                                    return (
+                                        <button onClick={() => onEdit(row)} className="text-blue-600 hover:underline">
+                                            Edit
+                                        </button>
+                                    );
+                                }
+                                return row[key];
+                            }}
+                            filterFn={(row, option, defaultOption) => {
+                                if (option === defaultOption) return true;
+
+                                if (option === "Enrolled") {
+                                    return !row.is_graduated;
+                                }
+                                if (option === "Unenrolled") {
+                                    return row.is_graduated;
+                                }
+                                return true;
+                            }}
+                            getHeaderTitle={(option) => (option === "All" ? "All Students List" : `${option} Student List`)}
+                            getHeaderSubtitle={(option) => (option === "All" ? "Includes all registered students, enrolled and unenrolled." : `List of all registered ${option.toLowerCase()} students only.`)}
+                            searchPlaceholder="Search students..."
+                        />
                     </div>
                 </div>
             </div>

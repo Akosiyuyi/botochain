@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
 import { Head } from '@inertiajs/react';
-import UsersTable from '@/Components/UsersTable';
+import Table from '@/Components/Table';
 import StatsBox from '@/Components/StatsBox';
 import SecondaryButton from '@/Components/SecondaryButton';
 
@@ -25,8 +25,50 @@ export default function UserManagement({ users, stats }) {
             <div className="">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <StatsBox stats={stats} />
-                    <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mt-6">
-                        <UsersTable users={users} />
+                    <div className="mt-6">
+                        <Table
+                            rows={users}
+                            header={[
+                                { key: "id", label: "No.", sortable: true },
+                                { key: "id_number", label: "ID Number", sortable: true },
+                                { key: "name", label: "Name", sortable: true },
+                                { key: "email", label: "Email", sortable: true },
+                                { key: "role", label: "Role" },
+                                { key: "status", label: "Status" },
+                                { key: "action", label: "Action" },
+                            ]}
+                            optionList={["All", "Admin", "Voter"]}
+                            defaultOption="All"
+                            onEdit={(user) => console.log("Edit user:", user)}
+                            renderCell={(row, key, { onEdit }) => {
+                                if (key === "role") {
+                                    return row.roles.map((r) => r.name.charAt(0).toUpperCase() + r.name.slice(1)).join(", ");
+                                }
+                                if (key === "status") {
+                                    return row.is_active ? (
+                                        <span className="text-green-600">Active</span>
+                                    ) : (
+                                        <span className="text-red-500">Inactive</span>
+                                    );
+                                }
+                                if (key === "action") {
+                                    return (
+                                        <button onClick={() => onEdit(row)} className="text-blue-600 hover:underline">
+                                            Edit
+                                        </button>
+                                    );
+                                }
+                                return row[key];
+                            }}
+                            filterFn={(row, option, defaultOption) => {
+                                if (option === defaultOption) return true;
+                                return row.roles.some((r) => r.name.toLowerCase() === option.toLowerCase());
+                            }}
+                            getHeaderTitle={(option) => (option === "All" ? "All Users" : `${option} List`)}
+                            getHeaderSubtitle={(option) => (option === "All" ? "Includes all registered users, voters and admins." : `List of all registered ${option.toLowerCase()}s only`)}
+                            searchPlaceholder="Search users..."
+                        />
+
                     </div>
                 </div>
             </div>

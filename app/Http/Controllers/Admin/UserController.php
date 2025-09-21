@@ -71,8 +71,9 @@ class UserController extends Controller
         //
     }
 
-    public function usersStatsCount(){
-       return [
+    public function usersStatsCount()
+    {
+        return [
             [
                 'title' => 'All Users',
                 'value' => User::count(),

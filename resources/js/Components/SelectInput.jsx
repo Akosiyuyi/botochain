@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export default function SelectInput({ id, value, onChange, options }) {
+export default function SelectInput({ id, value, onChange, options, disabled = false }) {
     const [open, setOpen] = useState(false);
     const [openUpward, setOpenUpward] = useState(false);
     const ref = useRef(null);
@@ -43,8 +43,9 @@ export default function SelectInput({ id, value, onChange, options }) {
             <button
                 id={id}
                 onClick={() => setOpen((prev) => !prev)}
-                className={`border rounded-lg px-3 py-1.5 min-w-[120px] bg-white dark:bg-gray-900 dark:text-white flex justify-between items-center
-        ${open ? "border-green-600" : "dark:border-gray-600 border-gray-300"}`}
+                disabled={disabled}
+                className={`border rounded-lg px-3 py-1.5 min-w-[120px] bg-white dark:bg-gray-900 dark:text-white disabled:text-gray-500 disabled:dark:text-gray-400 flex justify-between items-center hover:border-green-600
+        ${open ? "border-green-600 focus:outline-none focus:ring-2 focus:ring-green-600" : "dark:border-gray-600 border-gray-300"}`}
             >
                 <span>{value}</span>
                 {open ? (
@@ -58,7 +59,7 @@ export default function SelectInput({ id, value, onChange, options }) {
             {open && (
                 <ul
                     className={`absolute z-50 border rounded-lg bg-white dark:bg-gray-900 dark:text-white dark:border-gray-600 shadow-lg max-h-52 overflow-auto w-full
-                    ${openUpward ? "bottom-full mb-1" : "top-full mt-1"}`}
+                    ${openUpward ? "bottom-full mb-2" : "top-full mt-2"}`}
                 >
                     {options.map((opt) => (
                         <li
