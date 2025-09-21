@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 Route::redirect('/', '/login');
 
     // admin routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|super-admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     // student resource route

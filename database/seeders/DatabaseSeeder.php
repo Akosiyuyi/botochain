@@ -23,12 +23,12 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Default Admin',
+            'name' => 'Default Super Admin',
             'id_number' => '1000-00000',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'is_active' => true,
             'email_verified_at' => now(),
-        ])->assignRole('admin');
+        ])->assignRole('super-admin');
     }
 }

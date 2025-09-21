@@ -15,7 +15,7 @@ export default function UserManagement({ users, stats }) {
             }
             button={
                 <div className="flex gap-4">
-                    <PrimaryButton>Add User</PrimaryButton>
+                    <PrimaryButton>Create New Admin</PrimaryButton>
                     <SecondaryButton>Login Logs</SecondaryButton>
                 </div>
             }
@@ -37,7 +37,7 @@ export default function UserManagement({ users, stats }) {
                                 { key: "status", label: "Status" },
                                 { key: "action", label: "Action" },
                             ]}
-                            optionList={["All", "Admin", "Voter"]}
+                            optionList={["All", "Super-admin", "Admin", "Voter"]}
                             defaultOption="All"
                             onEdit={(user) => console.log("Edit user:", user)}
                             renderCell={(row, key, { onEdit }) => {

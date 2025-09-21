@@ -86,7 +86,7 @@ class UserController extends Controller
             ],
             [
                 'title' => 'All Admins',
-                'value' => User::whereHas('roles', fn($q) => $q->where('name', 'admin'))->count(),
+                'value' => User::whereHas('roles', fn($q) => $q->whereIn('name', ['admin', 'super-admin']))->count(),
                 'color' => 'yellow',
             ],
             [

@@ -6,7 +6,10 @@ import ebotoLogoWithColor from '../../images/EBOTO_logo_withColor.png';
 export default function NavBar({ showSidebar, setShowSidebar }) {
     const user = usePage().props.auth.user; // get user details
     const userRoles = user?.roles || [];    // get user roles
-    const dashboardRoute = userRoles.includes("admin") ? "admin.dashboard" : "voter.dashboard"; // route for logo
+    const dashboardRoute =
+        userRoles.includes("admin") || userRoles.includes("super-admin")
+            ? "admin.dashboard"
+            : "voter.dashboard"; // route for logo
 
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef(null);

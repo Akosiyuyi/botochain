@@ -43,7 +43,10 @@ export default function SideBar({ showSidebar, setShowSidebar }) {
             icon: LayoutDashboard,
         },];
 
-    const sidebarButtons = userRoles.includes("admin") ? adminButtons : voterButtons;
+    const sidebarButtons =
+        userRoles.includes("admin") || userRoles.includes("super-admin")
+            ? adminButtons
+            : voterButtons;
     // side bar buttons end
 
     useEffect(() => {
