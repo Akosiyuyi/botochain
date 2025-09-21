@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BulkUploadController;
 use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
     // user resource route
     Route::resource('users', UserController::class);
+    Route::get('/login_logs', [LoginLogsController::class, 'index'])->name('login_logs');
 
     // election resource route
     Route::resource('election', ElectionController::class);

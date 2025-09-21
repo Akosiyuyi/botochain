@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import StatsBox from '@/Components/StatsBox';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -16,7 +16,10 @@ export default function UserManagement({ users, stats }) {
             button={
                 <div className="flex gap-4">
                     <PrimaryButton>Create New Admin</PrimaryButton>
-                    <SecondaryButton>Login Logs</SecondaryButton>
+                    <Link href={route("admin.login_logs")}>
+                        <SecondaryButton>Login Logs</SecondaryButton>
+                    </Link>
+
                 </div>
             }
         >

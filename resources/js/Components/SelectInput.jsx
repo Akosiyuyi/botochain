@@ -44,7 +44,7 @@ export default function SelectInput({ id, value, onChange, options, disabled = f
                 id={id}
                 onClick={() => setOpen((prev) => !prev)}
                 disabled={disabled}
-                className={`border rounded-lg px-3 py-1.5 min-w-[120px] bg-white dark:bg-gray-900 dark:text-white disabled:text-gray-500 disabled:dark:text-gray-400 flex justify-between items-center hover:border-green-600
+                className={`border rounded-lg px-3 py-1.5 min-w-[120px] bg-white dark:bg-gray-900 dark:text-white disabled:text-gray-500 disabled:dark:text-gray-400 disabled:cursor-not-allowed flex justify-between items-center hover:border-green-600
         ${open ? "border-green-600 focus:outline-none focus:ring-2 focus:ring-green-600" : "dark:border-gray-600 border-gray-300"}`}
             >
                 <span>{value}</span>
