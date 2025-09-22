@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\Auth\Events\Registered;
+use App\Rules\UniqueAdminName;
 
 class UserController extends Controller
 {
@@ -17,7 +21,7 @@ class UserController extends Controller
         // all users list
         $users = User::with('roles:id,name')->get();
 
-        return Inertia::render("Admin/UserManagement", [
+        return Inertia::render("Admin/Users/UserManagement", [
             'users' => $users,
             'stats' => $this->usersStatsCount(),
         ]);
@@ -28,7 +32,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admin/Users/CreateAdminModal');
     }
 
     /**
@@ -36,7 +40,27 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', new UniqueAdminName],
+            'id_number' => 'required|string|unique:users',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+
+        $user = User::create([
+            'name' => $request->name,
+            'id_number' => $request->id_number,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'is_active' => true,
+        ]);
+        $user->assignRole('admin');
+
+        event(new Registered($user));
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Admin created successfully!');
     }
 
     /**

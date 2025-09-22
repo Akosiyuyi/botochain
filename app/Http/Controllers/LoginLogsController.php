@@ -12,7 +12,7 @@ class LoginLogsController extends Controller
     {
         $agent = new Agent();
 
-        $login_logs = LoginLogs::all()->map(function ($log) use ($agent) {
+        $login_logs = LoginLogs::orderByDesc('login_attempt_time')->get()->map(function ($log) use ($agent) {
             // Parse user agent for better readability
             $agent->setUserAgent($log->user_agent);
 
@@ -29,7 +29,7 @@ class LoginLogsController extends Controller
             ];
         });
 
-        return Inertia::render("Admin/LoginLogs", [
+        return Inertia::render("Admin/Users/LoginLogs", [
             'login_logs' => $login_logs,
         ]);
     }

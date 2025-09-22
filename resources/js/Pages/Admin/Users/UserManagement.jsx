@@ -4,6 +4,7 @@ import { Head, Link } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import StatsBox from '@/Components/StatsBox';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { ModalLink } from '@inertiaui/modal-react';
 
 export default function UserManagement({ users, stats }) {
     return (
@@ -15,7 +16,13 @@ export default function UserManagement({ users, stats }) {
             }
             button={
                 <div className="flex gap-4">
-                    <PrimaryButton>Create New Admin</PrimaryButton>
+                    <ModalLink
+                        href={route("admin.users.create")}
+                        closeButton={false}
+                        panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+                    >
+                        <PrimaryButton>Create Admin</PrimaryButton>
+                    </ModalLink>
                     <Link href={route("admin.login_logs")}>
                         <SecondaryButton>Login Logs</SecondaryButton>
                     </Link>
