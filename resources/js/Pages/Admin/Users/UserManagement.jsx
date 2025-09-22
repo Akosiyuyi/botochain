@@ -1,12 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import StatsBox from '@/Components/StatsBox';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { ModalLink } from '@inertiaui/modal-react';
 
 export default function UserManagement({ users, stats }) {
+    const { auth } = usePage().props;
+    const user = auth?.user;
+    const permissions = user?.permissions || [];
+
+    const canCreateAdmin = permissions.includes('create_admin');
+
     return (
         <AuthenticatedLayout
             header={
@@ -16,13 +22,16 @@ export default function UserManagement({ users, stats }) {
             }
             button={
                 <div className="flex gap-4">
-                    <ModalLink
-                        href={route("admin.users.create")}
-                        closeButton={false}
-                        panelClasses="bg-white dark:bg-gray-800 rounded-lg"
-                    >
-                        <PrimaryButton>Create Admin</PrimaryButton>
-                    </ModalLink>
+                    {canCreateAdmin && (
+                        <ModalLink
+                            href={route("admin.users.create")}
+                            closeButton={false}
+                            panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+                        >
+                            <PrimaryButton>Create Admin</PrimaryButton>
+                        </ModalLink>
+                    )}
+
                     <Link href={route("admin.login_logs")}>
                         <SecondaryButton>Login Logs</SecondaryButton>
                     </Link>

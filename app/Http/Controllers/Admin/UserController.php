@@ -13,6 +13,11 @@ use App\Rules\UniqueAdminName;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:create_admin')->only(['create', 'store']);
+    }
+
     /**
      * Display a listing of the resource.
      */
