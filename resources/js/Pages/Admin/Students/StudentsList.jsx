@@ -122,22 +122,7 @@ export default function StudentsList() {
 
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                    Students List
-                </h2>
-            }
-            button={
-                <div className="flex gap-4">
-                    <PrimaryButton>Add Student</PrimaryButton>
-                    <Link href={route("admin.bulk-upload.index")}>
-                        <SecondaryButton>Upload CSV</SecondaryButton>
-                    </Link>
-
-                </div>
-            }
-        >
+        <>
             <Head title="Students" />
 
             <div className="">
@@ -194,6 +179,25 @@ export default function StudentsList() {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+StudentsList.layout = (page) => {
+    const header = (
+        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            Students List
+        </h2>
+    );
+
+    const button = (
+        <div className="flex gap-4">
+            <PrimaryButton>Add Student</PrimaryButton>
+            <Link href={route("admin.bulk-upload.index")}>
+                <SecondaryButton>Upload CSV</SecondaryButton>
+            </Link>
+        </div>
+    );
+
+    return <AuthenticatedLayout header={header} button={button}>{page}</AuthenticatedLayout>;
+};
