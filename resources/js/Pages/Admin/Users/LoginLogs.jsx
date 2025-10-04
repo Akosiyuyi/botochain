@@ -5,22 +5,7 @@ import { ChevronLeft } from 'lucide-react';
 
 export default function LoginLogs({ login_logs }) {
     return (
-        <AuthenticatedLayout
-            header={
-
-                <Link href={route("admin.users.index")}>
-                    <div className="flex gap-4 hover:scale-105">
-                        <ChevronLeft className='text-gray-800 dark:text-white ' />
-                        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                            Login Logs
-                        </h2>
-                    </div>
-
-                </Link>
-
-
-            }
-        >
+        <>
             <Head title="Login Logs" />
 
             <div className="">
@@ -62,6 +47,21 @@ export default function LoginLogs({ login_logs }) {
                     />
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+LoginLogs.layout = (page) => {
+    const header = (
+        <Link href={route("admin.users.index")}>
+            <div className="flex gap-4 hover:scale-105">
+                <ChevronLeft className='text-gray-800 dark:text-white ' />
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+                    Login Logs
+                </h2>
+            </div>
+        </Link>
+    );
+
+    return <AuthenticatedLayout header={header}>{page}</AuthenticatedLayout>;
+};

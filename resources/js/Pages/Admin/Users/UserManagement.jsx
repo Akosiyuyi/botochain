@@ -1,47 +1,17 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import StatsBox from '@/Components/StatsBox';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { ModalLink } from '@inertiaui/modal-react';
 
 export default function UserManagement({ users, stats }) {
-    const { auth } = usePage().props;
-    const user = auth?.user;
-    const permissions = user?.permissions || [];
-
-    const canCreateAdmin = permissions.includes('create_admin');
-
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                    Users
-                </h2>
-            }
-            button={
-                <div className="flex gap-4">
-                    {canCreateAdmin && (
-                        <ModalLink
-                            href={route("admin.users.create")}
-                            closeButton={false}
-                            panelClasses="bg-white dark:bg-gray-800 rounded-lg"
-                        >
-                            <PrimaryButton>Create Admin</PrimaryButton>
-                        </ModalLink>
-                    )}
-
-                    <Link href={route("admin.login_logs")}>
-                        <SecondaryButton>Login Logs</SecondaryButton>
-                    </Link>
-
-                </div>
-            }
-        >
+        <>
             <Head title="Users" />
 
-            <div className="">
+            <div>
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <StatsBox stats={stats} />
                     <div className="mt-6">
@@ -91,6 +61,38 @@ export default function UserManagement({ users, stats }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+UserManagement.layout = (page) => {
+    const user = page.props.auth.user;
+    const permissions = user?.permissions || [];
+    const canCreateAdmin = permissions.includes('create_admin');
+
+    const header = (
+        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            Users
+        </h2>
+    );
+
+    const button = (
+        <div className="flex gap-4">
+            {canCreateAdmin && (
+                <ModalLink
+                    href={route("admin.users.create")}
+                    closeButton={false}
+                    panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+                >
+                    <PrimaryButton>Create Admin</PrimaryButton>
+                </ModalLink>
+            )}
+
+            <Link href={route("admin.login_logs")}>
+                <SecondaryButton>Login Logs</SecondaryButton>
+            </Link>
+        </div>
+    );
+
+    return <AuthenticatedLayout header={header} button={button}>{page}</AuthenticatedLayout>;
+};

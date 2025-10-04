@@ -1,6 +1,6 @@
 import { usePage, Link } from "@inertiajs/react";
 import { useRef, useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
+import { ChevronDown, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
 
 export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpenMenu }) {
     const sidebarRef = useRef(null);
@@ -84,7 +84,7 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
                                     <button
                                         type="button"
                                         className="flex items-center w-full p-2 text-gray-900 rounded-lg dark:text-white 
-                                                   hover:bg-green-700 hover:text-white"
+                                                   hover:bg-green-600 hover:text-white"
                                         onClick={() =>
                                             setOpenMenu(openMenu === idx ? null : idx)
                                         }
@@ -95,22 +95,26 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
                                         <span className="ms-3 flex-1 text-left">
                                             {item.title}
                                         </span>
-                                        {openMenu === idx ? (
-                                            <ChevronUp className="w-4 h-4 ml-auto text-inherit" />
-                                        ) : (
-                                            <ChevronDown className="w-4 h-4 ml-auto text inherit" />
-                                        )}
+                                        <span
+                                            className={`ml-auto transition-transform duration-500 ease-in-out ${openMenu === idx ? 'rotate-180' : 'rotate-0'
+                                                }`}
+                                        >
+                                            <ChevronDown className="w-4 h-4 text-inherit" />
+                                        </span>
                                     </button>
 
                                     {/* Dropdown children */}
-                                    {openMenu === idx && (
-                                        <ul className="mt-2 space-y-1">
+                                    <div
+                                        className={`transition-all duration-500 ease-in-out overflow-hidden ${openMenu === idx ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                                            }`}
+                                    >
+                                        <ul className="space-y-1">
                                             {item.children.map((child, cIdx) => (
                                                 <li key={cIdx}>
                                                     <Link
                                                         href={route(child.route)}
                                                         className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white 
-                                                                    hover:bg-green-700 hover:text-white"
+                     hover:bg-green-600 hover:text-white"
                                                     >
                                                         {child.icon && (
                                                             <child.icon className="w-5 h-5 text-inherit" />
@@ -122,13 +126,14 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
                                                 </li>
                                             ))}
                                         </ul>
-                                    )}
+                                    </div>
+
                                 </>
                             ) : (
                                 <Link
                                     href={route(item.route)}
                                     className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white 
-                                               hover:bg-green-700 hover:text-white"
+                                               hover:bg-green-600 hover:text-white"
                                 >
                                     {item.icon && (
                                         <item.icon className="w-5 h-5 text-inherit dark:text-inherit " />

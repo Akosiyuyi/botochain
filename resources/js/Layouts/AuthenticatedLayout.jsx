@@ -46,10 +46,10 @@ export default function AuthenticatedLayout({ header, children, button = false }
                 setOpenMenu={setOpenMenu}
             />
             <div className="xl:ml-64">
-                <div className="mt-12 pt-4">
+                <div className="mt-12 pt-6">
                     {header && (
                         <header>
-                            <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 flex justify-between">
+                            <div className="mx-auto w-full px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
                                 {header}
                                 {button && (
                                     <div>
