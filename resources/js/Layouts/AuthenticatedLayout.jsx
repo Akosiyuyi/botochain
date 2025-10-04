@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function AuthenticatedLayout({ header, children, button = false }) {
     const [showSidebar, setShowSidebar] = useState(false);  // side bar state management
+    const [openMenu, setOpenMenu ] = useState(null);
 
     // toast function
     const flash = usePage().props.flash ?? {}; // default to empty object
@@ -41,9 +42,11 @@ export default function AuthenticatedLayout({ header, children, button = false }
             <SideBar
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
+                openMenu={openMenu}
+                setOpenMenu={setOpenMenu}
             />
             <div className="xl:ml-64">
-                <div className="mt-14">
+                <div className="mt-12 pt-4">
                     {header && (
                         <header>
                             <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 flex justify-between">

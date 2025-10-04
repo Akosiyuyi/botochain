@@ -2,9 +2,8 @@ import { usePage, Link } from "@inertiajs/react";
 import { useRef, useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
 
-export default function SideBar({ showSidebar, setShowSidebar }) {
+export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpenMenu }) {
     const sidebarRef = useRef(null);
-    const [openMenu, setOpenMenu] = useState(null);
 
     const user = usePage().props.auth.user;
     const userRoles = user?.roles || [];
@@ -105,12 +104,12 @@ export default function SideBar({ showSidebar, setShowSidebar }) {
 
                                     {/* Dropdown children */}
                                     {openMenu === idx && (
-                                        <ul className="ml-6 mt-2 space-y-1">
+                                        <ul className="mt-2 space-y-1">
                                             {item.children.map((child, cIdx) => (
                                                 <li key={cIdx}>
                                                     <Link
                                                         href={route(child.route)}
-                                                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white 
+                                                        className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white 
                                                                     hover:bg-green-700 hover:text-white"
                                                     >
                                                         {child.icon && (
