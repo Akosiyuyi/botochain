@@ -14,7 +14,6 @@ export default function UpdateProfileInformation({
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
-            name: user.name,
             email: user.email,
         });
 
@@ -28,31 +27,16 @@ export default function UpdateProfileInformation({
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                    Profile Information
+                    Update Email Address
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-400">
-                    Update your account's profile information and email address.
+                    Ensure your email address is valid and accessible to avoid losing access to your account.
+                    We’ll use it to send a password reset link if you ever forget your password.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
-                    />
-
-                    <InputError className="mt-2" message={errors.name} />
-                </div>
-
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
