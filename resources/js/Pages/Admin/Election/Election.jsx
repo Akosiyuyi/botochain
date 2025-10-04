@@ -29,7 +29,7 @@ export default function Election({ elections, routes }) {
         >
             <Head title="Election" />
 
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
                 <LongDropdown componentName={"Pending Elections"} showComponent={showPending} setShowComponent={setShowPending} />
                 {showPending && (
                     <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">

@@ -12,7 +12,7 @@ export default function UserManagement({ users, stats }) {
             <Head title="Users" />
 
             <div>
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl">
                     <StatsBox stats={stats} />
                     <div className="mt-6">
                         <Table

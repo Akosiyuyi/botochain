@@ -126,7 +126,7 @@ export default function StudentsList() {
             <Head title="Students" />
 
             <div className="">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl">
                     <StatsBox />
                     <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mt-6">
                         <Table

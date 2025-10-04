@@ -23,7 +23,7 @@ export default function ManageElection({ election, positions = [], partylists = 
         >
             <Head title={election.title} />
 
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
                 <ManageElectionHeader election={election} />
                 <ManagePosition election={election} positions={positions} />
                 <ManagePartylist election={election} partylists={partylists} />

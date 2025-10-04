@@ -45,11 +45,11 @@ export default function AuthenticatedLayout({ header, children, button = false }
                 openMenu={openMenu}
                 setOpenMenu={setOpenMenu}
             />
-            <div className="xl:ml-64">
-                <div className="mt-12 pt-6">
+            <div className="xl:ml-56">
+                <div className="mt-12 pt-6 px-6 lg:px-12">
                     {header && (
                         <header>
-                            <div className="mx-auto w-full px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                            <div className="w-full py-4 flex justify-between items-center">
                                 {header}
                                 {button && (
                                     <div>
@@ -59,7 +59,7 @@ export default function AuthenticatedLayout({ header, children, button = false }
                             </div>
                         </header>
                     )}
-                    <main className="pb-6 mx-4 sm:mx-0">{children}</main>
+                    <main className="pb-6 sm:mx-0">{children}</main>
                 </div>
             </div>
         </div>
