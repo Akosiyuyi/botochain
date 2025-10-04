@@ -6,14 +6,8 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                    Profile Settings
-                </h2>
-            }
-        >
-            <Head title="Profile"/>
+        <>
+            <Head title="Profile" />
 
             <div className="">
                 <div className="mx-auto max-w-7xl space-y-6">
@@ -34,6 +28,16 @@ export default function Edit({ mustVerifyEmail, status }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
+}
+
+Edit.layout = (page) => {
+    const header = (
+        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            Profile Settings
+        </h2>
+    );
+
+    return <AuthenticatedLayout header={header}>{page}</AuthenticatedLayout>;
 }

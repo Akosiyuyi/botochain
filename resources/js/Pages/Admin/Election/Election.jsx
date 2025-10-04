@@ -11,22 +11,7 @@ export default function Election({ elections, routes }) {
     const [showPending, setShowPending] = useState(true);
     const [showActive, setShowActive] = useState(true);
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                    Election
-                </h2>
-            }
-            button={
-                <ModalLink
-                    href={route("admin.election.create")}
-                    closeButton={false}
-                    panelClasses="bg-white dark:bg-gray-800 rounded-lg"
-                >
-                    <PrimaryButton>Add Election</PrimaryButton>
-                </ModalLink>
-            }
-        >
+        <>
             <Head title="Election" />
 
             <div className="mx-auto max-w-7xl">
@@ -92,8 +77,27 @@ export default function Election({ elections, routes }) {
                         )}
                     </div>
                 )}
-
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+Election.layout = (page) => {
+    const header = (
+        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            Election
+        </h2>
+    );
+
+    const button = (
+        <ModalLink
+            href={route("admin.election.create")}
+            closeButton={false}
+            panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+        >
+            <PrimaryButton>Add Election</PrimaryButton>
+        </ModalLink>
+    );
+
+    return <AuthenticatedLayout header={header} button={button}>{page}</AuthenticatedLayout>;
+};

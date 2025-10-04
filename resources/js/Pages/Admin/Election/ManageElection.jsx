@@ -10,17 +10,7 @@ export default function ManageElection({ election, positions = [], partylists = 
     const [showPartylist, setShowPartylist] = useState(false);
 
     return (
-        <AuthenticatedLayout
-            header={
-                <div className="text-xl text-black dark:text-white font-semibold mb-2">
-                    <Link href={route('admin.election.index')} className="hover:underline">
-                        Election
-                    </Link>
-                    <span className="mx-2">›</span>
-                    <span className="font-medium">{election.title}</span>
-                </div>
-            }
-        >
+        <>
             <Head title={election.title} />
 
             <div className="mx-auto max-w-7xl">
@@ -28,7 +18,22 @@ export default function ManageElection({ election, positions = [], partylists = 
                 <ManagePosition election={election} positions={positions} />
                 <ManagePartylist election={election} partylists={partylists} />
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+ManageElection.layout = (page) => {
+    const election = page.props.election;
+    const header = (
+        <div className="text-xl text-black dark:text-white font-semibold mb-2">
+            <Link href={route('admin.election.index')} className="hover:underline">
+                Election
+            </Link>
+            <span className="mx-2">›</span>
+            <span className="font-medium">{election.title}</span>
+        </div>
+    );
+
+    return <AuthenticatedLayout header={header}>{page}</AuthenticatedLayout>;
+};
 
