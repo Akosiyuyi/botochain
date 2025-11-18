@@ -70,7 +70,7 @@ export default function NavBar({ showSidebar, setShowSidebar }) {
                                 alt="Logo"
                             />
                             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                                E<span className='text-green-700'>BOTO</span>
+                                Boto<span className='text-green-700'>Chain</span>
                             </span>
                         </Link>
                     </div>
