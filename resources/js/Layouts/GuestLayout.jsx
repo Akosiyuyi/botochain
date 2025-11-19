@@ -14,7 +14,7 @@ export default function GuestLayout({ children }) {
     return (
         <div className="flex min-h-screen">
             {/* Left side image with green tint */}
-            <div className="hidden w-1/2 lg:block relative h-screen overflow-hidden">
+            <div className="hidden w-1/2 lg:block relative h-100 overflow-hidden">
                 {/* Background image with blur */}
                 <img
                     src={spusmBG}
@@ -33,7 +33,7 @@ export default function GuestLayout({ children }) {
                     <h1 className="text-white font-black text-[2.50rem] mb-2 text-center mx-8">ST. PAUL UNIVERSITY SAN MIGUEL</h1>
                     <div className='flex'>
                         <img src={ebotoLogo} alt="eBoto Logo" className="w-20 mr-2" />
-                        <h1 className="text-white font-extrabold text-4xl mt-6">EBOTO</h1>
+                        <h1 className="text-white font-extrabold text-4xl mt-6">BotoChain</h1>
                     </div>
 
                 </div>

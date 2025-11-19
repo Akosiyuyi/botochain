@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BulkUploadController;
 use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -15,6 +16,10 @@ use App\Http\Controllers\VoterController;
 use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
+
+Route::post('/register/step1', [RegisteredUserController::class, 'validateStep1'])->name('register.step1');
+Route::post('/register/back', [RegisteredUserController::class, 'back'])->name('register.back');
+
 
     // admin routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|super-admin'])->group(function () {
