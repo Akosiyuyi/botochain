@@ -1,20 +1,21 @@
 import BackButton from '@/Components/BackButton';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { IdCard, Mail, ShieldCheck, Check } from 'lucide-react';
+import { IdCard, Mail, FileCheck, Check } from 'lucide-react';
 import Step1 from '@/Components/Register/Step1';
 import Step2 from '@/Components/Register/Step2';
+import Step3 from '@/Components/Register/Step3';
 
-export default function Register({ step: initialStep = 1, prefill = {} }) {
+export default function Register({ step: initialStep = 1, prefill_step1 = {}, prefill_step2 = {} }) {
     const [step, setStep] = useState(initialStep);
 
     const { data, setData, post, errors, processing, reset } = useForm({
-        id_number: prefill.id_number || '',
-        name: prefill.name || '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        id_number: prefill_step1.id_number || '',
+        name: prefill_step1.name || '',
+        email: prefill_step2.email || '',
+        password: prefill_step2.password || '',
+        password_confirmation: prefill_step2.password_confirmation || '',
     });
 
     useEffect(() => {
@@ -33,6 +34,14 @@ export default function Register({ step: initialStep = 1, prefill = {} }) {
         });
     };
 
+    const goToStep3 = () => {
+        post(route('register.step2'), {
+            email: data.email,
+            password: data.password,
+            password_confirmation: data.password_confirmation,
+        });
+    };
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -46,9 +55,9 @@ export default function Register({ step: initialStep = 1, prefill = {} }) {
             <Head title="Register" />
 
             {step > 1 && (
-                    <BackButton type="button" onClick={() => goBack()}>
-                        Back
-                    </BackButton>
+                <BackButton type="button" onClick={() => goBack()}>
+                    Back
+                </BackButton>
             )}
 
             <div className="flex justify-center">
@@ -99,10 +108,10 @@ export default function Register({ step: initialStep = 1, prefill = {} }) {
                             className={`flex items-center justify-center w-10 h-10 rounded-full lg:h-12 lg:w-12 shrink-0
         ${step >= 3 ? 'bg-green-100' : 'bg-gray-100'}`}
                         >
-                            {step === 3 ? (
+                            {step > 3 ? (
                                 <Check className="h-5 w-5" />
                             ) : (
-                                <ShieldCheck className="h-5 w-5" />
+                                <FileCheck className="h-5 w-5" />
                             )}
                         </span>
                     </li>
@@ -125,7 +134,15 @@ export default function Register({ step: initialStep = 1, prefill = {} }) {
                     setData={setData}
                     errors={errors}
                     processing={processing}
-                    goToStep3={submit}
+                    goToStep3={goToStep3}
+                />
+            )}
+
+            {step === 3 && (
+                <Step3
+                    data={data}
+                    processing={processing}
+                    submit={submit}
                 />
             )}
 

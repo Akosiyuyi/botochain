@@ -87,11 +87,8 @@ export default function NavBar({ showSidebar, setShowSidebar }) {
                                 className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                             >
                                 <span className="sr-only">Open user menu</span>
-                                <img
-                                    className="w-8 h-8 rounded-full"
-                                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                    alt="user photo"
-                                />
+                                <div className="w-8 h-8 rounded-full bg-green-600 text-white flex justify-center items-center font-bold">{user.name.charAt(0)}
+                                </div>
                             </button>
 
                             {showUserMenu && (

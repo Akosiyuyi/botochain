@@ -7,9 +7,9 @@ export default function Step1({ data, setData, errors, goToStep2 }) {
     return (
         <div>
             <div className="mb-3">
-                <h1 className="text-xl font-bold">REGISTER to your ID number</h1>
+                <h1 className="text-xl font-bold">PERSONAL INFO from school ID</h1>
                 <h2 className="text-md">
-                    Register using your ID number and the full name as shown on your ID to continue
+                    Enter your personal information as shown on your ID to continue
                 </h2>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); goToStep2(); }}>

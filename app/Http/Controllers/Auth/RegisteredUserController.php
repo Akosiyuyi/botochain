@@ -22,10 +22,12 @@ class RegisteredUserController extends Controller
     {
         $step = $request->session()->get('register.step', 1);
         $step1 = $request->session()->get('register.step1', []);
+        $step2 = $request->session()->get('register.step2', []);
 
         return Inertia::render('Auth/Register', [
             'step' => $step,
-            'prefill' => $step1, // pass saved data back to React
+            'prefill_step1' => $step1,
+            'prefill_step2' => $step2,
         ]);
     }
 
@@ -52,22 +54,19 @@ class RegisteredUserController extends Controller
             'is_active' => true,
         ]);
 
-        $user->assignRole('voter');
-
+        $user->assignRole('voter'); // assign voter role
         event(new Registered($user));
-
         Auth::login($user);
-
+        session()->forget(['register.step', 'register.step1', 'register.step2']); // delete registration session data
         return redirect(route('voter.dashboard', absolute: false));
     }
 
     public function back(Request $request)
     {
-        $currentStep = $request->input('step', 1);
+        $currentStep = $request->session()->get('register.step', 1);
         $previousStep = max(1, $currentStep - 1);
 
         $request->session()->put('register.step', $previousStep);
-
         return redirect()->route('register');
     }
 
@@ -81,6 +80,21 @@ class RegisteredUserController extends Controller
         // Save step and data in session
         $request->session()->put('register.step', 2);
         $request->session()->put('register.step1', $validated);
+
+        // Redirect back to /register
+        return redirect()->route('register');
+    }
+
+    public function validateStep2(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        // Save step and data in session
+        $request->session()->put('register.step', 3);
+        $request->session()->put('register.step2', $validated);
 
         // Redirect back to /register
         return redirect()->route('register');

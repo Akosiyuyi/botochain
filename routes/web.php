@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
 
+    // register steps routes
+Route::post('/register/step2', [RegisteredUserController::class, 'validateStep2'])->name('register.step2');
 Route::post('/register/step1', [RegisteredUserController::class, 'validateStep1'])->name('register.step1');
 Route::post('/register/back', [RegisteredUserController::class, 'back'])->name('register.back');
 

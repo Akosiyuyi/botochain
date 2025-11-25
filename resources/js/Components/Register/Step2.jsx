@@ -12,7 +12,7 @@ export default function Step2({ data, setData, errors, processing, goToStep3 }) 
                     Register using your personal or school provided email address to continue
                 </h2>
             </div>
-            <form onSubmit={goToStep3}>
+            <form onSubmit={(e) => { e.preventDefault(); goToStep3(); }}>
                 <div className="mt-4">
                     <InputLabel htmlFor="email" value="Email Address" />
                     <TextInput
