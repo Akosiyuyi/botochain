@@ -6,7 +6,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\OneTimePasswords\Models\Concerns\HasOneTimePasswords;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\OneTimePasswords\Models\OneTimePassword;
+
 
 /**
  * @method \Illuminate\Support\Collection getAllPermissions()
@@ -16,6 +19,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     use HasRoles;
+    use HasOneTimePasswords;
 
     /**
      * The attributes that are mass assignable.
@@ -51,6 +55,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function currentOneTimePassword(): ?OneTimePassword
+    {
+        return $this->oneTimePasswords()
+            ->latest()
+            ->first();
+    }
+
+    public function oneTimePasswords()
+    {
+        return $this->morphMany(OneTimePassword::class, 'authenticatable');
     }
 }
 

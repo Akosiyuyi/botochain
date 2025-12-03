@@ -9,20 +9,20 @@
         <tr>
             <td style="padding: 30px; text-align: center;">
                 <!-- Logo -->
-                <img src="{{ asset('images/EBOTO_Colored.png') }}" alt="App Logo" style="height: 40px; margin-bottom: 20px;">
+                <img src="{{ asset('EBOTO_Colored.png') }}" alt="App Logo" style="height: 40px; margin-bottom: 20px;">
 
                 <!-- Title -->
                 <h2 style="color: #111827; font-size: 20px; margin-bottom: 10px;">Verification Code</h2>
 
                 <!-- Instructions -->
                 <p style="color: #374151; font-size: 15px; margin-bottom: 25px;">
-                    Use the code below to complete your login or registration:
+                    Use the code below to complete your login
                 </p>
 
                 <!-- OTP Box -->
                 <div style="display: inline-block; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 6px; padding: 15px 30px; margin-bottom: 25px;">
-                    <span style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #2563eb;">
-                        {{ $code }}
+                    <span style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #16a34a">
+                        {{ $oneTimePassword->password }}
                     </span>
                 </div>
 

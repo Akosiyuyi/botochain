@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 
 class AuthenticatedSessionController extends Controller
@@ -28,24 +31,29 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
+        // Manual validate input instead of authenticate() of LoginRequest to avoid immediate login
+        $credentials = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-        $request->session()->regenerate();
+        $user = User::where('email', $credentials['email'])->first();
 
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if ($user->hasAnyRole(['super-admin', 'admin'])) {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('voter')) {
-            return redirect()->route('voter.dashboard');
-        } else {
-            return redirect('/');
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
         }
 
-        // return redirect()->intended(route('dashboard', absolute: false));
+        // Stash user ID for OTP
+        $request->session()->put('pre_2fa_user_id', $user->id);
+
+        // Send OTP
+        $user->sendOneTimePassword();
+
+        return redirect()->route('otp');
     }
 
     /**
