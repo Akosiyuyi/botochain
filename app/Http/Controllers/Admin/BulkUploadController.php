@@ -26,16 +26,13 @@ class BulkUploadController extends Controller
 
     public function downloadTemplate()
     {
-        $path = storage_path('app/templates/template.xlsx');
+        $zipFileName = 'upload_templates.zip';
+        $zipFilePath = storage_path('app/templates/' . $zipFileName);
 
-        if (!file_exists($path)) {
-            abort(404);
-        }
-
-        return Response::download($path, 'template.xlsx');
+        return Response::download($zipFilePath, $zipFileName);
     }
 
-    public function upload(Request $request)
+    public function stage(Request $request)
     {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,csv',

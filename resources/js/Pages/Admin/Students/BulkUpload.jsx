@@ -4,9 +4,10 @@ import ListPreview from '@/Components/ListPreview';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function BulkUpload() {
+    const [file, setFile] = useState(null);
 
     const students = [
         { student_id: "STU001", full_name: "Alice Santos", school_level: "elementary", grade_year: "Grade 5", course: null, section: "A" },
@@ -32,24 +33,28 @@ export default function BulkUpload() {
             <div className="mx-auto max-w-7xl">
                 <div className="flex items-center justify-center w-full">
                     {/* drag and drop upload section */}
-                    <DragAndDropUploader />
+                    <DragAndDropUploader file={file} setFile={setFile} />
                 </div>
-                <ListPreview />
-                <FileUploadPreviewTable
-                    students={students}
-                    variant="new" />
+                {file && (
+                    <>
+                        <ListPreview />
+                        <FileUploadPreviewTable
+                            students={students}
+                            variant="new" />
 
-                <FileUploadPreviewTable
-                    students={students}
-                    variant="existing" />
+                        <FileUploadPreviewTable
+                            students={students}
+                            variant="existing" />
 
-                <FileUploadPreviewTable
-                    students={students}
-                    variant="incomplete" />
+                        <FileUploadPreviewTable
+                            students={students}
+                            variant="incomplete" />
 
-                <FileUploadPreviewTable
-                    students={students}
-                    variant="missing" />
+                        <FileUploadPreviewTable
+                            students={students}
+                            variant="missing" />
+                    </>
+                )}
             </div>
         </>
     );

@@ -4,8 +4,7 @@ import { Upload, Download, Trash2 } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import { toast } from 'react-hot-toast';
 
-export default function DragAndDropUploader() {
-  const [file, setFile] = useState(null);
+export default function DragAndDropUploader({ file, setFile }) {
   const { setData, post, reset } = useForm({
     file: null
   });
@@ -32,6 +31,9 @@ export default function DragAndDropUploader() {
 
     setFile(selectedFile);
     setData('file', selectedFile);
+
+
+    // add the route to staging file here to preview
   };
 
   //  --- file removal ---

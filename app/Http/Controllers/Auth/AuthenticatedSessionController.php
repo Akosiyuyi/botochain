@@ -50,9 +50,8 @@ class AuthenticatedSessionController extends Controller
         // Stash user ID for OTP
         $request->session()->put('pre_2fa_user_id', $user->id);
 
-        // Send OTP
+        // Send OTP then redirect to otp page
         $user->sendOneTimePassword();
-
         return redirect()->route('otp');
     }
 

@@ -33,8 +33,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     // bulk upload resource
     Route::get('/bulk-upload/template', [BulkUploadController::class, 'downloadTemplate'])
         ->name('bulk-upload.template');
-    Route::post('/bulk-upload/upload', [BulkUploadController::class, 'upload'])
-        ->name('bulk-upload.upload');
+    Route::post('/bulk-upload/stage', [BulkUploadController::class, 'stage'])
+        ->name('bulk-upload.stage');
     Route::resource('bulk-upload', BulkUploadController::class);
 
     // user resource route
