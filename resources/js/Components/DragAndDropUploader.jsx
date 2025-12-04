@@ -1,45 +1,51 @@
-import { useState } from "react";
 import { FileInput, Label } from "flowbite-react";
 import { Upload, Download, Trash2 } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import { toast } from 'react-hot-toast';
+import { router } from '@inertiajs/react';
+import axios from 'axios';
+import React, { useState } from 'react';
 
-export default function DragAndDropUploader({ file, setFile }) {
+export default function DragAndDropUploader({ setResults, setExpectedSchoolLevel }) {
+  const [file, setFile] = useState(null);
   const { setData, post, reset } = useForm({
     file: null
   });
 
   //  --- file change or file selection ---
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const selectedFile = event.target.files[0];
-
-    if (!selectedFile) {
-      setFile(null);
-      setData('file', null);
-      return;
-    }
-
-    const validExtensions = ['xlsx', 'csv'];
-    const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
-
-    if (!validExtensions.includes(fileExtension)) {
-      toast.error('Invalid file type. Please upload a .xlsx or .csv file.');
-      setFile(null);
-      setData('file', null);
-      return;
-    }
+    if (!selectedFile) return;
 
     setFile(selectedFile);
-    setData('file', selectedFile);
 
+    const formData = new FormData();
+    formData.append('file', selectedFile);
 
-    // add the route to staging file here to preview
+    try {
+      const response = await axios.post('/admin/bulk-upload/stage', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      console.log(response.data.results);
+      console.log(response.data.expectedSchoolLevel);
+
+      // You can set state here to render preview tables
+      setResults(response.data.results);
+      setExpectedSchoolLevel(response.data.expectedSchoolLevel);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //  --- file removal ---
   const handleRemoveFile = () => {
     setFile(null);
     document.getElementById("dropzone-file").value = "";
+
+    // clear staged preview data
+    setResults(null);
+    setExpectedSchoolLevel(null);
   };
 
   //  --- file upload ---
