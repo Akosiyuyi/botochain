@@ -28,7 +28,7 @@ class BulkUploadController extends Controller
 
             $successMessage = $successRowCount > 1 ?
                 $successRowCount . ' ' . strtolower($expectedSchoolLevel) . ' students uploaded successfully!' :
-                $successRowCount . ' ' . strtolower($expectedSchoolLevel) . ' students uploaded successfully!';
+                $successRowCount . ' ' . strtolower($expectedSchoolLevel) . ' student uploaded successfully!';
 
             return redirect()->route('admin.bulk-upload.index')
                 ->with('success', $successMessage);
