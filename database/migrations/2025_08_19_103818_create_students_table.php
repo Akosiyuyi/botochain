@@ -14,19 +14,17 @@ return new class extends Migration {
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string('id_number')->unique();
+            $table->string('student_id')->unique();
             $table->string('name');
             $table->enum('school_level', ['Grade School', 'Junior High', 'Senior High', 'College']);
-            $table->integer('year_level');
+            $table->string('year_level');
             $table->string('course')->nullable();
             $table->string('section')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             // indexes
             $table->index(['school_level', 'year_level']);
             $table->index('course');
-            $table->index(['is_active', 'school_level', 'year_level']);
         });
     }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CircleCheck, CircleMinus, CircleAlert } from "lucide-react";
 
 const variantStyles = {
     validated: {
@@ -30,6 +31,19 @@ export default function FileUploadPreviewTable({ students, variant }) {
     const paginated = students.slice(start, start + rowsPerPage);
 
     const styles = variantStyles[variant] || variantStyles.new;
+
+    const getIcon = (variant) => {
+        switch (variant) {
+            case "validated":
+                return <CircleCheck className="text-green-800 dark:text-green-200 w-7 h-7" />;
+            case "incomplete":
+                return <CircleMinus className="text-yellow-800 dark:text-yellow-200 w-7 h-7" />;
+            case "error":
+                return <CircleAlert className="text-red-800 dark:text-red-200 w-7 h-7" />;
+            default:
+                return null; // or a fallback icon
+        }
+    };
 
     const getTitle = (variant) => {
         switch (variant) {
@@ -63,12 +77,13 @@ export default function FileUploadPreviewTable({ students, variant }) {
             className={`mt-6 rounded-xl overflow-hidden border ${styles.border}`}
         >
             {/* Header */}
-            <div className={`px-4 py-3 ${styles.header}`}>
+            <div className={`flex items-center gap-4 px-4 py-3 ${styles.header}`}>
+                {getIcon(variant)}
                 <div className="font-semibold text-lg">
                     {getTitle(variant)} ({students.length})
-                </div>
-                <div className="text-sm">
-                    {getSubtitle?.(variant) ?? "None"}
+                    <div className="text-sm">
+                        {getSubtitle?.(variant) ?? "None"}
+                    </div>
                 </div>
             </div>
 
@@ -80,7 +95,7 @@ export default function FileUploadPreviewTable({ students, variant }) {
                             <th className="px-4 py-2 font-extrabold">Student ID</th>
                             <th className="px-4 py-2 font-extrabold">Full Name</th>
                             <th className="px-4 py-2 font-extrabold">School Level</th>
-                            <th className="px-4 py-2 font-extrabold">Grade/Year</th>
+                            <th className="px-4 py-2 font-extrabold">Year Level</th>
                             <th className="px-4 py-2 font-extrabold">Course</th>
                             <th className="px-4 py-2 font-extrabold">Section</th>
                         </tr>

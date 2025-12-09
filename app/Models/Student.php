@@ -16,17 +16,11 @@ class Student extends Model
         'year_level',
         'course',
         'section',
-        'is_active',
     ];
 
     protected $casts = [
-        'year_level'=> 'integer',
-        'is_active'=> 'boolean',
+        'year_level'=> 'string',
     ];
-
-    public function scopeActive($query){
-        return $query->where('is_active', true);
-    }
 
     public function scopeOfSchoolLevel($query, $level){
         return $query->where('school_level', $level);

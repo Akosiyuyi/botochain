@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class BulkUploadController extends Controller
 {
@@ -19,11 +21,28 @@ class BulkUploadController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,csv',
-        ]);
+        try {
+            $import = $this->runImport($request, 'upload');
+            $successRowCount = $import->getResultsCount('valid');
+            $expectedSchoolLevel = $import->getExpectedSchoolLevel();
 
-        $file = $request->file('file');
+            $successMessage = $successRowCount > 1 ?
+                $successRowCount . ' ' . strtolower($expectedSchoolLevel) . ' students uploaded successfully!' :
+                $successRowCount . ' ' . strtolower($expectedSchoolLevel) . ' students uploaded successfully!';
+
+            return redirect()->route('admin.bulk-upload.index')
+                ->with('success', $successMessage);
+        } catch (QueryException $e) {
+            Log::error('Upload failed: ' . $e->getMessage());
+
+            return redirect()->route('admin.bulk-upload.index')
+                ->with('error', 'Upload failed. Please check your file and try again.');
+        } catch (\Exception $e) {
+            Log::error('Unexpected error: ' . $e->getMessage());
+
+            return redirect()->route('admin.bulk-upload.index')
+                ->with('error', 'Something went wrong during upload.');
+        }
     }
 
     public function downloadTemplate()
@@ -36,6 +55,16 @@ class BulkUploadController extends Controller
 
     public function stage(Request $request)
     {
+        $import = $this->runImport($request, 'preview');
+
+        return response()->json([
+            'results' => $import->getResults(),
+            'expectedSchoolLevel' => $import->getExpectedSchoolLevel(),
+        ]);
+    }
+
+    private function runImport(Request $request, string $mode)
+    {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,csv',
         ]);
@@ -45,14 +74,9 @@ class BulkUploadController extends Controller
         $expectedSchoolLevel = $spreadsheet->getActiveSheet()->getCell('A1')->getValue();
 
         // 👉 Run import in preview mode
-        $import = new StudentsImport('preview', $expectedSchoolLevel);
+        $import = new StudentsImport($mode, $expectedSchoolLevel);
         Excel::import($import, $request->file('file'));
 
-        return response()->json([
-            'results' => $import->getResults(),
-            'expectedSchoolLevel' => $import->getExpectedSchoolLevel(),
-        ]);
+        return $import;
     }
-
-
 }

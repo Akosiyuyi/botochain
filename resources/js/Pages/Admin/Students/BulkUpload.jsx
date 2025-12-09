@@ -8,6 +8,19 @@ import React, { useState } from 'react';
 export default function BulkUpload() {
     const [results, setResults] = useState(null);
     const [expectedSchoolLevel, setExpectedSchoolLevel] = useState(null);
+    const resultStats = (results) => {
+        if (!results) return [];
+
+        const totalRows = results.valid?.length + results.missing?.length + results.errors?.length;
+        return [
+            { title: "All Rows", value: totalRows, color: "blue" },
+            { title: "Valid Rows", value: results.valid?.length, color: "green" },
+            { title: "Incomplete Rows", value: results.missing?.length, color: "yellow" },
+            { title: "Error Rows", value: results.errors?.length, color: "red" },
+        ];
+    }
+
+
     return (
         <>
             <Head title="Bulk Upload" />
@@ -18,7 +31,7 @@ export default function BulkUpload() {
                 </div>
                 {results && (
                     <>
-                        <ListPreview school_level={expectedSchoolLevel} />
+                        <ListPreview school_level={expectedSchoolLevel} resultStats={resultStats(results)} />
                         {results.valid?.length > 0 && (
                             <FileUploadPreviewTable
                                 students={results.valid}

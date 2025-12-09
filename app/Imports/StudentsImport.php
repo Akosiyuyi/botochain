@@ -2,12 +2,14 @@
 
 namespace App\Imports;
 
-use App\Models\User;
+use App\Models\Student;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class StudentsImport implements ToCollection, WithHeadingRow
 {
@@ -160,25 +162,24 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            // Preview mode → collect
-            if ($this->mode === 'preview') {
-                $this->results['valid'][] = compact(
-                    'student_id',
-                    'name',
-                    'school_level',
-                    'year_level',
-                    'course',
-                    'section'
-                );
-            }
+            // collect
+            $this->results['valid'][] = compact(
+                'student_id',
+                'name',
+                'school_level',
+                'year_level',
+                'course',
+                'section'
+            );
 
-            // Upload mode → save to DB
-            if ($this->mode === 'upload') {
-                User::create([
-                    'student_id' => $student_id,
-                    'name' => $name,
-                ]);
-            }
+        }
+        // end of loop
+        if ($this->mode === 'upload') {
+            Student::upsert(
+                $this->results['valid'], // array of rows
+                ['student_id'],          // unique key to check
+                ['name', 'school_level', 'year_level', 'course', 'section'] // fields to update
+            );
         }
     }
 
@@ -190,5 +191,10 @@ class StudentsImport implements ToCollection, WithHeadingRow
     public function getExpectedSchoolLevel()
     {
         return $this->expectedSchoolLevel;
+    }
+
+    public function getResultsCount(string $type)
+    {
+        return count($this->results[$type]);
     }
 }
