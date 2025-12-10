@@ -16,6 +16,7 @@ class Student extends Model
         'year_level',
         'course',
         'section',
+        'status',
     ];
 
     protected $casts = [

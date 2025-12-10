@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('year_level');
             $table->string('course')->nullable();
             $table->string('section')->nullable();
+            $table->string('status');
             $table->timestamps();
 
             // indexes

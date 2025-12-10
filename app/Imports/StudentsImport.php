@@ -163,13 +163,16 @@ class StudentsImport implements ToCollection, WithHeadingRow
             }
 
             // collect
-            $this->results['valid'][] = compact(
-                'student_id',
-                'name',
-                'school_level',
-                'year_level',
-                'course',
-                'section'
+            $this->results['valid'][] = array_merge(
+                compact(
+                    'student_id',
+                    'name',
+                    'school_level',
+                    'year_level',
+                    'course',
+                    'section'
+                ),
+                ['status' => 'enrolled']
             );
 
         }
@@ -178,7 +181,7 @@ class StudentsImport implements ToCollection, WithHeadingRow
             Student::upsert(
                 $this->results['valid'], // array of rows
                 ['student_id'],          // unique key to check
-                ['name', 'school_level', 'year_level', 'course', 'section'] // fields to update
+                ['name', 'school_level', 'year_level', 'course', 'section', 'status'] // fields to update
             );
         }
     }
