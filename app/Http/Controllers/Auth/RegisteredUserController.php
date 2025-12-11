@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use App\Models\Student;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
@@ -73,8 +74,22 @@ class RegisteredUserController extends Controller
     public function validateStep1(Request $request)
     {
         $validated = $request->validate([
-            'id_number' => 'required|unique:users,id_number',
-            'name' => 'required|unique:users,name',
+            'id_number' => [
+                'required',
+                'unique:users,id_number',
+                function ($attribute, $value, $fail) use ($request) {
+                    $student = Student::where('student_id', $value)->first();
+                    if (!$student) {
+                        $fail('The ID number does not exist in the student records.');
+                    } elseif ($student->name !== $request->name) {
+                        $fail('The name does not match the student record for this ID number.');
+                    }
+                },
+            ],
+            'name' => [
+                'required',
+                'unique:users,name',
+            ],
         ]);
 
         // Save step and data in session

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Student;
 
 class StudentController extends Controller
 {
@@ -13,7 +14,12 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return Inertia::render("Admin/Students/StudentsList");
+        $students = Student::all();
+
+        return Inertia::render("Admin/Students/StudentsList", [
+            'students' => $students,
+            'stats' => $this->studentsStatsCount(),
+        ]);
     }
 
     /**
@@ -62,5 +68,33 @@ class StudentController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function studentsStatsCount()
+    {
+        return [
+            [
+                'title' => 'All Students',
+                'value' => Student::count(),
+                'color' => 'blue',
+            ],
+            [
+                'title' => 'Enrolled Students',
+                'value' => Student::where('status', 'enrolled')->count(),
+                'color' => 'green',
+            ],
+            [
+                'title' => 'Students with No Accounts',
+                'value' => Student::whereNotIn('student_id', function ($query) {
+                    $query->select('id_number')->from('users');
+                })->count(),
+                'color' => 'yellow',
+            ],
+            [
+                'title' => 'Unenrolled Students',
+                'value' => Student::where('status', 'unenrolled')->count(),
+                'color' => 'red',
+            ],
+        ];
     }
 }
