@@ -110,7 +110,7 @@ class StudentsImport implements ToCollection, WithHeadingRow
             $seenIds[] = $normalizedRow['student_id'];
 
             // Collect valid rows
-            $this->results['valid'][] = array_merge($normalizedRow, ['status' => 'enrolled']);
+            $this->results['valid'][] = array_merge($normalizedRow, ['status' => 'Enrolled']);
         }
 
         // end of loop

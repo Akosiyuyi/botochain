@@ -52,7 +52,7 @@ class StudentController extends Controller
         }
 
         $data = array_merge($validator->validated(), [
-            'status' => 'enrolled',
+            'status' => 'Enrolled',
         ]);
 
         Student::create($data);
@@ -72,7 +72,10 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $student = Student::find($id);
+        return Inertia::render('Admin/Students/EditStudentModal', [
+            'student' => $student,
+        ]);
     }
 
     /**
@@ -101,7 +104,7 @@ class StudentController extends Controller
             ],
             [
                 'title' => 'Enrolled Students',
-                'value' => Student::where('status', 'enrolled')->count(),
+                'value' => Student::where('status', 'Enrolled')->count(),
                 'color' => 'green',
             ],
             [
