@@ -28,7 +28,8 @@ export default forwardRef(function TextInput(
                 type={inputType}
                 className={
                     'w-full pr-10 rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600' + ' ' +
-                    'dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400' + ' ' +
+                    'dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 text-sm' + ' ' +
+                    'disabled:cursor-not-allowed' + ' ' +
                     className
                 }
                 ref={localRef}
