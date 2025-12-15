@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Student;
+use App\Services\StudentValidationService;
 
 class StudentController extends Controller
 {
@@ -27,7 +28,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admin/Students/CreateStudentModal');
     }
 
     /**
@@ -35,7 +36,17 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = StudentValidationService::validate($request->all());
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $data = array_merge($validator->validated(), [
+            'status' => 'enrolled',
+        ]);
+
+        Student::create($data);
     }
 
     /**
