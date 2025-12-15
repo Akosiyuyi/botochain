@@ -64,6 +64,9 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 : trim(strval($cellValue));
         }
 
+        // track all seen ids
+        $seenIds = [];
+
         foreach ($rows as $index => $row) {
             // Build one associative array for the row
             $normalizedRow = [
@@ -96,6 +99,15 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 ]);
                 continue;
             }
+
+            // Duplicate check
+            if (in_array($normalizedRow['student_id'], $seenIds)) {
+                // Already seen this student_id, skip to avoid recording in valid
+                continue;
+            }
+
+            // Mark the student_id as seen if it passed all validations
+            $seenIds[] = $normalizedRow['student_id'];
 
             // Collect valid rows
             $this->results['valid'][] = array_merge($normalizedRow, ['status' => 'enrolled']);
