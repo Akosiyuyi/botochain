@@ -53,8 +53,8 @@ class StudentValidationService
                     if ($school_level === 'College') {
                         if (empty($value)) {
                             $fail('Course is required for College.');
-                        } elseif (!in_array($value, ['BSCS', 'BSBA', 'BEED', 'BSED'])) {
-                            $fail('College course must be BSCS, BSBA, BEED, or BSED.');
+                        } elseif (!in_array($value, ['BSCS', 'BSBA', 'BEED', 'BSED', 'BSHM'])) {
+                            $fail('College course must be BSCS, BSBA, BEED, BSED or BSHM.');
                         }
                     }
                 }
