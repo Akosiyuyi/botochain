@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Student;
 use App\Services\StudentValidationService;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -36,7 +37,15 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = StudentValidationService::validate($request->all());
+        // Base rules from your service
+        $baseValidator = StudentValidationService::validate($request->all());
+
+        $validator = Validator::make(
+            $request->all(),
+            array_merge($baseValidator->getRules(), [
+                'student_id' => ['required', 'integer', 'min:20000000', 'unique:students,student_id'],
+            ])
+        );
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -48,6 +57,7 @@ class StudentController extends Controller
 
         Student::create($data);
     }
+
 
     /**
      * Display the specified resource.

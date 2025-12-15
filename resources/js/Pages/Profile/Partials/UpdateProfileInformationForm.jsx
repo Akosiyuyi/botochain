@@ -32,13 +32,12 @@ export default function UpdateProfileInformation({
 
                 <p className="mt-1 text-sm text-gray-400">
                     Ensure your email address is valid and accessible to avoid losing access to your account.
-                    We’ll use it to send a password reset link if you ever forget your password.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Email Address" />
 
                     <TextInput
                         id="email"

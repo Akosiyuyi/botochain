@@ -5,6 +5,7 @@ import { Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Table from '@/Components/Table';
+import { ModalLink } from '@inertiaui/modal-react';
 
 export default function StudentsList({ students, stats }) {
     return (
@@ -78,7 +79,13 @@ StudentsList.layout = (page) => {
 
     const button = (
         <div className="flex gap-4">
-            <PrimaryButton>Add Student</PrimaryButton>
+            <ModalLink
+                href={route("admin.students.create")}
+                closeButton={false}
+                panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+            >
+                <PrimaryButton>Add Student</PrimaryButton>
+            </ModalLink>
             <Link href={route("admin.bulk-upload.index")}>
                 <SecondaryButton>Upload CSV</SecondaryButton>
             </Link>
