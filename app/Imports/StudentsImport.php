@@ -4,12 +4,10 @@ namespace App\Imports;
 
 use App\Models\Student;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Log;
+use App\Services\StudentValidationService;
 
 class StudentsImport implements ToCollection, WithHeadingRow
 {
@@ -53,7 +51,6 @@ class StudentsImport implements ToCollection, WithHeadingRow
         return $value !== null ? trim(strval($value)) : null;
     }
 
-
     public function collection(Collection $rows)
     {
         // Normalize expected school level from A1
@@ -62,120 +59,48 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 request()->file('file')->getRealPath()
             )->getActiveSheet()->getCell('A1')->getValue();
 
-            if ($cellValue instanceof RichText) {
-                // 👈 unwrap the RichText object
-                $this->expectedSchoolLevel = $cellValue->getPlainText();
-            } else {
-                $this->expectedSchoolLevel = trim(strval($cellValue));
-            }
+            $this->expectedSchoolLevel = $cellValue instanceof RichText
+                ? $cellValue->getPlainText()
+                : trim(strval($cellValue));
         }
 
         foreach ($rows as $index => $row) {
-            // Normalize all fields
-            $student_id = $this->normalize($row['student_id'] ?? null);
-            $name = $this->normalize($row['name'] ?? null);
-            $school_level = $this->normalize($row['school_level'] ?? null);
-            $year_level = $this->normalize($row['year_level'] ?? null);
-            $course = $this->normalize($row['course'] ?? null);
-            $section = $this->normalize($row['section'] ?? null);
+            // Build one associative array for the row
+            $normalizedRow = [
+                'student_id' => $this->normalize($row['student_id'] ?? null),
+                'name' => $this->normalize($row['name'] ?? null),
+                'school_level' => $this->normalize($row['school_level'] ?? null),
+                'year_level' => $this->normalize($row['year_level'] ?? null),
+                'course' => $this->normalize($row['course'] ?? null),
+                'section' => $this->normalize($row['section'] ?? null),
+            ];
 
             // Check if school_level matches expected
-            if ($school_level !== $this->expectedSchoolLevel) {
-                $this->results['errors'][] = compact(
-                    'student_id',
-                    'name',
-                    'school_level',
-                    'year_level',
-                    'course',
-                    'section'
-                );
+            if ($normalizedRow['school_level'] !== $this->expectedSchoolLevel) {
+                $this->results['errors'][] = $normalizedRow;
                 continue;
             }
 
             // Missing data check
-            if (empty($student_id) || empty($name) || empty($school_level) || empty($year_level)) {
-                $this->results['missing'][] = compact(
-                    'student_id',
-                    'name',
-                    'school_level',
-                    'year_level',
-                    'course',
-                    'section'
-                );
+            if (empty($normalizedRow['student_id']) || empty($normalizedRow['name']) || empty($normalizedRow['school_level']) || empty($normalizedRow['year_level'])) {
+                $this->results['missing'][] = $normalizedRow;
                 continue;
             }
 
-            // Validation
-            $validator = Validator::make([
-                'student_id' => $student_id,
-                'name' => $name,
-                'school_level' => $school_level,
-                'year_level' => $year_level,
-                'course' => $course,
-                'section' => $section,
-            ], [
-                'student_id' => ['required', 'integer', 'min:20000000'],
-                'name' => ['required', 'string', 'min:2', 'max:255'],
-                'school_level' => ['required', 'in:Grade School,Junior High,Senior High,College'],
-                'year_level' => [
-                    'required',
-                    function ($attribute, $value, $fail) use ($school_level) {
-                        if ($school_level === 'Grade School' && !in_array($value, ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])) {
-                            $fail('Grade School year level must be Grade 1–6.');
-                        }
-                        if ($school_level === 'Junior High' && !in_array($value, ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])) {
-                            $fail('Junior High year level must be Grade 7–10.');
-                        }
-                        if ($school_level === 'Senior High' && !in_array($value, ['Grade 11', 'Grade 12'])) {
-                            $fail('Senior High year level must be Grade 11–12.');
-                        }
-                        if ($school_level === 'College' && !in_array($value, ['1st Year', '2nd Year', '3rd Year', '4th Year'])) {
-                            $fail('College year level must be 1st–4th Year.');
-                        }
-                    }
-                ],
-                'course' => [
-                    function ($attribute, $value, $fail) use ($school_level) {
-                        if (in_array($school_level, ['Grade School', 'Junior High']) && !empty($value)) {
-                            $fail('Course must be empty for Grade School and Junior High.');
-                        }
-                        if ($school_level === 'Senior High' && !in_array($value, ['STEM', 'ABM', 'GAS'])) {
-                            $fail('Senior High course must be STEM, ABM, or GAS.');
-                        }
-                        if ($school_level === 'College' && !in_array($value, ['BSCS', 'BSBA', 'BEED', 'BSED'])) {
-                            $fail('College course must be BSCS, BSBA, BEED, or BSED.');
-                        }
-                    }
-                ],
-                'section' => ['nullable', 'string', 'max:50'],
-            ]);
+            // Validation via reusable service
+            $validator = StudentValidationService::validate($normalizedRow);
 
             if ($validator->fails()) {
-                $this->results['errors'][] = compact(
-                    'student_id',
-                    'name',
-                    'school_level',
-                    'year_level',
-                    'course',
-                    'section'
-                );
+                $this->results['errors'][] = array_merge($normalizedRow, [
+                    'messages' => $validator->errors()->all(),
+                ]);
                 continue;
             }
 
-            // collect
-            $this->results['valid'][] = array_merge(
-                compact(
-                    'student_id',
-                    'name',
-                    'school_level',
-                    'year_level',
-                    'course',
-                    'section'
-                ),
-                ['status' => 'enrolled']
-            );
-
+            // Collect valid rows
+            $this->results['valid'][] = array_merge($normalizedRow, ['status' => 'enrolled']);
         }
+
         // end of loop
         if ($this->mode === 'upload') {
             Student::upsert(
