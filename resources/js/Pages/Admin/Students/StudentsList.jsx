@@ -6,6 +6,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Table from '@/Components/Table';
 import { ModalLink } from '@inertiaui/modal-react';
+import DangerButton from '@/Components/DangerButton';
 
 export default function StudentsList({ students, stats }) {
     return (
@@ -30,10 +31,9 @@ export default function StudentsList({ students, stats }) {
                             ]}
                             optionList={["All", "Enrolled", "Unenrolled"]}
                             defaultOption="All"
-                            onEdit={(student) => console.log("Edit student:", student)}
-                            renderCell={(row, key, { onEdit }) => {
+                            renderCell={(row, key) => {
                                 if (key === "status") {
-                                    return row.status != "enrolled" ? (
+                                    return row.status != "Enrolled" ? (
                                         <span className="text-red-600">Unenrolled</span>
                                     ) : (
                                         <span className="text-green-600">Enrolled</span>
@@ -41,9 +41,13 @@ export default function StudentsList({ students, stats }) {
                                 }
                                 if (key === "action") {
                                     return (
-                                        <button onClick={() => onEdit(row)} className="text-blue-600 hover:underline">
-                                            Edit
-                                        </button>
+                                        <ModalLink
+                                            href={route("admin.students.edit", row.id)} // 👈 pass student id
+                                            closeButton={false}
+                                            panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+                                        >
+                                            <button className="text-blue-600 hover:underline">Edit</button>
+                                        </ModalLink>
                                     );
                                 }
                                 return row[key];
@@ -52,10 +56,10 @@ export default function StudentsList({ students, stats }) {
                                 if (option === defaultOption) return true;
 
                                 if (option === "Enrolled") {
-                                    return !row.is_graduated;
+                                    return row.status === "Enrolled"
                                 }
                                 if (option === "Unenrolled") {
-                                    return row.is_graduated;
+                                    return row.status === "Unenrolled"
                                 }
                                 return true;
                             }}
@@ -89,6 +93,14 @@ StudentsList.layout = (page) => {
             <Link href={route("admin.bulk-upload.index")}>
                 <SecondaryButton>Upload CSV</SecondaryButton>
             </Link>
+            <ModalLink
+                href={route("admin.students.showConfirmUnenroll")}
+                closeButton={false}
+                panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+            >
+                <DangerButton>Unenroll All</DangerButton>
+            </ModalLink>
+            
         </div>
     );
 

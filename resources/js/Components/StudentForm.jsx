@@ -4,7 +4,7 @@ import InputLabel from "./InputLabel";
 import InputError from "./InputError";
 import PrimaryButton from "./PrimaryButton";
 
-export default function StudentForm({ data, setData, errors, onSubmit, processing }) {
+export default function StudentForm({ data, setData, errors, onSubmit, processing, isEdit }) {
     const isElemOrJhs = data.school_level === "Grade School" || data.school_level === "Junior High";
 
     const schoolLevelOptions = [
@@ -55,6 +55,11 @@ export default function StudentForm({ data, setData, errors, onSubmit, processin
             { label: "BSHM", value: "BSHM" },
         ],
     };
+
+    const statusOptions = [
+        { label: "Enrolled", value: "Enrolled" },
+        { label: "Unenrolled", value: "Unenrolled" },
+    ];
 
     return (
         <form onSubmit={onSubmit} className="space-y-4">
@@ -145,6 +150,20 @@ export default function StudentForm({ data, setData, errors, onSubmit, processin
                     <InputError message={errors.section} className="mt-2" />
                 </div>
             </div>
+
+            {isEdit && (
+                <div>
+                    <InputLabel htmlFor="status" value="Status" />
+                    <SelectInputForForms
+                        id="status"
+                        options={statusOptions}
+                        value={data.status}
+                        onChange={(val) => setData("status", val)}
+                        className="mt-1"
+                    />
+                    <InputError message={errors.status} className="mt-2" />
+                </div>
+            )}
 
             <PrimaryButton type="submit" disabled={processing}>
                 {processing ? "Saving..." : "Save"}

@@ -28,6 +28,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     // student resource route
+    Route::get('/students/showConfirmUnenroll', [StudentController::class, 'showConfirmUnenroll'])
+        ->name('students.showConfirmUnenroll');
+    Route::patch('/students/unenrollAll', [StudentController::class, 'unenrollAll'])
+        ->name('students.unenrollAll');
     Route::resource('students', StudentController::class);
 
     // bulk upload resource
