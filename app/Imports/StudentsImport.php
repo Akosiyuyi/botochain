@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use App\Services\StudentValidationService;
+use App\Models\User;
 
 class StudentsImport implements ToCollection, WithHeadingRow
 {
@@ -120,6 +121,12 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 ['student_id'],          // unique key to check
                 ['name', 'school_level', 'year_level', 'course', 'section', 'status'] // fields to update
             );
+
+            // Collect all student IDs from the uploaded rows 
+            $studentIds = collect($this->results['valid'])->pluck('student_id');
+
+            // Bulk update users with matching id_number 
+            User::whereIn('id_number', $studentIds) ->update(['is_active' => true]);
         }
     }
 
