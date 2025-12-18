@@ -79,10 +79,13 @@ class RegisteredUserController extends Controller
                 'unique:users,id_number',
                 function ($attribute, $value, $fail) use ($request) {
                     $student = Student::where('student_id', $value)->first();
+
                     if (!$student) {
                         $fail('The ID number does not exist in the student records.');
                     } elseif ($student->name !== $request->name) {
                         $fail('The name does not match the student record for this ID number.');
+                    } elseif ($student->status !== 'Enrolled') {
+                        $fail('The student ID is not currently enrolled.');
                     }
                 },
             ],
