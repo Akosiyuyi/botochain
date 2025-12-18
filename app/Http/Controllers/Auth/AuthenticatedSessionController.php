@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Student;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,17 +34,26 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // Manual validate input instead of authenticate() of LoginRequest to avoid immediate login
+        // Validate input
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
 
+        // Get user with same email
         $user = User::where('email', $credentials['email'])->first();
 
+        // Check if user exists and password matches
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
+            ]);
+        }
+
+        // Check user active status
+        if (!$user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => 'This account has been deactivated. Please contact admin.',
             ]);
         }
 
@@ -52,8 +62,10 @@ class AuthenticatedSessionController extends Controller
 
         // Send OTP then redirect to otp page
         $user->sendOneTimePassword();
+
         return redirect()->route('otp');
     }
+
 
     /**
      * Destroy an authenticated session.
