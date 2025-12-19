@@ -1,9 +1,9 @@
 import { Link } from "@inertiajs/react";
 import { useEffect } from "react";
 import React from "react";
+import { ModalLink } from '@inertiaui/modal-react';
 
 export default function OptionsMenu({ menuId, setShowMenu, menuRef, options }) {
-
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -21,19 +21,36 @@ export default function OptionsMenu({ menuId, setShowMenu, menuRef, options }) {
             className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg p-2 dark:bg-gray-700"
         >
             {options.map((option, idx) => (
-                <Link key={idx} href={option.route}
-                    className={`block px-4 py-2 text-sm rounded-lg text-${option.color}-700 dark:text-${option.color}-300 hover:bg-gray-100 dark:hover:bg-gray-600`}
-                >
-                    <div className="flex items-center justify-start gap-4">
-                        {/* Force all icons to the same size */}
-                        <span className="flex-shrink-0">
-                            {option.icon && React.cloneElement(option.icon, { size: 16 })}
-                        </span>
-                        <span>{option.name}</span>
-                    </div>
-                </Link>
+                option.isModalLink ? (
+                    <ModalLink
+                        key={idx}
+                        href={option.route}
+                        closeButton={false}
+                        panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+                        className={`block px-4 py-2 text-sm rounded-lg text-${option.color}-700 dark:text-${option.color}-300 hover:bg-gray-100 dark:hover:bg-gray-600`}
+                    >
+                        <div className="flex items-center justify-start gap-4">
+                            {/* Force all icons to the same size */}
+                            <span className="flex-shrink-0">
+                                {option.icon && React.cloneElement(option.icon, { size: 16 })}
+                            </span>
+                            <span>{option.name}</span>
+                        </div>
+                    </ModalLink>
+                ) : (
+                    <Link key={idx} href={option.route}
+                        className={`block px-4 py-2 text-sm rounded-lg text-${option.color}-700 dark:text-${option.color}-300 hover:bg-gray-100 dark:hover:bg-gray-600`}
+                    >
+                        <div className="flex items-center justify-start gap-4">
+                            {/* Force all icons to the same size */}
+                            <span className="flex-shrink-0">
+                                {option.icon && React.cloneElement(option.icon, { size: 16 })}
+                            </span>
+                            <span>{option.name}</span>
+                        </div>
+                    </Link>)
             ))}
-        </div>
+        </div >
     );
 }
 

@@ -16,16 +16,18 @@ export default function ManageElectionHeader({ election }) {
 
     const ellipsisOptions = [
         {
-            "route": route("admin.election.edit", election.id),
-            "icon": <Pencil />,
-            "name": "Edit Election",
-            "color": "gray",
+            route: route("admin.election.edit", election.id),
+            icon: <Pencil />,
+            name: "Edit Election",
+            color: "gray",
+            isModalLink: true,
         },
         {
-            "route": route("admin.election.destroy", election.id),
-            "icon": <Trash2 />,
-            "name": "Delete Election",
-            "color": "red",
+            route: route("admin.election.destroy", election.id),
+            icon: <Trash2 />,
+            name: "Delete Election",
+            color: "red",
+            isModalLink: true,
         },
     ];
 
@@ -56,23 +58,6 @@ export default function ManageElectionHeader({ election }) {
                     {showMenu && (
 
                         <OptionsMenu menuId="election-menu" menuRef={menuRef} setShowMenu={setShowMenu} options={ellipsisOptions} />
-                        // <div
-                        //     id="election-menu"
-                        //     className="absolute right-0 mt-8 w-48 bg-white rounded-md shadow-lg py-2 dark:bg-gray-700"
-                        // >
-                        //     <Link
-                        //         // href={route("election.edit", election.id)}
-                        //         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        //     >
-                        //         Edit Election
-                        //     </Link>
-                        //     <Link
-                        //         // href={route("election.destroy", election.id)}
-                        //         className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        //     >
-                        //         Delete Election
-                        //     </Link>
-                        // </div>
                     )}
                 </div>
 
