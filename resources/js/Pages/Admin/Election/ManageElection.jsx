@@ -4,17 +4,28 @@ import { useState } from 'react';
 import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
 import ManagePosition from '@/Components/Election/ManagePosition';
 import ManagePartylist from '@/Components/Election/ManagePartylist';
+import DeleteModal from '@/Components/DeleteModal';
 
 export default function ManageElection({ election, positions = [], partylists = [] }) {
+    const [ confirmingElectionDeletion, setConfirmingElectionDeletion ] = useState(false);
+
     return (
         <>
             <Head title={election.title} />
 
             <div className="mx-auto max-w-7xl">
-                <ManageElectionHeader election={election} />
+                <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirmingElectionDeletion} />
                 <ManagePosition election={election} positions={positions} />
                 <ManagePartylist election={election} partylists={partylists} />
             </div>
+
+            <DeleteModal
+                entityName="election"
+                deleteRoute="admin.election.destroy"
+                params={election.id}
+                confirmingDeletion={confirmingElectionDeletion}
+                setConfirmingDeletion={setConfirmingElectionDeletion}
+            />
         </>
     );
 }

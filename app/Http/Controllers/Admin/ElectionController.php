@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Illuminate\Validation\Rule;
 use App\Models\Election;
 use App\Models\ElectionSchoolLevel;
 use App\Models\ElectionSetup;
@@ -46,7 +46,7 @@ class ElectionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Election/CreateElectionModal');
+        return Inertia::render('Admin/Election/ElectionCRUD/CreateElectionModal');
     }
 
     public function store(Request $request)
@@ -82,7 +82,7 @@ class ElectionController extends Controller
             'setup_positions' => false,
             'setup_partylist' => false,
             'setup_candidates' => false,
-            'setup_finalized' => false, 
+            'setup_finalized' => false,
         ]);
 
         return redirect()->route('admin.election.index')
@@ -117,7 +117,15 @@ class ElectionController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $election = Election::findOrFail($id);
+        $electionData = [
+            'id' => $election->id,
+            'title' => $election->title,
+            'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+        ];
+        return Inertia::render('Admin/Election/ElectionCRUD/EditElectionModal', [
+            "election" => $electionData,
+        ]);
     }
 
     /**
@@ -125,15 +133,46 @@ class ElectionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $election = Election::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => [
+                'required',
+                Rule::unique('elections', 'title')->ignore($id),
+            ],
+            'school_levels' => 'required|array|min:1',
+            'school_levels.*' => 'in:Grade School,Junior High,Senior High,College',
+        ]);
+
+        // 1. Update election itself
+        $election->update([
+            'title' => $validated['title'],
+        ]);
+
+        // 2. Clear existing school levels for this election
+        ElectionSchoolLevel::where('election_id', $election->id)->delete();
+
+        // 3. Store eligible school levels
+        foreach ($validated['school_levels'] as $level) {
+            ElectionSchoolLevel::create([
+                'election_id' => $election->id,
+                'school_level' => $level,
+            ]);
+        }
+
+        return redirect()->route('admin.election.show', $election->id)
+            ->with('success', 'Election updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Election $election)
     {
-        //
+        $election->delete();
+        return redirect()
+            ->route('admin.election.index')
+            ->with('success', 'Election deleted.');
     }
 
     public function dateFormat(Election $election)

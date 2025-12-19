@@ -3,7 +3,7 @@ import OptionsMenu from "../OptionsMenu";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function ManageElectionHeader({ election }) {
+export default function ManageElectionHeader({ election, setConfirmingElectionDeletion }) {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
@@ -12,6 +12,10 @@ export default function ManageElectionHeader({ election }) {
         "Junior High": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
         "Senior High": "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
         "College": "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
+    };
+
+    const handleDelete = (id) => {
+        setConfirmingElectionDeletion(true);
     };
 
     const ellipsisOptions = [
@@ -27,7 +31,8 @@ export default function ManageElectionHeader({ election }) {
             icon: <Trash2 />,
             name: "Delete Election",
             color: "red",
-            isModalLink: true,
+            isButton: true,
+            onClick: () => handleDelete(election.id), // without (), handle delete will run while rendering
         },
     ];
 
