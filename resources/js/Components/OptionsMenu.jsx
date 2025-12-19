@@ -41,7 +41,7 @@ export default function OptionsMenu({ menuId, setShowMenu, menuRef, options }) {
 
                 if (option.isButton) {
                     return (
-                        <button key={idx} type="button" onClick={option.onClick} className={baseClasses} >
+                        <button key={idx} type="button" onClick={option.onClick} className={`${baseClasses} w-full text-left`} >
                             {renderContent(option)}
                         </button>
                     );
