@@ -3,10 +3,10 @@ import { useForm, router } from '@inertiajs/react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
-import noElectionsFlat from '../../images/NoElectionsFlat.png';
+import noElectionsFlat from '../../../images/NoElectionsFlat.png';
 import PrimaryButton from '@/Components/PrimaryButton';
-import LongDropdown from './LongDropdown';
-import TextArea from './TextArea';
+import LongDropdown from '../LongDropdown';
+import TextArea from '../TextArea';
 
 export default function ManagePartylist({ election, partylists }) {
     const [showPartylist, setShowPartylist] = useState(false); // partylist component state management

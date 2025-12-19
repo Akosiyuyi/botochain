@@ -3,10 +3,11 @@ import { useForm, router } from '@inertiajs/react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
-import noElectionsFlat from '../../images/NoElectionsFlat.png';
+
+import noElectionsFlat from '../../../images/NoElectionsFlat.png';
 import PrimaryButton from '@/Components/PrimaryButton';
-import LongDropdown from './LongDropdown';
-import DeleteModal from './DeleteModal';
+import LongDropdown from '../LongDropdown';
+import DeleteModal from '../DeleteModal';
 import { Pencil, Trash2 } from 'lucide-react';
 
 export default function ManagePosition({ election, positions }) {

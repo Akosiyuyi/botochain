@@ -1,14 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import ManageElectionHeader from '@/Components/ManageElectionHeader';
-import ManagePosition from '@/Components/ManagePosition';
-import ManagePartylist from '@/Components/ManagePartylist';
+import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
+import ManagePosition from '@/Components/Election/ManagePosition';
+import ManagePartylist from '@/Components/Election/ManagePartylist';
 
 export default function ManageElection({ election, positions = [], partylists = [] }) {
-    const [showPartylist, setShowPartylist] = useState(false);
-
     return (
         <>
             <Head title={election.title} />
