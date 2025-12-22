@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -18,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             ColorThemesSeeder::class,
+            SchoolLevelSeeder::class, 
+            SchoolUnitSeeder::class,
         ]);
 
         // User::factory(10)->create();
