@@ -4,15 +4,7 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CheckboxGroup from "@/Components/CheckboxGroup";
 
-export default function ElectionCreationForm({ data, setData, errors, onSubmit, processing }) {
-
-    const schoolLevelOptions = [
-        { id: 1, label: "Grade School", value: "Grade School" },
-        { id: 2, label: "Junior High", value: "Junior High" },
-        { id: 3, label: "Senior High", value: "Senior High" },
-        { id: 4, label: "College", value: "College" },
-    ];
-
+export default function ElectionCreationForm({ data, setData, errors, onSubmit, processing, schoolLevelOptions }) {
     return (
         <form onSubmit={onSubmit}>
             {/* Election Title */}

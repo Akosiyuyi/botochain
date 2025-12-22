@@ -11,6 +11,7 @@ use App\Models\ElectionSchoolLevel;
 use App\Models\ElectionSetup;
 use App\Models\ColorTheme;
 use Carbon\Carbon;
+use App\Models\SchoolLevel;
 
 class ElectionController extends Controller
 {
@@ -46,7 +47,13 @@ class ElectionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Election/ElectionCRUD/CreateElectionModal');
+        $schoolLevelOptions = $this->schoolLevelOptions();
+        return Inertia::render(
+            'Admin/Election/ElectionCRUD/CreateElectionModal',
+            [
+                'schoolLevelOptions' => $schoolLevelOptions,
+            ]
+        );
     }
 
     public function store(Request $request)
@@ -123,8 +130,12 @@ class ElectionController extends Controller
             'title' => $election->title,
             'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
         ];
+
+        $schoolLevelOptions = $this->schoolLevelOptions();
+
         return Inertia::render('Admin/Election/ElectionCRUD/EditElectionModal', [
-            "election" => $electionData,
+            'election' => $electionData,
+            'schoolLevelOptions' => $schoolLevelOptions,
         ]);
     }
 
@@ -189,5 +200,17 @@ class ElectionController extends Controller
             return "{$days} days ago";
         }
         return $created->format('M d, Y');
+    }
+
+    public function schoolLevelOptions()
+    {
+        // Fetch levels from DB and transform to {id, label, value} 
+        $schoolLevelOptions = SchoolLevel::all()->map(fn($level) => [
+            'id' => $level->id,
+            'label' => $level->name,
+            'value' => $level->name,
+        ]);
+
+        return $schoolLevelOptions;
     }
 }

@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import ElectionCreationForm from '@/Components/Election/ElectionCreationForm';
 
-export default function CreateElectionModal() {
+export default function CreateElectionModal({ schoolLevelOptions }) {
   const { data, setData, post, processing, errors } = useForm({
     title: "",
     school_levels: [], // array for checkboxes
@@ -43,7 +43,7 @@ export default function CreateElectionModal() {
               </button>
             </header>
 
-            <ElectionCreationForm data={data} setData={setData} errors={errors} onSubmit={submit} processing={processing} />
+            <ElectionCreationForm data={data} setData={setData} errors={errors} onSubmit={submit} processing={processing} schoolLevelOptions={schoolLevelOptions} />
           </div>
         );
       }}
