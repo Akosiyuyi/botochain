@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\SchoolOptionsService;
 use App\Services\StudentValidationService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,10 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Students/CreateStudentModal');
+        $schoolOptions = $this->getSchoolOptions();
+        return Inertia::render('Admin/Students/CreateStudentModal', [
+            'schoolOptions' => $schoolOptions,
+        ]);
     }
 
     /**
@@ -78,8 +82,10 @@ class StudentController extends Controller
     public function edit(string $id)
     {
         $student = Student::find($id);
+        $schoolOptions = $this->getSchoolOptions();
         return Inertia::render('Admin/Students/EditStudentModal', [
             'student' => $student,
+            'schoolOptions' => $schoolOptions,
         ]);
     }
 
@@ -172,5 +178,12 @@ class StudentController extends Controller
                 'color' => 'red',
             ],
         ];
+    }
+
+    public function getSchoolOptions()
+    {
+        // get school level, year level and course options
+        $schoolOptions = SchoolOptionsService::getOptions();
+        return $schoolOptions;
     }
 }

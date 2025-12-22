@@ -12,6 +12,7 @@ use App\Models\ElectionSetup;
 use App\Models\ColorTheme;
 use Carbon\Carbon;
 use App\Models\SchoolLevel;
+use App\Services\SchoolOptionsService;
 
 class ElectionController extends Controller
 {
@@ -205,11 +206,7 @@ class ElectionController extends Controller
     public function schoolLevelOptions()
     {
         // Fetch levels from DB and transform to {id, label, value} 
-        $schoolLevelOptions = SchoolLevel::all()->map(fn($level) => [
-            'id' => $level->id,
-            'label' => $level->name,
-            'value' => $level->name,
-        ]);
+        $schoolLevelOptions = SchoolOptionsService::getSchoolLevelOptions();
 
         return $schoolLevelOptions;
     }

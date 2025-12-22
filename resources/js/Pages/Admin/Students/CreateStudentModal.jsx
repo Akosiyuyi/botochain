@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import StudentForm from '@/Components/StudentForm';
 
-export default function CreateStudentModal() {
+export default function CreateStudentModal({ schoolOptions }) {
     const { data, setData, post, processing, errors } = useForm({
         student_id: "",
         name: "",
@@ -59,6 +59,7 @@ export default function CreateStudentModal() {
                             errors={errors}
                             onSubmit={submit}
                             processing={processing}
+                            schoolOptions={schoolOptions}
                         />
                     </div>
                 );

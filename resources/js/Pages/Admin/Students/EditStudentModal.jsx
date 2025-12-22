@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import StudentForm from '@/Components/StudentForm';
 
-export default function EditStudentModal({ student }) {
+export default function EditStudentModal({ student, schoolOptions }) {
     const { data, setData, patch, processing, errors } = useForm({
         student_id: student?.student_id ?? "",
         name: student?.name ?? "",
@@ -51,6 +51,7 @@ export default function EditStudentModal({ student }) {
                             onSubmit={submit}
                             processing={processing}
                             isEdit={true}
+                            schoolOptions={schoolOptions}
                         />
                     </div>
                 );

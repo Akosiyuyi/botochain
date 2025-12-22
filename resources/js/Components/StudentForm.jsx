@@ -4,57 +4,9 @@ import InputLabel from "./InputLabel";
 import InputError from "./InputError";
 import PrimaryButton from "./PrimaryButton";
 
-export default function StudentForm({ data, setData, errors, onSubmit, processing, isEdit }) {
+export default function StudentForm({ data, setData, errors, onSubmit, processing, isEdit, schoolOptions }) {
     const isElemOrJhs = data.school_level === "Grade School" || data.school_level === "Junior High";
-
-    const schoolLevelOptions = [
-        { label: "Grade School", value: "Grade School" },
-        { label: "Junior High", value: "Junior High" },
-        { label: "Senior High", value: "Senior High" },
-        { label: "College", value: "College" },
-    ];
-
-    const yearLevelOptions = {
-        "Grade School": [
-            { label: "Grade 1", value: "Grade 1" },
-            { label: "Grade 2", value: "Grade 2" },
-            { label: "Grade 3", value: "Grade 3" },
-            { label: "Grade 4", value: "Grade 4" },
-            { label: "Grade 5", value: "Grade 5" },
-            { label: "Grade 6", value: "Grade 6" },
-        ],
-        "Junior High": [
-            { label: "Grade 7", value: "Grade 7" },
-            { label: "Grade 8", value: "Grade 8" },
-            { label: "Grade 9", value: "Grade 9" },
-            { label: "Grade 10", value: "Grade 10" },
-        ],
-        "Senior High": [
-            { label: "Grade 11", value: "Grade 11" },
-            { label: "Grade 12", value: "Grade 12" },
-        ],
-        "College": [
-            { label: "1st Year", value: "1st Year" },
-            { label: "2nd Year", value: "2nd Year" },
-            { label: "3rd Year", value: "3rd Year" },
-            { label: "4th Year", value: "4th Year" },
-        ],
-    };
-
-    const courselOptions = {
-        "Senior High": [
-            { label: "STEM", value: "STEM" },
-            { label: "ABM", value: "ABM" },
-            { label: "GAS", value: "GAS" },
-        ],
-        "College": [
-            { label: "BSCS", value: "BSCS" },
-            { label: "BSBA", value: "BSBA" },
-            { label: "BSED", value: "BSED" },
-            { label: "BEED", value: "BEED" },
-            { label: "BSHM", value: "BSHM" },
-        ],
-    };
+    const { schoolLevelOptions, yearLevelOptions, courseOptions } = schoolOptions;
 
     const statusOptions = [
         { label: "Enrolled", value: "Enrolled" },
@@ -129,7 +81,7 @@ export default function StudentForm({ data, setData, errors, onSubmit, processin
                     <InputLabel htmlFor="course" value="Course" />
                     <SelectInputForForms
                         id="course"
-                        options={courselOptions[data.school_level] || []}
+                        options={courseOptions[data.school_level] || []}
                         value={data.course}
                         onChange={(val) => setData("course", val)}
                         disabled={isElemOrJhs || !data.school_level}
