@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Validator;
+use App\Models\SchoolLevel;
+use App\Models\SchoolUnit;
 
 class StudentValidationService
 {
@@ -11,54 +13,75 @@ class StudentValidationService
         return Validator::make($data, [
             'student_id' => ['required', 'integer', 'min:20000000'],
             'name' => ['required', 'string', 'min:2', 'max:255'],
-            'school_level' => ['required', 'in:Grade School,Junior High,Senior High,College'],
+            
+            'school_level' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    // Check if school_level exists in DB
+                    if (!SchoolLevel::where('name', $value)->exists()) {
+                        $fail("Invalid school level: {$value}.");
+                    }
+                }
+            ],
+
             'year_level' => [
                 'required',
                 function ($attribute, $value, $fail) use ($data) {
-                    $school_level = $data['school_level'] ?? null;
+                    $schoolLevel = SchoolLevel::where('name', $data['school_level'] ?? null)->first();
 
-                    if ($school_level === 'Grade School' && !in_array($value, ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])) {
-                        $fail('Grade School year level must be Grade 1–6.');
+                    if (!$schoolLevel) {
+                        $fail('School level must be valid before checking year level.');
+                        return;
                     }
-                    if ($school_level === 'Junior High' && !in_array($value, ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])) {
-                        $fail('Junior High year level must be Grade 7–10.');
+
+                    // Check if a unit exists with this year_level (and optional course)
+                    $query = SchoolUnit::where('school_level_id', $schoolLevel->id)
+                        ->where('year_level', $value);
+
+                    if (!empty($data['course'])) {
+                        $query->where('course', $data['course']);
                     }
-                    if ($school_level === 'Senior High' && !in_array($value, ['Grade 11', 'Grade 12'])) {
-                        $fail('Senior High year level must be Grade 11–12.');
-                    }
-                    if ($school_level === 'College' && !in_array($value, ['1st Year', '2nd Year', '3rd Year', '4th Year'])) {
-                        $fail('College year level must be 1st–4th Year.');
+
+                    if (!$query->exists()) {
+                        $fail("Invalid year level/course combination for {$schoolLevel->name}.");
                     }
                 }
             ],
+
             'course' => [
                 function ($attribute, $value, $fail) use ($data) {
-                    $school_level = $data['school_level'] ?? null;
+                    $schoolLevel = SchoolLevel::where('name', $data['school_level'] ?? null)->first();
 
-                    // Grade School & Junior High: must be empty
-                    if (in_array($school_level, ['Grade School', 'Junior High']) && !empty($value)) {
-                        $fail('Course must be empty for Grade School and Junior High.');
+                    if (!$schoolLevel) {
+                        return; // already handled in school_level validation
                     }
 
-                    // Senior High: must not be empty and must be STEM, ABM, or GAS
-                    if ($school_level === 'Senior High') {
-                        if (empty($value)) {
-                            $fail('Course is required for Senior High.');
-                        } elseif (!in_array($value, ['STEM', 'ABM', 'GAS'])) {
-                            $fail('Senior High course must be STEM, ABM, or GAS.');
-                        }
+                    // Senior High and College must NOT be null
+                    if (in_array($schoolLevel->name, ['Senior High', 'College']) && empty($value)) {
+                        $fail("Course is required for {$schoolLevel->name}.");
+                        return;
                     }
 
-                    // College: must not be empty and must be BSCS, BSBA, BEED, or BSED
-                    if ($school_level === 'College') {
-                        if (empty($value)) {
-                            $fail('Course is required for College.');
-                        } elseif (!in_array($value, ['BSCS', 'BSBA', 'BEED', 'BSED', 'BSHM'])) {
-                            $fail('College course must be BSCS, BSBA, BEED, BSED or BSHM.');
+                    // Grade School & Junior High must be null
+                    if (in_array($schoolLevel->name, ['Grade School', 'Junior High']) && !empty($value)) {
+                        $fail("Course must be empty for {$schoolLevel->name}.");
+                        return;
+                    }
+
+                    // If course is provided, check if it exists for the given level/year
+                    if (!empty($value)) {
+                        $exists = SchoolUnit::where('school_level_id', $schoolLevel->id)
+                            ->where('year_level', $data['year_level'] ?? null)
+                            ->where('course', $value)
+                            ->exists();
+
+                        if (!$exists) {
+                            $fail("Invalid course '{$value}' for {$schoolLevel->name} {$data['year_level']}.");
                         }
                     }
                 }
             ],
+
             'section' => ['nullable', 'string', 'max:50'],
         ]);
     }
