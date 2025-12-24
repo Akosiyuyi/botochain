@@ -12,14 +12,24 @@ return new class extends Migration {
     {
         Schema::create('election_school_levels', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('election_id')->constrained()->cascadeOnDelete();
-            $table->enum('school_level', ['Grade School', 'Junior High', 'Senior High', 'College']);
+
+            // Link to election
+            $table->foreignId('election_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // Link to school_levels table instead of enum
+            $table->foreignId('school_level_id')
+                ->constrained('school_levels')
+                ->cascadeOnDelete();
+
             $table->timestamps();
 
-            $table->unique(['election_id', 'school_level']); // avoid duplicates
+            // Prevent duplicate election + school_level combinations
+            $table->unique(['election_id', 'school_level_id']);
         });
-
     }
+
 
     /**
      * Reverse the migrations.

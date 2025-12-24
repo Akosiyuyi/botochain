@@ -15,7 +15,7 @@ class SchoolOptionsService
         return SchoolLevel::all()->map(fn($level) => [
             'id' => $level->id,
             'label' => $level->name,
-            'value' => $level->name,
+            'value' => $level->id,
         ]);
     }
 

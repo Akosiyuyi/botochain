@@ -21,20 +21,25 @@ class ElectionController extends Controller
      */
     public function index()
     {
-        $elections = Election::with('setup.colorTheme', 'schoolLevels')
+        $elections = Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->get()
             ->map(function ($election) {
                 $created_at = $this->dateFormat($election);
+
                 return [
                     'id' => $election->id,
                     'title' => $election->title,
                     'image_path' => $election->setup->colorTheme->image_url,
-                    'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+                    // pull names from related SchoolLevel model
+                    'school_levels' => $election->schoolLevels
+                        ->map(fn($esl) => $esl->schoolLevel->name)
+                        ->toArray(),
                     'status' => $election->status,
                     'created_at' => $created_at,
                     'link' => route("admin.election.show", ['election' => $election->id]),
                 ];
             });
+
         return Inertia::render(
             'Admin/Election/Election',
             [
@@ -63,7 +68,7 @@ class ElectionController extends Controller
         $validated = $request->validate([
             'title' => 'required|unique:elections,title',
             'school_levels' => 'required|array|min:1',
-            'school_levels.*' => 'in:Grade School,Junior High,Senior High,College',
+            'school_levels.*' => 'exists:school_levels,id', // validate against IDs
         ]);
 
         // 2. Create the election
@@ -72,11 +77,11 @@ class ElectionController extends Controller
             'status' => 'pending',
         ]);
 
-        // 3. Store eligible school levels
-        foreach ($validated['school_levels'] as $level) {
+        // 3. Store eligible school levels (foreign key IDs)
+        foreach ($validated['school_levels'] as $levelId) {
             ElectionSchoolLevel::create([
                 'election_id' => $election->id,
-                'school_level' => $level,
+                'school_level_id' => $levelId,
             ]);
         }
 
@@ -97,12 +102,13 @@ class ElectionController extends Controller
             ->with('success', 'Election created successfully!');
     }
 
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $election = Election::with('setup.colorTheme', 'schoolLevels')
+        $election = Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->findOrFail($id);
 
         $created_at = $this->dateFormat($election);
@@ -111,25 +117,34 @@ class ElectionController extends Controller
             'id' => $election->id,
             'title' => $election->title,
             'image_path' => $election->setup->colorTheme->image_url,
-            'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+            // map through the nested relation to get names
+            'school_levels' => $election->schoolLevels
+                ->map(fn($esl) => $esl->schoolLevel->name)
+                ->toArray(),
             'created_at' => $created_at,
         ];
+
         return Inertia::render('Admin/Election/ManageElection', [
             'election' => $electionData,
             'positions' => $election->positions()->oldest()->get(),
         ]);
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        $election = Election::findOrFail($id);
+        $election = Election::with('schoolLevels.schoolLevel')->findOrFail($id);
+
         $electionData = [
             'id' => $election->id,
             'title' => $election->title,
-            'school_levels' => $election->schoolLevels->pluck('school_level')->toArray(),
+            // map through the relation to get names
+            'school_levels' => $election->schoolLevels
+                ->map(fn($esl) => $esl->schoolLevel->id)
+                ->toArray(),
         ];
 
         $schoolLevelOptions = $this->schoolLevelOptions();
@@ -139,6 +154,7 @@ class ElectionController extends Controller
             'schoolLevelOptions' => $schoolLevelOptions,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -153,7 +169,7 @@ class ElectionController extends Controller
                 Rule::unique('elections', 'title')->ignore($id),
             ],
             'school_levels' => 'required|array|min:1',
-            'school_levels.*' => 'in:Grade School,Junior High,Senior High,College',
+            'school_levels.*' => 'exists:school_levels,id', // validate IDs instead of names
         ]);
 
         // 1. Update election itself
@@ -164,11 +180,11 @@ class ElectionController extends Controller
         // 2. Clear existing school levels for this election
         ElectionSchoolLevel::where('election_id', $election->id)->delete();
 
-        // 3. Store eligible school levels
-        foreach ($validated['school_levels'] as $level) {
+        // 3. Store eligible school levels (foreign key IDs)
+        foreach ($validated['school_levels'] as $levelId) {
             ElectionSchoolLevel::create([
                 'election_id' => $election->id,
-                'school_level' => $level,
+                'school_level_id' => $levelId,
             ]);
         }
 
