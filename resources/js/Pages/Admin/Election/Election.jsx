@@ -3,7 +3,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import { Head } from '@inertiajs/react';
 import ElectionCard from '@/Components/Election/ElectionCard';
 import { ModalLink } from '@inertiaui/modal-react';
-import noElectionsFlat from '../../../../images/NoElectionsFlat.png';
+import noElectionsFlat from '@images/NoElectionsFlat.png';
 import { useState } from 'react';
 import LongDropdown from '@/Components/LongDropdown';
 
