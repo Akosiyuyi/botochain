@@ -47,7 +47,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
     // election resource route
     Route::resource('election', ElectionController::class);
-    Route::resource('election.positions', PositionController::class)->only(['store', 'destroy']);
+    Route::resource('election.positions', PositionController::class);
 });
 
     // voter routes

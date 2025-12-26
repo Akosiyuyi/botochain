@@ -71,9 +71,18 @@ class PositionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Election $election, Position $position)
     {
-        //
+        $validated = $request->validate([
+            'position' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('positions', 'name')->where(fn($query) => $query->where('election_id', $election->id))->ignore($position->id),
+            ],
+        ]);
+        $position->update(['name' => $validated['position'],]);
+        return redirect()->route('admin.election.show', $election->id)->with('success', 'Position updated.');
     }
 
     /**
