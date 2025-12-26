@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
-import ManagePosition from '@/Components/Election/ManagePosition';
+import ManagePosition from '@/Components/Election/Position/ManagePosition';
 import ManagePartylist from '@/Components/Election/ManagePartylist';
 import DeleteModal from '@/Components/DeleteModal';
 
