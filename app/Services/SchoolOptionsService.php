@@ -42,7 +42,7 @@ class SchoolOptionsService
                 })
                 ->values();
 
-            $options[$level->name] = $yearLevels;
+            $options[$level->id] = $yearLevels;
         }
 
         return $options;
@@ -67,7 +67,7 @@ class SchoolOptionsService
                 ->values();
 
             if ($courses->isNotEmpty()) {
-                $options[$level->name] = $courses;
+                $options[$level->id] = $courses;
             }
         }
 
