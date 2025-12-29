@@ -71,10 +71,10 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
                         election.school_levels.map((level, idx) => (
                             <span
                                 key={idx}
-                                className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${levelColors[level] || "bg-gray-100 text-gray-800"
+                                className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${levelColors[level.label] || "bg-gray-100 text-gray-800"
                                     }`}
                             >
-                                {level}
+                                {level.label}
                             </span>
                         ))
                     ) : (

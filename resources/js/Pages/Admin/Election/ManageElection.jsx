@@ -6,7 +6,7 @@ import ManagePosition from '@/Components/Election/Position/ManagePosition';
 import ManagePartylist from '@/Components/Election/ManagePartylist';
 import DeleteModal from '@/Components/DeleteModal';
 
-export default function ManageElection({ election, positions = [], partylists = [] }) {
+export default function ManageElection({ election, positions = [], partylists = [], yearLevelOptions, courseOptions }) {
     const [ confirmingElectionDeletion, setConfirmingElectionDeletion ] = useState(false);
 
     return (
@@ -15,7 +15,7 @@ export default function ManageElection({ election, positions = [], partylists = 
 
             <div className="mx-auto max-w-7xl">
                 <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirmingElectionDeletion} />
-                <ManagePosition election={election} positions={positions} />
+                <ManagePosition election={election} positions={positions} yearLevelOptions={yearLevelOptions} courseOptions={courseOptions}/>
                 <ManagePartylist election={election} partylists={partylists} />
             </div>
 
