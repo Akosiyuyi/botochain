@@ -7,43 +7,30 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 use App\Models\Election;
-use App\Models\ElectionSchoolLevel;
-use App\Models\ElectionSetup;
-use App\Models\ColorTheme;
-use Carbon\Carbon;
-use App\Models\SchoolLevel;
+use App\Services\ElectionService;
 use App\Services\SchoolOptionsService;
+use App\Services\ElectionViewService;
 
 class ElectionController extends Controller
 {
+    /**
+     * Inject application services via constructor (Dependency Injection).
+     */
+    public function __construct(
+        protected ElectionViewService $electionViewService,
+        protected ElectionService $electionService,
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $elections = Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
-            ->get()
-            ->map(function ($election) {
-                $created_at = $this->dateFormat($election);
-
-                return [
-                    'id' => $election->id,
-                    'title' => $election->title,
-                    'image_path' => $election->setup->colorTheme->image_url,
-                    // pull names from related SchoolLevel model
-                    'school_levels' => $election->schoolLevels
-                        ->map(fn($esl) => $esl->schoolLevel->name)
-                        ->toArray(),
-                    'status' => $election->status,
-                    'created_at' => $created_at,
-                    'link' => route("admin.election.show", ['election' => $election->id]),
-                ];
-            });
-
         return Inertia::render(
             'Admin/Election/Election',
             [
-                "elections" => $elections,
+                "elections" => $this->electionViewService->list(),
             ]
         );
     }
@@ -53,15 +40,17 @@ class ElectionController extends Controller
      */
     public function create()
     {
-        $schoolLevelOptions = $this->schoolLevelOptions();
         return Inertia::render(
             'Admin/Election/ElectionCRUD/CreateElectionModal',
             [
-                'schoolLevelOptions' => $schoolLevelOptions,
+                'schoolLevelOptions' => SchoolOptionsService::getSchoolLevelOptions(),
             ]
         );
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         // 1. Validate input
@@ -71,32 +60,7 @@ class ElectionController extends Controller
             'school_levels.*' => 'exists:school_levels,id', // validate against IDs
         ]);
 
-        // 2. Create the election
-        $election = Election::create([
-            'title' => $validated['title'],
-            'status' => 'pending',
-        ]);
-
-        // 3. Store eligible school levels (foreign key IDs)
-        foreach ($validated['school_levels'] as $levelId) {
-            ElectionSchoolLevel::create([
-                'election_id' => $election->id,
-                'school_level_id' => $levelId,
-            ]);
-        }
-
-        // 4. Assign a random theme
-        $theme = ColorTheme::inRandomOrder()->first();
-
-        // 5. Create election setup
-        ElectionSetup::create([
-            'election_id' => $election->id,
-            'theme_id' => $theme->id,
-            'setup_positions' => false,
-            'setup_partylist' => false,
-            'setup_candidates' => false,
-            'setup_finalized' => false,
-        ]);
+        $election = $this->electionService->create($validated);
 
         return redirect()->route('admin.election.index')
             ->with('success', 'Election created successfully!');
@@ -106,27 +70,15 @@ class ElectionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Election $election)
     {
-        $election = Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
-            ->findOrFail($id);
-
-        $created_at = $this->dateFormat($election);
-
-        $electionData = [
-            'id' => $election->id,
-            'title' => $election->title,
-            'image_path' => $election->setup->colorTheme->image_url,
-            // map through the nested relation to get names
-            'school_levels' => $election->schoolLevels
-                ->map(fn($esl) => $esl->schoolLevel->name)
-                ->toArray(),
-            'created_at' => $created_at,
-        ];
+        $election = $this->electionViewService->forShow($election);
 
         return Inertia::render('Admin/Election/ManageElection', [
-            'election' => $electionData,
-            'positions' => $election->positions()->oldest()->get(),
+            'election' => $election['election'],
+            'positions' => $election['positions'],
+            'yearLevelOptions' => $election['year_levels'],
+            'courseOptions' => $election['courses'],
         ]);
     }
 
@@ -134,24 +86,13 @@ class ElectionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Election $election)
     {
-        $election = Election::with('schoolLevels.schoolLevel')->findOrFail($id);
-
-        $electionData = [
-            'id' => $election->id,
-            'title' => $election->title,
-            // map through the relation to get names
-            'school_levels' => $election->schoolLevels
-                ->map(fn($esl) => $esl->schoolLevel->id)
-                ->toArray(),
-        ];
-
-        $schoolLevelOptions = $this->schoolLevelOptions();
+        $electionData = $this->electionViewService->forEdit($election);
 
         return Inertia::render('Admin/Election/ElectionCRUD/EditElectionModal', [
             'election' => $electionData,
-            'schoolLevelOptions' => $schoolLevelOptions,
+            'schoolLevelOptions' => SchoolOptionsService::getSchoolLevelOptions(),
         ]);
     }
 
@@ -172,21 +113,7 @@ class ElectionController extends Controller
             'school_levels.*' => 'exists:school_levels,id', // validate IDs instead of names
         ]);
 
-        // 1. Update election itself
-        $election->update([
-            'title' => $validated['title'],
-        ]);
-
-        // 2. Clear existing school levels for this election
-        ElectionSchoolLevel::where('election_id', $election->id)->delete();
-
-        // 3. Store eligible school levels (foreign key IDs)
-        foreach ($validated['school_levels'] as $levelId) {
-            ElectionSchoolLevel::create([
-                'election_id' => $election->id,
-                'school_level_id' => $levelId,
-            ]);
-        }
+        $election = $this->electionService->update($election, $validated);
 
         return redirect()->route('admin.election.show', $election->id)
             ->with('success', 'Election updated successfully!');
@@ -201,29 +128,5 @@ class ElectionController extends Controller
         return redirect()
             ->route('admin.election.index')
             ->with('success', 'Election deleted.');
-    }
-
-    public function dateFormat(Election $election)
-    {
-        $created = Carbon::parse($election->created_at);
-        if ($created->isToday()) {
-            return 'Today';
-        }
-        if ($created->isYesterday()) {
-            return 'Yesterday';
-        }
-        $days = floor($created->diffInDays(Carbon::now())); // always 2–6
-        if ($days <= 6) {
-            return "{$days} days ago";
-        }
-        return $created->format('M d, Y');
-    }
-
-    public function schoolLevelOptions()
-    {
-        // Fetch levels from DB and transform to {id, label, value} 
-        $schoolLevelOptions = SchoolOptionsService::getSchoolLevelOptions();
-
-        return $schoolLevelOptions;
     }
 }
