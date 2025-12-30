@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('school_units', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('school_level_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('school_level_id')->constrained('school_levels')->cascadeOnDelete();
             $table->string('year_level'); // e.g. "Grade 1", "Grade 7", "1st Year"
             $table->string('course')->nullable(); // e.g. "STEM", "BSCS"
             $table->timestamps();
