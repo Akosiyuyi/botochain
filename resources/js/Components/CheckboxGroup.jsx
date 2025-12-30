@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import Checkbox from "@/Components/Checkbox";
 
 export default function CheckboxGroup({
@@ -8,6 +8,9 @@ export default function CheckboxGroup({
     value = [],   // array of selected values
     onChange = () => { },
 }) {
+
+    const uid = useId();
+
     const handleChange = (optionValue, checked) => {
         if (checked) {
             onChange([...value, optionValue]);
@@ -19,7 +22,7 @@ export default function CheckboxGroup({
     return (
         <div id={id} className="mt-1 grid grid-cols-2 gap-2">
             {options.map((option, index) => {
-                const inputId = `${name}-${option.id || index}`;
+                const inputId = `${uid}-${option.id || index}`;
                 const isChecked = value.includes(option.value);
 
                 return (
