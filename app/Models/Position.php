@@ -15,4 +15,9 @@ class Position extends Model
     {
         return $this->belongsTo(Election::class);
     }
+
+    public function eligibleUnits()
+    {
+        return $this->hasMany(PositionEligibleUnit::class);
+    }
 }
