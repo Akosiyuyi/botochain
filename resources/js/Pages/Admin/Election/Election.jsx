@@ -10,73 +10,48 @@ import LongDropdown from '@/Components/LongDropdown';
 export default function Election({ elections, routes }) {
     const [showPending, setShowPending] = useState(true);
     const [showActive, setShowActive] = useState(true);
+
+    const renderElection = (status) => {
+        return (
+            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {elections.some(election => election.status === status) ? (
+                    elections
+                        .filter(election => election.status === status)
+                        .map(election => (
+                            <ElectionCard
+                                key={election.id}
+                                imagePath={election.image_path}
+                                title={election.title}
+                                schoolLevels={election.school_levels}
+                                created_at={election.created_at}
+                                button_label='Manage'
+                                link={election.link}
+                            />
+                        ))
+                ) : (
+                    <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
+                        <img
+                            src={noElectionsFlat}
+                            alt="No Elections"
+                            className="w-80"
+                        />
+                        <div className="text-gray-500 dark:text-gray-200 text-lg">
+                            There are no {status} elections.
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
     return (
         <>
             <Head title="Election" />
-
             <div className="mx-auto max-w-7xl">
                 <LongDropdown componentName={"Pending Elections"} showComponent={showPending} setShowComponent={setShowPending} />
-                {showPending && (
-                    <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {elections.some(election => election.status === "pending") ? (
-                            elections
-                                .filter(election => election.status === "pending")
-                                .map(election => (
-                                    <ElectionCard
-                                        key={election.id}
-                                        imagePath={election.image_path}
-                                        title={election.title}
-                                        schoolLevels={election.school_levels}
-                                        created_at={election.created_at}
-                                        button_label='Manage'
-                                        link={election.link}
-                                    />
-                                ))
-                        ) : (
-                            <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
-                                <img
-                                    src={noElectionsFlat}
-                                    alt="No Elections"
-                                    className="w-80"
-                                />
-                                <div className="text-gray-500 dark:text-gray-200 text-lg">
-                                    There are no pending elections.
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
+                {showPending && renderElection("pending")}
 
                 <LongDropdown className="mt-4" componentName={"Active Elections"} showComponent={showActive} setShowComponent={setShowActive} />
-                {showActive && (
-                    <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {elections.some(election => election.status === "active") ? (
-                            elections
-                                .filter(election => election.status === "active")
-                                .map(election => (
-                                    <ElectionCard
-                                        key={election.id}
-                                        imagePath={election.image_path}
-                                        title={election.title}
-                                        schoolLevels={election.school_levels}
-                                        created_at={election.created_at}
-                                        button_label='View'
-                                    />
-                                ))
-                        ) : (
-                            <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
-                                <img
-                                    src={noElectionsFlat}
-                                    alt="No Elections"
-                                    className="w-80"
-                                />
-                                <div className="text-gray-500 dark:text-gray-200 text-lg">
-                                    There are no active elections.
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
+                {showActive && renderElection("active")}
             </div>
         </>
     );
