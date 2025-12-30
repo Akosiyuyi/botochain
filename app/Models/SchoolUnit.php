@@ -11,7 +11,7 @@ class SchoolUnit extends Model
 
     protected $fillable = ['school_level_id', 'year_level', 'course'];
 
-    public function level()
+    public function schoolLevel()
     {
         return $this->belongsTo(SchoolLevel::class);
     }
