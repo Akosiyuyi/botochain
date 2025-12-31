@@ -5,47 +5,46 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Models\Position;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\PositionEligibleUnit;
+use App\Http\Requests\PositionRequest;
+use App\Services\PositionEligibilityService;
+use Illuminate\Support\Facades\DB;
 
 class PositionController extends Controller
 {
-    // store and destroy only
-
-
     /**
-     * Display a listing of the resource.
+     * Inject application services via constructor (Dependency Injection).
      */
-    public function index()
-    {
-        //
+    public function __construct(
+        protected PositionEligibilityService $positionEligibilityService,
+    ) {
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Election $election)
+    public function store(PositionRequest $request, Election $election)
     {
-        $validated = $request->validate([
-            'position' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('positions', 'name')->where(fn($query) => $query->where('election_id', $election->id)),
-            ],
-        ]);
+        $validated = $request->validated();
 
-        $election->positions()->create([
-            'name' => $validated['position'],
-        ]);
+        DB::transaction(function () use ($validated, $election) {
+
+            $position = $election->positions()->create([
+                'name' => $validated['position'],
+            ]);
+
+            $schoolUnitIds = $this->positionEligibilityService->resolveUnitIds(
+                $validated['school_levels'],
+                $validated['year_levels'] ?? [],
+                $validated['courses'] ?? []
+            );
+
+            PositionEligibleUnit::insert(
+                $schoolUnitIds->map(fn($id) => [
+                    'position_id' => $position->id,
+                    'school_unit_id' => $id,
+                ])->toArray()
+            );
+        });
 
         return redirect()
             ->route('admin.election.show', $election->id)
@@ -53,36 +52,44 @@ class PositionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Election $election, Position $position)
-    {
-        $validated = $request->validate([
-            'position' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('positions', 'name')->where(fn($query) => $query->where('election_id', $election->id))->ignore($position->id),
-            ],
-        ]);
-        $position->update(['name' => $validated['position'],]);
-        return redirect()->route('admin.election.show', $election->id)->with('success', 'Position updated.');
+    public function update(
+        PositionRequest $request,
+        Election $election,
+        Position $position
+    ) {
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $position) {
+
+            // 1. Update position name
+            $position->update([
+                'name' => $validated['position'],
+            ]);
+
+            // 2. Resolve new eligible units
+            $schoolUnitIds = $this->positionEligibilityService->resolveUnitIds(
+                $validated['school_levels'],
+                $validated['year_levels'] ?? [],
+                $validated['courses'] ?? []
+            );
+
+            // 3. Clear old eligibility
+            $position->eligibleUnits()->delete();
+
+            // 4. Insert new eligibility
+            PositionEligibleUnit::insert(
+                $schoolUnitIds->map(fn($id) => [
+                    'position_id' => $position->id,
+                    'school_unit_id' => $id,
+                ])->toArray()
+            );
+        });
+
+        return redirect()
+            ->route('admin.election.show', $election->id)
+            ->with('success', 'Position updated.');
     }
 
     /**

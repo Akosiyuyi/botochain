@@ -27,13 +27,21 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
             patch(route('admin.election.positions.update', [election.id, selectedId]), {
                 onSuccess: () => {
                     setData('position', '');
+                    setData('school_levels', []);
+                    setData('year_levels', []);
+                    setData('courses', []);
                     setIsEditing(false);
                     setSelectedId(null);
                 },
             });
         } else {
             post(route('admin.election.positions.store', election.id), {
-                onSuccess: () => setData('position', ''),
+                onSuccess: () => {
+                    setData('position', '');
+                    setData('school_levels', []);
+                    setData('year_levels', []);
+                    setData('courses', []);
+                },
             });
         }
     };
@@ -44,14 +52,51 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
 
         // reset form incase in edit mode
         setData('position', '');
+        setData('school_levels', []);
+        setData('year_levels', []);
+        setData('courses', []);
         setIsEditing(false);
     };
 
     const handleEdit = (pos) => {
         setIsEditing(true);
         setSelectedId(pos.id);
+
+        // 1️⃣ position name
         setData('position', pos.name);
+
+        // 2️⃣ school levels (ids)
+        const schoolLevels = pos.school_levels.map(level => level.value);
+
+        // 3️⃣ year levels (unique)
+        const yearLevels = [
+            ...new Set(
+                pos.school_levels.flatMap(level =>
+                    level.units.map(u => u.year_level)
+                )
+            ),
+        ];
+
+        // 4️⃣ courses (only if present)
+        const courses = [
+            ...new Set(
+                pos.school_levels.flatMap(level =>
+                    level.units
+                        .filter(u => u.course)
+                        .map(u => u.course)
+                )
+            ),
+        ];
+
+        // 5️⃣ set all at once (important!)
+        setData({
+            position: pos.name,
+            school_levels: schoolLevels,
+            year_levels: yearLevels,
+            courses,
+        });
     };
+
 
     const handleCancelEdit = () => {
         // reset all form fields
@@ -59,6 +104,9 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
 
         // explicitly clear the position field
         setData('position', '');
+        setData('school_levels', []);
+        setData('year_levels', []);
+        setData('courses', []);
 
         // exit edit mode
         setIsEditing(false);
@@ -81,13 +129,8 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
                         handleSubmit={handleSubmit}
                         handleCancelEdit={handleCancelEdit}
                         isEditing={isEditing}
-                        data={data}
-                        setData={setData}
-                        processing={processing}
-                        errors={errors}
-                        schoolLevelOptions={schoolLevelOptions}
-                        yearLevelOptions={yearLevelOptions}
-                        courseOptions={courseOptions}
+                        form={{ data, setData, errors, processing }}
+                        options={{ schoolLevelOptions, yearLevelOptions, courseOptions }}
                     />
 
                     {/* Right section - list positions */}
