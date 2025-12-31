@@ -91,7 +91,6 @@ class RegisteredUserController extends Controller
             ],
             'name' => [
                 'required',
-                'unique:users,name',
             ],
         ]);
 
