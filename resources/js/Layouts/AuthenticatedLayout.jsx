@@ -6,28 +6,30 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function AuthenticatedLayout({ header, children, button = false }) {
     const [showSidebar, setShowSidebar] = useState(false);  // side bar state management
-    const [openMenu, setOpenMenu ] = useState(null);
+    const [openMenu, setOpenMenu] = useState(null);
 
     // toast function
     const flash = usePage().props.flash ?? {}; // default to empty object
     const { errors } = usePage().props;
 
     useEffect(() => {
-        if (flash.success) toast.success(flash.success);
-        if (flash.error) toast.error(flash.error);
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
 
-        // Show validation errors
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+
         if (errors && Object.keys(errors).length > 0) {
-            Object.values(errors).forEach((errMsg) => {
-                toast.error(errMsg);
-            });
+            toast.error("Please fix the highlighted fields.");
         }
     }, [flash, errors]);
 
 
     return (
         // relative z-0 is just for ui-stacking to make modal in front
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 relative z-0"> 
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 relative z-0">
             {/* Toast container */}
             <Toaster
                 position="top-center"
