@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
-use App\Models\Student;
-use Inertia\Response;
+use App\Rules\ValidVoterId;
 
 class RegisteredUserController extends Controller
 {
@@ -77,17 +76,7 @@ class RegisteredUserController extends Controller
             'id_number' => [
                 'required',
                 'unique:users,id_number',
-                function ($attribute, $value, $fail) use ($request) {
-                    $student = Student::where('student_id', $value)->first();
-
-                    if (!$student) {
-                        $fail('The ID number does not exist in the student records.');
-                    } elseif ($student->name !== $request->name) {
-                        $fail('The name does not match the student record for this ID number.');
-                    } elseif ($student->status !== 'Enrolled') {
-                        $fail('The student ID is not currently enrolled.');
-                    }
-                },
+                new ValidVoterId($request->name),
             ],
             'name' => [
                 'required',
