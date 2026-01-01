@@ -17,7 +17,7 @@ class UniqueAdminName implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -29,7 +29,7 @@ class UniqueAdminName implements ValidationRule
             $query->where('id', '!=', $this->ignoreId);
         }
         if ($query->exists()) {
-            $fail($attribute, 'This name is already used by another admin.');
+            $fail('This name is already used by another admin.');
         }
     }
 }
