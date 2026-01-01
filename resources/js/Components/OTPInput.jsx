@@ -1,7 +1,6 @@
 import { useRef } from "react";
 
 export default function OTPInput({ length = 4, onComplete }) {
-  const values = Array(length).fill("");
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
@@ -12,11 +11,7 @@ export default function OTPInput({ length = 4, onComplete }) {
       inputsRef.current[index + 1].focus();
     }
 
-    // collect all values
-    const code = inputsRef.current.map((input) => input.value).join("");
-    if (code.length === length && onComplete) {
-      onComplete(code);
-    }
+    collectCode();
   };
 
   const handleKeyDown = (e, index) => {
@@ -25,9 +20,31 @@ export default function OTPInput({ length = 4, onComplete }) {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const paste = e.clipboardData.getData("text").replace(/[^0-9]/g, "");
+    if (!paste) return;
+
+    // distribute pasted digits into inputs
+    paste.split("").forEach((char, i) => {
+      if (i < length) {
+        inputsRef.current[i].value = char;
+      }
+    });
+
+    collectCode();
+  };
+
+  const collectCode = () => {
+    const code = inputsRef.current.map((input) => input.value).join("");
+    if (code.length === length && onComplete) {
+      onComplete(code);
+    }
+  };
+
   return (
     <div className="flex gap-x-3">
-      {values.map((_, i) => (
+      {Array.from({ length }).map((_, i) => (
         <input
           key={i}
           type="tel"
@@ -36,6 +53,7 @@ export default function OTPInput({ length = 4, onComplete }) {
           ref={(el) => (inputsRef.current[i] = el)}
           onChange={(e) => handleChange(e, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
+          onPaste={handlePaste}
           autoFocus={i === 0}
         />
       ))}
