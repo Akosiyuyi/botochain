@@ -8,6 +8,12 @@ use App\Models\User;
 
 class UniqueAdminName implements ValidationRule
 {
+
+    protected ?int $ignoreId;
+    public function __construct(?int $ignoreId = null)
+    {
+        $this->ignoreId = $ignoreId;
+    }
     /**
      * Run the validation rule.
      *
@@ -15,12 +21,15 @@ class UniqueAdminName implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $exists = User::where($attribute, $value)
-            ->whereHas('roles', fn($q) => $q->whereIn('name', ['admin', 'super-admin']))
-            ->exists();
+        $query = User::where($attribute, $value)
+            ->whereHas('roles', fn($q)
+                => $q->whereIn('name', ['admin', 'super-admin']));
 
-        if ($exists) {
-            $fail('This name is already used by another admin.');
+        if ($this->ignoreId) {
+            $query->where('id', '!=', $this->ignoreId);
+        }
+        if ($query->exists()) {
+            $fail($attribute, 'This name is already used by another admin.');
         }
     }
 }
