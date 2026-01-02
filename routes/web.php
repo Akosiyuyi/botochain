@@ -9,21 +9,19 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\PartylistController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use App\Http\Controllers\VoterController;
-use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
 
-    // register steps routes
+// register steps routes
 Route::post('/register/step2', [RegisteredUserController::class, 'validateStep2'])->name('register.step2');
 Route::post('/register/step1', [RegisteredUserController::class, 'validateStep1'])->name('register.step1');
 Route::post('/register/back', [RegisteredUserController::class, 'back'])->name('register.back');
 
 
-    // admin routes
+// admin routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin|super-admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -34,6 +32,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
         ->name('students.unenrollAll');
     Route::resource('students', StudentController::class);
 
+
     // bulk upload resource
     Route::get('/bulk-upload/template', [BulkUploadController::class, 'downloadTemplate'])
         ->name('bulk-upload.template');
@@ -41,21 +40,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
         ->name('bulk-upload.stage');
     Route::resource('bulk-upload', BulkUploadController::class);
 
+
     // user resource route
     Route::resource('users', UserController::class);
     Route::get('/login_logs', [LoginLogsController::class, 'index'])->name('login_logs');
 
+
     // election resource route
     Route::resource('election', ElectionController::class);
     Route::resource('election.positions', PositionController::class);
+    Route::resource('election.partylists', PartylistController::class);
 });
 
-    // voter routes
+
+// voter routes
 Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
     Route::get('/voter/dashboard', [VoterController::class, 'dashboard'])->name('voter.dashboard');
 });
 
-    // shared routes
+
+// shared routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
