@@ -133,7 +133,7 @@ class ElectionViewService
         return $electionData;
     }
 
-    public function dateFormat(Election $election)
+    private function dateFormat(Election $election)
     {
         $created = Carbon::parse($election->created_at);
         if ($created->isToday()) {
