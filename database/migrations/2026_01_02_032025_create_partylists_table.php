@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('election_id')->constrained('elections')->cascadeOnDelete();
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
