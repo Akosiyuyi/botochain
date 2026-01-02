@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('election_setup', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('election_id')->constrained('elections')->onDelete('cascade');
+            $table->foreignId('election_id')->constrained('elections')->cascadeOnDelete();
             $table->foreignId('theme_id')->nullable()->constrained('color_themes')->onDelete('set null');
             $table->boolean('setup_positions')->default(false);
             $table->boolean('setup_partylist')->default(false);
