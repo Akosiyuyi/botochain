@@ -76,9 +76,8 @@ class ElectionController extends Controller
 
         return Inertia::render('Admin/Election/ManageElection', [
             'election' => $election['election'],
-            'positions' => $election['positions'],
-            'yearLevelOptions' => $election['year_levels'],
-            'courseOptions' => $election['courses'],
+            'setup' => $election['setup'],
+            'schoolOptions' => $election['schoolOptions'],
         ]);
     }
 

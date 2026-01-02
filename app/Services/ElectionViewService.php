@@ -42,6 +42,7 @@ class ElectionViewService
             'setup.colorTheme',
             'schoolLevels.schoolLevel',
             'positions.eligibleUnits.schoolUnit.schoolLevel',
+            'partylists',
         );
 
         $created_at = $this->dateFormat($election);
@@ -88,15 +89,28 @@ class ElectionViewService
             ];
         });
 
+        $partylists = $election->partylists->map(function ($partylist) {
+            return [
+                'id' => $partylist->id,
+                'name' => $partylist->name,
+                'description' => $partylist->description,
+            ];
+        });
+
 
         $yearLevelOptions = SchoolOptionsService::getYearLevelOptions();
         $courseOptions = SchoolOptionsService::getCourseOptions();
 
         return [
             'election' => $electionData,
-            'positions' => $positions,
-            'year_levels' => $yearLevelOptions,
-            'courses' => $courseOptions,
+            'setup' => [
+                'positions' => $positions,
+                'partylists' => $partylists,
+            ],
+            'schoolOptions' => [
+                'yearLevelOptions' => $yearLevelOptions,
+                'courseOptions' => $courseOptions,
+            ],
         ];
     }
 
