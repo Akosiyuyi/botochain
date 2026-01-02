@@ -25,6 +25,7 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
         e.preventDefault();
         if (isEditing && selectedId) {
             patch(route('admin.election.positions.update', [election.id, selectedId]), {
+                preserveScroll: true,
                 onSuccess: () => {
                     setData('position', '');
                     setData('school_levels', []);
@@ -36,6 +37,7 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
             });
         } else {
             post(route('admin.election.positions.store', election.id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     setData('position', '');
                     setData('school_levels', []);
