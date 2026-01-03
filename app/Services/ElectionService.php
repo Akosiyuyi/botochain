@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Election;
 use App\Models\ColorTheme;
+use App\Models\Partylist;
 use Illuminate\Support\Facades\DB;
 
 class ElectionService
@@ -26,6 +27,11 @@ class ElectionService
                 'setup_partylist' => false,
                 'setup_candidates' => false,
                 'setup_finalized' => false,
+            ]);
+
+            $partylist = Partylist::create([
+                'election_id' => $election->id,
+                'name' => "Independent",
             ]);
 
             return $election;
