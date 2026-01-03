@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Position extends Model
+class Candidate extends Model
 {
     protected $fillable = [
         'election_id',
+        'partylist_id',
+        'position_id',
         'name',
+        'description,'
     ];
 
     public function election()
@@ -16,13 +19,13 @@ class Position extends Model
         return $this->belongsTo(Election::class);
     }
 
-    public function eligibleUnits()
+    public function partylist()
     {
-        return $this->hasMany(PositionEligibleUnit::class);
+        return $this->belongsTo(Partylist::class);
     }
 
-    public function candidates()
+    public function position()
     {
-        return $this->hasMany(Candidate::class);
+        return $this->belongsTo(Position::class);
     }
 }

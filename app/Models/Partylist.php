@@ -16,4 +16,9 @@ class Partylist extends Model
     {
         return $this->belongsTo(Election::class);
     }
+
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }
