@@ -64,7 +64,10 @@ export default forwardRef(function SelectInputForForms(
                 `}
                 {...props}
             >
-                <span>{value || "Choose an option"}</span>
+                <span>
+                    {options.find(opt => opt.value === value)?.label || "Choose an option"}
+                </span>
+
                 {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
 
@@ -82,9 +85,8 @@ export default forwardRef(function SelectInputForForms(
                                 onChange(opt.value);
                                 setOpen(false);
                             }}
-                            className={`px-3 py-2 cursor-pointer hover:bg-green-100 dark:hover:bg-green-800 ${
-                                value === opt.value ? "bg-green-200 dark:bg-green-700" : ""
-                            }`}
+                            className={`px-3 py-2 cursor-pointer hover:bg-green-100 dark:hover:bg-green-800 ${value === opt.value ? "bg-green-200 dark:bg-green-700" : ""
+                                }`}
                         >
                             {opt.label}
                         </li>
