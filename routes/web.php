@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PartylistController;
@@ -50,6 +51,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('election', ElectionController::class);
     Route::resource('election.positions', PositionController::class);
     Route::resource('election.partylists', PartylistController::class);
+    Route::resource('election.candidates', CandidateController::class);
 });
 
 
