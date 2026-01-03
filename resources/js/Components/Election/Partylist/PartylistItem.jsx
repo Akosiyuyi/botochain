@@ -54,16 +54,18 @@ export default function PartylistItem({
                     <button
                         type="button"
                         onClick={() => actions.handleEdit(partylist)}
+                        disabled = {partylist.name === "Independent"}
                         className="pr-3 text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 dark:hover:text-yellow-400
-                 transform transition-transform duration-150 hover:scale-110"
+                 transform transition-transform duration-150 hover:scale-110 disabled:cursor-not-allowed"
                     >
                         <Pencil className="size-4" />
                     </button>
                     <button
                         type="button"
                         onClick={() => actions.handleDelete(partylist.id)}
+                        disabled = {partylist.name === "Independent"}
                         className="pr-3 text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400
-                 transform transition-transform duration-150 hover:scale-110"
+                 transform transition-transform duration-150 hover:scale-110 disabled:cursor-not-allowed"
                     >
                         <Trash2 className="size-4" />
                     </button>
