@@ -3,11 +3,12 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
 import ManagePosition from '@/Components/Election/Position/ManagePosition';
-import ManagePartylist from '@/Components/Election/ManagePartylist';
+import ManagePartylist from '@/Components/Election/Partylist/ManagePartylist';
 import DeleteModal from '@/Components/DeleteModal';
+import ManageCandidate from '@/Components/Election/Candidate/ManageCandidate';
 
 export default function ManageElection({ election, setup, schoolOptions }) {
-    const { positions = [], partylists = [] } = setup;
+    const { positions = [], partylists = [], candidates = [] } = setup;
     const { yearLevelOptions, courseOptions } = schoolOptions;
 
     const [confirmingElectionDeletion, setConfirmingElectionDeletion] = useState(false);
@@ -20,6 +21,7 @@ export default function ManageElection({ election, setup, schoolOptions }) {
                 <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirmingElectionDeletion} />
                 <ManagePosition election={election} positions={positions} yearLevelOptions={yearLevelOptions} courseOptions={courseOptions} />
                 <ManagePartylist election={election} partylists={partylists} />
+                <ManageCandidate election={election}  candidates={candidates} />
             </div>
 
             <DeleteModal
