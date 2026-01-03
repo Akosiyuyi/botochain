@@ -183,7 +183,7 @@ class StudentController extends Controller
     public function getSchoolOptions()
     {
         // get school level, year level and course options
-        $schoolOptions = SchoolOptionsService::getOptions();
+        $schoolOptions = SchoolOptionsService::getOptions('name');
         return $schoolOptions;
     }
 }

@@ -3,26 +3,25 @@
 namespace App\Services;
 
 use App\Models\SchoolLevel;
-use App\Models\SchoolUnit;
 
 class SchoolOptionsService
 {
     /**
      * Get school level options
      */
-    public static function getSchoolLevelOptions()
+    public static function getSchoolLevelOptions($mode = 'id')
     {
         return SchoolLevel::all()->map(fn($level) => [
             'id' => $level->id,
             'label' => $level->name,
-            'value' => $level->id,
+            'value' => $mode === 'id' ? $level->id : $level->name,
         ]);
     }
 
     /**
      * Get year level options grouped by school level
      */
-    public static function getYearLevelOptions()
+    public static function getYearLevelOptions($mode = 'id')
     {
         $options = [];
         $levels = SchoolLevel::with('units')->get();
@@ -42,7 +41,8 @@ class SchoolOptionsService
                 })
                 ->values();
 
-            $options[$level->id] = $yearLevels;
+            $key = $mode === 'id' ? $level->id : $level->name;
+            $options[$key] = $yearLevels;
         }
 
         return $options;
@@ -51,7 +51,7 @@ class SchoolOptionsService
     /**
      * Get course options grouped by school level
      */
-    public static function getCourseOptions()
+    public static function getCourseOptions($mode = 'id')
     {
         $options = [];
         $levels = SchoolLevel::with('units')->get();
@@ -66,8 +66,10 @@ class SchoolOptionsService
                 ->unique('value')
                 ->values();
 
+            $key = $mode === 'id' ? $level->id : $level->name;
+
             if ($courses->isNotEmpty()) {
-                $options[$level->id] = $courses;
+                $options[$key] = $courses;
             }
         }
 
@@ -77,12 +79,12 @@ class SchoolOptionsService
     /**
      * Convenience method to get all options together
      */
-    public static function getOptions()
+    public static function getOptions($mode = 'id')
     {
         return [
-            'schoolLevelOptions' => self::getSchoolLevelOptions(),
-            'yearLevelOptions' => self::getYearLevelOptions(),
-            'courseOptions' => self::getCourseOptions(),
+            'schoolLevelOptions' => self::getSchoolLevelOptions($mode),
+            'yearLevelOptions' => self::getYearLevelOptions($mode),
+            'courseOptions' => self::getCourseOptions($mode),
         ];
     }
 }
