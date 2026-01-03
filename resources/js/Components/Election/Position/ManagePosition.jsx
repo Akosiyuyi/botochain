@@ -124,28 +124,32 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
                 showComponent={showPosition}
                 setShowComponent={setShowPosition}
             />
-            {showPosition && (
-                <div className="px-6 py-5 bg-white dark:bg-gray-800 shadow-sm rounded-lg mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Left section - create/edit position */}
-                    <PositionForm
-                        handleSubmit={handleSubmit}
-                        handleCancelEdit={handleCancelEdit}
-                        isEditing={isEditing}
-                        form={{ data, setData, errors, processing }}
-                        options={{ schoolLevelOptions, yearLevelOptions, courseOptions }}
-                    />
+            <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 
+                grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
+                transition-all duration-300 ease-out overflow-hidden 
+                ${showPosition ? 'px-6 py-5 mt-2 h-auto opacity-100 translate-y-0' :
+                    'px-0 py-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`} >
+                        
+                {/* Left section - create/edit position */}
+                <PositionForm
+                    handleSubmit={handleSubmit}
+                    handleCancelEdit={handleCancelEdit}
+                    isEditing={isEditing}
+                    form={{ data, setData, errors, processing }}
+                    options={{ schoolLevelOptions, yearLevelOptions, courseOptions }}
+                />
 
-                    {/* Right section - list positions */}
-                    <PositionList
-                        positions={positions}
-                        isEditing={isEditing}
-                        selectedId={selectedId}
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
-                        noElectionsFlat={noElectionsFlat}
-                    />
-                </div>
-            )}
+                {/* Right section - list positions */}
+                <PositionList
+                    positions={positions}
+                    isEditing={isEditing}
+                    selectedId={selectedId}
+                    handleEdit={handleEdit}
+                    handleDelete={handleDelete}
+                    noElectionsFlat={noElectionsFlat}
+                />
+            </div>
+
 
             {/* delete position modal */}
             <DeleteModal
