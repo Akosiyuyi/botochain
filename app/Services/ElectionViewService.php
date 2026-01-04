@@ -132,12 +132,34 @@ class ElectionViewService
             'value' => $pos->id,
         ])->values();
 
+        $setup = $election->setup;
+
+        $startDate = $setup?->start_time
+            ? Carbon::parse($setup->start_time)->toDateString()
+            : null;
+
+        $startTime = $setup?->start_time
+            ? Carbon::parse($setup->start_time)->format('H:i')
+            : null;
+
+        $endTime = $setup?->end_time
+            ? Carbon::parse($setup->end_time)->format('H:i')
+            : null;
+
+
+
         return [
             'election' => $electionData,
             'setup' => [
                 'positions' => $positions,
                 'partylists' => $partylists,
                 'candidates' => $candidates,
+                'schedule' => [
+                    'id' => $setup->id,
+                    'startDate' => $startDate,
+                    'startTime' => $startTime,
+                    'endTime' => $endTime,
+                ]
             ],
             'schoolOptions' => [
                 'yearLevelOptions' => $yearLevelOptions,

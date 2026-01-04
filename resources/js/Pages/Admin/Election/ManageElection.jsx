@@ -6,12 +6,18 @@ import ManagePosition from '@/Components/Election/Position/ManagePosition';
 import ManagePartylist from '@/Components/Election/Partylist/ManagePartylist';
 import DeleteModal from '@/Components/DeleteModal';
 import ManageCandidate from '@/Components/Election/Candidate/ManageCandidate';
+import ManageSchedule from '@/Components/Election/Schedule/ManageSchedule';
+import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function ManageElection({ election, setup, schoolOptions }) {
-    const { positions = [], partylists = [], candidates = [] } = setup;
+    const { positions = [], partylists = [], candidates = [], schedule = [] } = setup;
     const { yearLevelOptions, courseOptions, positionOptions, partylistOptions } = schoolOptions;
 
     const [confirmingElectionDeletion, setConfirmingElectionDeletion] = useState(false);
+
+    const publishElection = (e) => {
+        e.preventDefault();
+    }
 
     return (
         <>
@@ -22,6 +28,10 @@ export default function ManageElection({ election, setup, schoolOptions }) {
                 <ManagePosition election={election} positions={positions} yearLevelOptions={yearLevelOptions} courseOptions={courseOptions} />
                 <ManagePartylist election={election} partylists={partylists} />
                 <ManageCandidate election={election} candidates={candidates} options={{ positionOptions, partylistOptions }} />
+                <ManageSchedule election={election} schedule={schedule} />
+                <form className="mt-6 w-full flex justify-center"onSubmit={publishElection}>
+                    <PrimaryButton className="w-full sm:w-1/2 md:w-3/5 lg:w-1/3 flex justify-center">Finalize</PrimaryButton>
+                </form>
             </div>
 
             <DeleteModal

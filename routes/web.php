@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\BulkUploadController;
 use App\Http\Controllers\Admin\ElectionController;
+use App\Http\Controllers\Admin\ElectionSetupController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -52,6 +53,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::resource('election.positions', PositionController::class);
     Route::resource('election.partylists', PartylistController::class);
     Route::resource('election.candidates', CandidateController::class);
+    Route::resource('election.setup', ElectionSetupController::class);
 });
 
 
