@@ -5,7 +5,7 @@ import DeleteModal from '@/Components/DeleteModal';
 import CandidateForm from "./CandidateForm";
 import CandidateList from "./CandidateList";
 
-export default function ManageCandidate({ election, candidates, options }) {
+export default function ManageCandidate({ election, candidates, options, flag }) {
     const [showCandidate, setShowCandidate] = useState(false);
     const [confirmingDeletion, setConfirmingDeletion] = useState(false);
 
@@ -92,7 +92,7 @@ export default function ManageCandidate({ election, candidates, options }) {
 
     return (
         <div>
-            <LongDropdown className="mt-4" componentName={"Manage Candidate"} showComponent={showCandidate} setShowComponent={setShowCandidate} />
+            <LongDropdown className="mt-4" componentName={"Manage Candidate"} showComponent={showCandidate} setShowComponent={setShowCandidate} flag={flag} />
             <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 
             transition-all duration-300 ease-out overflow-hidden
                     ${showCandidate ? 'opacity-100 h-auto translate-y-0 mt-2 px-6 py-5' :

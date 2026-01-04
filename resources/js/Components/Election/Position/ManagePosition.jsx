@@ -6,11 +6,12 @@ import DeleteModal from '@/Components/DeleteModal';
 import PositionList from './PositionList';
 import PositionForm from './PositionForm';
 
-export default function ManagePosition({ election, positions, yearLevelOptions, courseOptions }) {
+export default function ManagePosition({ election, positions, options, flag }) {
     const [showPosition, setShowPosition] = useState(false);
     const [confirmingPositionDeletion, setConfirmingPositionDeletion] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [isEditing, setIsEditing] = useState(false); // track edit mode
+    const {yearLevelOptions, courseOptions} = options;
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
         position: '',
@@ -123,6 +124,7 @@ export default function ManagePosition({ election, positions, yearLevelOptions, 
                 componentName={"Manage Position"}
                 showComponent={showPosition}
                 setShowComponent={setShowPosition}
+                flag={flag}
             />
             <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 
                 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 

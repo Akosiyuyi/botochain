@@ -146,6 +146,12 @@ class ElectionViewService
             ? Carbon::parse($setup->end_time)->format('H:i')
             : null;
 
+        $flags = [
+            'position' => $setup->setup_positions,
+            'partylist' => $setup->setup_partylist,
+            'candidate' => $setup->setup_candidates,
+            'schedule' => ($setup?->start_time && $setup?->end_time) ? true : false,
+        ];
 
 
         return [
@@ -159,7 +165,8 @@ class ElectionViewService
                     'startDate' => $startDate,
                     'startTime' => $startTime,
                     'endTime' => $endTime,
-                ]
+                ],
+                'flags' => $flags,
             ],
             'schoolOptions' => [
                 'yearLevelOptions' => $yearLevelOptions,

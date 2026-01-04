@@ -8,7 +8,7 @@ import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { useEffect } from "react";
 
-export default function ManageSchedule({ election, schedule }) {
+export default function ManageSchedule({ election, schedule, flag }) {
     const [showSched, setShowSched] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
 
@@ -18,7 +18,7 @@ export default function ManageSchedule({ election, schedule }) {
         end_time: schedule?.endTime ?? "",
     });
 
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         patch(route('admin.election.setup.update', [election.id, schedule.id]), {
@@ -46,6 +46,7 @@ export default function ManageSchedule({ election, schedule }) {
                 componentName={"Manage Schedule"}
                 showComponent={showSched}
                 setShowComponent={setShowSched}
+                flag={flag}
             />
             <div
                 className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 

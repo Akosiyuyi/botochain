@@ -11,7 +11,7 @@ import PartylistItem from './PartylistItem';
 import DangerButton from '@/Components/DangerButton';
 import DeleteModal from '@/Components/DeleteModal';
 
-export default function ManagePartylist({ election, partylists }) {
+export default function ManagePartylist({ election, partylists, flag }) {
     const [showPartylist, setShowPartylist] = useState(false);
     const [confirmingDeletion, setConfirmingDeletion] = useState(false);
     const { data, setData, post, patch, processing, errors } = useForm({
@@ -83,7 +83,7 @@ export default function ManagePartylist({ election, partylists }) {
 
     return (
         <div>
-            <LongDropdown className="mt-4" componentName={"Manage Partylist"} showComponent={showPartylist} setShowComponent={setShowPartylist} />
+            <LongDropdown className="mt-4" componentName={"Manage Partylist"} showComponent={showPartylist} setShowComponent={setShowPartylist} flag={flag} />
             <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 
             transition-all duration-300 ease-out overflow-hidden
                     ${showPartylist ? 'opacity-100 h-auto translate-y-0 mt-2 px-6 py-5' :
