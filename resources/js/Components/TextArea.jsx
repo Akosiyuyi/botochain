@@ -32,8 +32,8 @@ export default forwardRef(function TextArea(
                 onChange={handleChange}
                 className={
                     "w-full rounded-md border-gray-300 shadow-sm p-2.5 " +
-                    "focus:border-green-600 focus:ring-green-600 " +
-                    "dark:bg-gray-900 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 " +
+                    " focus:border-green-600 focus:ring-green-600 placeholder:text-gray-500 " +
+                    " dark:bg-gray-900 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 " +
                     className
                 }
             />
