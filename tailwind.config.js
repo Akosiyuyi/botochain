@@ -11,6 +11,7 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
         './node_modules/@inertiaui/modal-react/src/**/*.{js,jsx}',
+        "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
     ],
 
     theme: {
@@ -47,5 +48,8 @@ export default {
         'dark:bg-red-900/30',
     ],
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        require('flowbite/plugin'),
+    ],
 };
