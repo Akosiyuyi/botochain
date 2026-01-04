@@ -11,7 +11,7 @@ class Candidate extends Model
         'partylist_id',
         'position_id',
         'name',
-        'description,'
+        'description',
     ];
 
     public function election()
