@@ -43,6 +43,8 @@ class ElectionViewService
             'schoolLevels.schoolLevel',
             'positions.eligibleUnits.schoolUnit.schoolLevel',
             'partylists',
+            'candidates.position',
+            'candidates.partylist',
         );
 
         $created_at = $this->dateFormat($election);
@@ -97,19 +99,51 @@ class ElectionViewService
             ];
         });
 
+        $candidates = $election->candidates->map(function ($candidate) {
+            return [
+                'id' => $candidate->id,
+                'partylist' => [
+                    'id' => $candidate->partylist_id,
+                    'name' => $candidate->partylist?->name,
+                ],
+                'position' => [
+                    'id' => $candidate->position_id,
+                    'name' => $candidate->position?->name,
+                ],
+                'name' => $candidate->name,
+                'description' => $candidate->description,
+            ];
+        });
+
 
         $yearLevelOptions = SchoolOptionsService::getYearLevelOptions();
         $courseOptions = SchoolOptionsService::getCourseOptions();
+
+
+        $partylistOptions = $election->partylists->map(fn($p) => [
+            'id' => $p->id,
+            'label' => $p->name,
+            'value' => $p->id,
+        ])->values();
+
+        $positionOptions = $election->positions->map(fn($pos) => [
+            'id' => $pos->id,
+            'label' => $pos->name,
+            'value' => $pos->id,
+        ])->values();
 
         return [
             'election' => $electionData,
             'setup' => [
                 'positions' => $positions,
                 'partylists' => $partylists,
+                'candidates' => $candidates,
             ],
             'schoolOptions' => [
                 'yearLevelOptions' => $yearLevelOptions,
                 'courseOptions' => $courseOptions,
+                'partylistOptions' => $partylistOptions,
+                'positionOptions' => $positionOptions,
             ],
         ];
     }

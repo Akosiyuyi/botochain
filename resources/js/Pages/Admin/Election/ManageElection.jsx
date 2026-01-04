@@ -9,7 +9,7 @@ import ManageCandidate from '@/Components/Election/Candidate/ManageCandidate';
 
 export default function ManageElection({ election, setup, schoolOptions }) {
     const { positions = [], partylists = [], candidates = [] } = setup;
-    const { yearLevelOptions, courseOptions } = schoolOptions;
+    const { yearLevelOptions, courseOptions, positionOptions, partylistOptions } = schoolOptions;
 
     const [confirmingElectionDeletion, setConfirmingElectionDeletion] = useState(false);
 
@@ -21,7 +21,7 @@ export default function ManageElection({ election, setup, schoolOptions }) {
                 <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirmingElectionDeletion} />
                 <ManagePosition election={election} positions={positions} yearLevelOptions={yearLevelOptions} courseOptions={courseOptions} />
                 <ManagePartylist election={election} partylists={partylists} />
-                <ManageCandidate election={election}  candidates={candidates} />
+                <ManageCandidate election={election} candidates={candidates} options={{ positionOptions, partylistOptions }} />
             </div>
 
             <DeleteModal
