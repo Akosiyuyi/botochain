@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ElectionStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -127,5 +128,21 @@ class ElectionController extends Controller
         return redirect()
             ->route('admin.election.index')
             ->with('success', 'Election deleted.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function finalize(Election $election)
+    {
+        $setup = $election->setup;
+        if ($setup->canFinalize()) {
+            $setup->setup_finalized = true;
+            $setup->save();
+            $election->status = ElectionStatus::Upcoming; // or whatever status you want 
+            $election->save();
+        }
+        return redirect()->route('admin.election.index')
+            ->with('success', 'Election finalized.');
     }
 }

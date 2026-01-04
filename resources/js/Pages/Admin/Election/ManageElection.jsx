@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
 import ManagePosition from '@/Components/Election/Position/ManagePosition';
@@ -15,11 +15,16 @@ export default function ManageElection({ election, setup, schoolOptions }) {
 
     const [confirmingElectionDeletion, setConfirmingElectionDeletion] = useState(false);
 
-    const publishElection = (e) => {
-        e.preventDefault();
-    }
+    const { patch, processing } = useForm({});
 
-    console.log(flags);
+    const finalizeElection = (e) => {
+        e.preventDefault();
+        patch(route('admin.election.finalize', election.id), {
+            preserveScroll: true,
+        });
+    };
+
+    const allFlagsTrue = flags.position && flags.partylist && flags.candidate && flags.schedule;
 
     return (
         <>
@@ -31,8 +36,14 @@ export default function ManageElection({ election, setup, schoolOptions }) {
                 <ManagePartylist election={election} partylists={partylists} flag={flags.partylist} />
                 <ManageCandidate election={election} candidates={candidates} options={{ positionOptions, partylistOptions }} flag={flags.candidate} />
                 <ManageSchedule election={election} schedule={schedule} flag={flags.schedule} />
-                <form className="mt-6 w-full flex justify-center" onSubmit={publishElection}>
-                    <PrimaryButton className="w-full sm:w-1/2 md:w-3/5 lg:w-1/3 flex justify-center">Finalize</PrimaryButton>
+                <form className="mt-6 w-full flex justify-center" onSubmit={finalizeElection}>
+                    <PrimaryButton
+                        className="w-full sm:w-1/2 md:w-3/5 lg:w-1/3 flex justify-center disabled:cursor-not-allowed"
+                        disabled={!allFlagsTrue || processing}
+                    >
+                        {processing ? "Finalizing..." : "Finalize"}
+                    </PrimaryButton>
+
                 </form>
             </div>
 
