@@ -46,6 +46,8 @@ class PositionController extends Controller
             );
         });
 
+        $election->setup->refreshSetupFlags();
+
         return redirect()
             ->route('admin.election.show', $election->id)
             ->with('success', 'Position added.');
@@ -98,6 +100,7 @@ class PositionController extends Controller
     public function destroy(Election $election, Position $position)
     {
         $position->delete();
+        $election->setup->refreshSetupFlags();
 
         return redirect()
             ->route('admin.election.show', $election->id)

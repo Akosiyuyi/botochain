@@ -40,6 +40,8 @@ class CandidateController extends Controller
             'description' => $validated['description'],
         ]);
 
+        $election->setup->refreshSetupFlags();
+
         return redirect()
             ->route('admin.election.show', $election->id)
             ->with('success', "Candidate {$candidate->name} added.");
@@ -89,6 +91,8 @@ class CandidateController extends Controller
     {
         $name = $candidate->name;
         $candidate->delete();
+
+        $election->setup->refreshSetupFlags();
 
         return redirect()
             ->route('admin.election.show', $election)

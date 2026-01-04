@@ -28,6 +28,8 @@ class PartylistController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
+        $election->setup->refreshSetupFlags();
+
         return redirect()
             ->route('admin.election.show', $election->id)
             ->with('success', "Partylist {$partylist->name} added.");
@@ -70,6 +72,7 @@ class PartylistController extends Controller
     public function destroy(Election $election, Partylist $partylist)
     {
         $partylist->delete();
+        $election->setup->refreshSetupFlags();
 
         return redirect()
             ->route('admin.election.show', $election->id)

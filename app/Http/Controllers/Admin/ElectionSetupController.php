@@ -64,6 +64,8 @@ class ElectionSetupController extends Controller
             'end_time' => $endDateTime,
         ]);
 
+        $election->setup->refreshSetupFlags();
+
         return redirect()
             ->route('admin.election.show', $election->id)
             ->with('success', 'Election schedule updated.');

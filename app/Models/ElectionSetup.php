@@ -40,4 +40,27 @@ class ElectionSetup extends Model
     {
         return $this->belongsTo(ColorTheme::class, 'theme_id');
     }
+
+    public function refreshSetupFlags(): void
+    {
+        $this->setup_positions = $this->election->positions()->count() > 0;
+        $this->setup_partylist = $this->election->partylists()->count() > 0;
+        $this->setup_candidates = $this->election->candidates()->count() > 0;
+
+        // Reset finalized if any flag goes false
+        if (!($this->setup_positions && $this->setup_partylist && $this->setup_candidates)) {
+            $this->setup_finalized = false;
+        }
+
+        $this->saveQuietly();
+    }
+
+    public function canFinalize(): bool
+    {
+        return $this->setup_positions
+            && $this->setup_partylist
+            && $this->setup_candidates
+            && $this->start_time
+            && $this->end_time;
+    }
 }

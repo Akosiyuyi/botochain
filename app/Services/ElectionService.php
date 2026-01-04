@@ -34,6 +34,7 @@ class ElectionService
                 'name' => "Independent",
             ]);
 
+            $election->setup->refreshSetupFlags();
             return $election;
         });
     }
