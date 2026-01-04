@@ -79,7 +79,7 @@ export default function PartylistItem({
                     <p className="text-md font-bold pb-2 text-gray-800 dark:text-gray-200">
                         Description
                     </p>
-                    <p className="text-sm font-normal pb-2 ml-4 text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                    <p className="text-sm font-normal pb-2 ml-4 text-gray-800 dark:text-gray-200">
                         {partylist.description || "No description provided."}
                     </p>
 
