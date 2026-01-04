@@ -23,9 +23,9 @@ export default function Election({ elections, routes }) {
                                 imagePath={election.image_path}
                                 title={election.title}
                                 schoolLevels={election.school_levels}
-                                created_at={election.created_at}
-                                button_label='Manage'
+                                date={election.display_date}
                                 link={election.link}
+                                mode={status}
                             />
                         ))
                 ) : (

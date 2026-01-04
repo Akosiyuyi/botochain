@@ -6,9 +6,9 @@ export default function ElectionCard({
     imagePath = "https://picsum.photos/seed/picsum/200/300",
     title = "Untitled Election",
     schoolLevels = [],
-    created_at = "No date",
-    button_label = "Unlabeled",
+    date = "No date",
     link = "#",
+    mode = "draft"   // default mode incase null
 }) {
     // Define colors per level
     const levelColors = {
@@ -17,6 +17,29 @@ export default function ElectionCard({
         "Senior High": "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
         "College": "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
     };
+
+    // Decide label + value based on mode 
+    const getDateLabel = () => {
+        switch (mode) {
+            case "draft": return { label: "Created", value: date || "No Date" };
+            case "upcoming": return { label: "Starts", value: date || "TBA" };
+            case "ongoing": return { label: "Ends", value: date || "TBA" };
+            case "ended": return { label: "Ended", value: date || "TBA" };
+            default: return { label: "Date", value: date };
+        }
+    };
+    const { label, value } = getDateLabel();
+
+    const getButtonLabel = () => {
+        switch (mode) {
+            case "draft": return { btn_label: "Manage" };
+            case "upcoming": return { btn_label: "View" };
+            case "ongoing": return { btn_label: "View" };
+            case "ended": return { btn_label: "View" };
+            default: return { btn_label: "Manage" };
+        }
+    }
+    const { btn_label } = getButtonLabel();
 
     return (
         <div className="relative bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-slate-800 dark:border-gray-700 overflow-hidden group transition hover:shadow-md">
@@ -33,7 +56,7 @@ export default function ElectionCard({
                     <div>
                         <h5 className="text-lg font-bold text-white">{title}</h5>
                         <h1 className="text-sm text-gray-100">
-                            Created <span>{created_at}</span>
+                            {label} <span>{value}</span>
                         </h1>
                     </div>
 
@@ -79,11 +102,11 @@ export default function ElectionCard({
                 </div>
                 <div className="flex items-center justify-between">
                     <h1 className="text-sm text-gray-600 dark:text-gray-400">
-                        Created <span>{created_at}</span>
+                        {label} <span>{value}</span>
                     </h1>
                     <Link href={link}>
-                        <PrimaryButton>
-                            {button_label}
+                        <PrimaryButton className="w-28 flex justify-center">
+                            {btn_label}
                             <svg
                                 className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
                                 aria-hidden="true"

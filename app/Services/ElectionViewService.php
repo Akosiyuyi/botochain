@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ElectionStatus;
 use App\Models\Election;
 use Carbon\Carbon;
 
@@ -15,7 +16,14 @@ class ElectionViewService
         $elections = Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->get()
             ->map(function ($election) {
-                $created_at = $this->dateFormat($election);
+                // Decide what to show based on status
+                $displayDate = match ($election->status) {
+                    ElectionStatus::Draft => $this->dateFormat($election->created_at),
+                    ElectionStatus::Upcoming => $this->dateFormat($election->setup->start_time),
+                    ElectionStatus::Ongoing => $this->dateFormat($election->setup->start_time) . ' → ' . $this->dateFormat($election->setup->end_time),
+                    ElectionStatus::Ended => $this->dateFormat($election->setup->end_time),
+                    default => $this->dateFormat($election->created_at),
+                };
 
                 return [
                     'id' => $election->id,
@@ -25,13 +33,14 @@ class ElectionViewService
                         ->map(fn($esl) => $esl->schoolLevel->name)
                         ->toArray(),
                     'status' => $election->status,
-                    'created_at' => $created_at,
+                    'display_date' => $displayDate,
                     'link' => route("admin.election.show", ['election' => $election->id]),
                 ];
             });
 
         return $elections;
     }
+
 
     /**
      * Get specified election details.
@@ -47,7 +56,7 @@ class ElectionViewService
             'candidates.partylist',
         );
 
-        $created_at = $this->dateFormat($election);
+        $created_at = $this->dateFormat($election->created_at);
 
         $electionData = [
             'id' => $election->id,
@@ -196,19 +205,27 @@ class ElectionViewService
         return $electionData;
     }
 
-    private function dateFormat(Election $election)
+
+    private function dateFormat(?Carbon $date): ?string
     {
-        $created = Carbon::parse($election->created_at);
-        if ($created->isToday()) {
+        if (!$date) {
+            return null;
+        }
+
+        if ($date->isToday()) {
             return 'Today';
         }
-        if ($created->isYesterday()) {
+
+        if ($date->isYesterday()) {
             return 'Yesterday';
         }
-        $days = floor($created->diffInDays(Carbon::now())); // always 2–6
-        if ($days <= 6) {
+
+        $days = floor($date->diffInDays(Carbon::now())); // always 2–6
+        if ($days >=2 && $days <= 6) {
             return "{$days} days ago";
         }
-        return $created->format('M d, Y');
+
+        return $date->format('M d, Y');
     }
+
 }
