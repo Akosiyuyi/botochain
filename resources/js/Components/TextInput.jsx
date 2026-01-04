@@ -27,7 +27,7 @@ export default forwardRef(function TextInput(
                 {...props}
                 type={inputType}
                 className={
-                    'w-full pr-10 rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600' + ' ' +
+                    'w-full pr-10 rounded-md border-gray-300 shadow-sm placeholder:text-gray-500 focus:border-green-600 focus:ring-green-600' + ' ' +
                     'dark:bg-gray-900 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 text-sm' + ' ' +
                     'disabled:cursor-not-allowed' + ' ' +
                     className
