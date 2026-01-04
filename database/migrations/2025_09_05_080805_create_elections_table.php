@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('elections', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->enum('status', ['pending', 'active', 'ended'])->default('pending');
+            $table->enum('status', ['draft', 'upcoming', 'ongoing', 'ended'])->default('draft');
             $table->char('final_hash', 100)->nullable();
             $table->timestamps();
 

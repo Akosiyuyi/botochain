@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ElectionStatus;
 
 class Election extends Model
 {
@@ -16,10 +17,11 @@ class Election extends Model
     ];
 
     protected $attributes = [
-        'status' => 'pending',
+        'status' => 'draft',
     ];
 
     protected $casts = [
+        'status' => ElectionStatus::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

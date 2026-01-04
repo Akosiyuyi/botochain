@@ -47,11 +47,11 @@ export default function Election({ elections, routes }) {
         <>
             <Head title="Election" />
             <div className="mx-auto max-w-7xl">
-                <LongDropdown componentName={"Pending Elections"} showComponent={showPending} setShowComponent={setShowPending} />
-                {showPending && renderElection("pending")}
+                <LongDropdown componentName={"Draft Elections"} showComponent={showPending} setShowComponent={setShowPending} />
+                {showPending && renderElection("draft")}
 
-                <LongDropdown className="mt-4" componentName={"Active Elections"} showComponent={showActive} setShowComponent={setShowActive} />
-                {showActive && renderElection("active")}
+                <LongDropdown className="mt-4" componentName={"Upcoming Elections"} showComponent={showActive} setShowComponent={setShowActive} />
+                {showActive && renderElection("upcoming")}
             </div>
         </>
     );

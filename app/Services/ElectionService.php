@@ -14,7 +14,7 @@ class ElectionService
         return DB::transaction(function () use ($data) {
             $election = Election::create([
                 'title' => $data['title'],
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             $this->syncSchoolLevels($election, $data['school_levels']);
