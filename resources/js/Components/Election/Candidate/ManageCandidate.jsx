@@ -93,7 +93,7 @@ export default function ManageCandidate({ election, candidates, options }) {
     return (
         <div>
             <LongDropdown className="mt-4" componentName={"Manage Candidate"} showComponent={showCandidate} setShowComponent={setShowCandidate} />
-            <div className={`px-6 py-5 bg-white dark:bg-gray-800 shadow-sm rounded-lg 
+            <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg 
             transition-all duration-300 ease-out overflow-hidden
                     ${showCandidate ? 'opacity-100 h-auto translate-y-0 mt-2 px-6 py-5' :
                     'opacity-0 h-0 translate-y-2 mt-0 px-0 py-0 pointer-events-none'}`} >
