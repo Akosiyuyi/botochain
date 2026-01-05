@@ -8,8 +8,10 @@ import { useState } from 'react';
 import LongDropdown from '@/Components/LongDropdown';
 
 export default function Election({ elections, routes }) {
-    const [showPending, setShowPending] = useState(true);
-    const [showActive, setShowActive] = useState(true);
+    const [showPending, setShowPending] = useState(false);
+    const [showUpcoming, setShowUpcoming] = useState(false);
+    const [showOngoing, setShowOngoing] = useState(false);
+    const [showEnded, setShowEnded] = useState(false);
 
     const renderElection = (status) => {
         return (
@@ -50,8 +52,14 @@ export default function Election({ elections, routes }) {
                 <LongDropdown componentName={"Draft Elections"} showComponent={showPending} setShowComponent={setShowPending} />
                 {showPending && renderElection("draft")}
 
-                <LongDropdown className="mt-4" componentName={"Upcoming Elections"} showComponent={showActive} setShowComponent={setShowActive} />
-                {showActive && renderElection("upcoming")}
+                <LongDropdown className="mt-4" componentName={"Upcoming Elections"} showComponent={showUpcoming} setShowComponent={setShowUpcoming} />
+                {showUpcoming && renderElection("upcoming")}
+
+                <LongDropdown className="mt-4" componentName={"Ongoing Elections"} showComponent={showOngoing} setShowComponent={setShowOngoing} />
+                {showOngoing && renderElection("ongoing")}
+
+                <LongDropdown className="mt-4" componentName={"Archived Elections"} showComponent={showEnded} setShowComponent={setShowEnded} />
+                {showEnded && renderElection("ended")}
             </div>
         </>
     );
