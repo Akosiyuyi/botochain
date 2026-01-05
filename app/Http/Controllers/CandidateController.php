@@ -15,7 +15,6 @@ class CandidateController extends Controller
      */
     public function store(Request $request, Election $election)
     {
-        // Validate request
         $validated = $request->validate([
             'partylist' => [
                 'required',
@@ -27,13 +26,19 @@ class CandidateController extends Controller
                 'integer',
                 Rule::exists('positions', 'id')->where('election_id', $election->id),
             ],
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('candidates', 'name')->where(function ($query) use ($election) {
+                    return $query->where('election_id', $election->id);
+                }),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        // Create candidate
         $candidate = Candidate::create([
-            'election_id' => $election->id,        // optional but recommended for integrity
+            'election_id' => $election->id,
             'partylist_id' => $validated['partylist'],
             'position_id' => $validated['position'],
             'name' => $validated['name'],
@@ -54,7 +59,6 @@ class CandidateController extends Controller
      */
     public function update(Request $request, Election $election, Candidate $candidate)
     {
-        // Validate request
         $validated = $request->validate([
             'partylist' => [
                 'required',
@@ -66,11 +70,17 @@ class CandidateController extends Controller
                 'integer',
                 Rule::exists('positions', 'id')->where('election_id', $candidate->election_id),
             ],
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('candidates', 'name')
+                    ->where(fn($query) => $query->where('election_id', $candidate->election_id))
+                    ->ignore($candidate->id),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        // Update candidate
         $candidate->update([
             'partylist_id' => $validated['partylist'],
             'position_id' => $validated['position'],
