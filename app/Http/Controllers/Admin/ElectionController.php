@@ -11,6 +11,7 @@ use App\Models\Election;
 use App\Services\ElectionService;
 use App\Services\SchoolOptionsService;
 use App\Services\ElectionViewService;
+use Carbon\Carbon;
 
 class ElectionController extends Controller
 {
@@ -139,20 +140,57 @@ class ElectionController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Finalize election and save status to upcoming
      */
     public function finalize(Election $election)
     {
         $setup = $election->setup;
+
+        // Check schedule validity
+        if ($setup->start_time && $setup->end_time) {
+            $now = Carbon::now();
+
+            if (Carbon::parse($setup->end_time)->lt($now)) {
+
+                $setup->start_time = null;
+                $setup->end_time = null;
+                $setup->save();
+
+                $election->setup->refreshSetupFlags();
+
+                return redirect()
+                    ->route('admin.election.show', $election->id)
+                    ->with('error', 'Election cannot be finalized because the schedule has already passed.');
+            }
+
+            if (Carbon::parse($setup->start_time)->lt($now)) {
+
+                $setup->start_time = null;
+                $setup->end_time = null;
+                $setup->save();
+
+                $election->setup->refreshSetupFlags();
+
+                return redirect()
+                    ->route('admin.election.show', $election->id)
+                    ->with('error', 'Election cannot be finalized because the start time is already past.');
+            }
+        }
+
+        // Proceed only if setup is valid
         if ($setup->canFinalize()) {
             $setup->setup_finalized = true;
             $setup->save();
-            $election->status = ElectionStatus::Upcoming; // or whatever status you want 
+
+            $election->status = ElectionStatus::Upcoming; // or whatever status you want
             $election->save();
         }
-        return redirect()->route('admin.election.index')
+
+        return redirect()
+            ->route('admin.election.index')
             ->with('success', 'Election finalized.');
     }
+
 
     public function restoreToDraft(Election $election)
     {
