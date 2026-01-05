@@ -172,6 +172,11 @@ export default function ManageSchedule({ election, schedule, flag }) {
                                 />
                             </div>
 
+                            <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">
+                                Once the election start date is less than 24 hours away, the setup can no longer be restored to draft or edited. This ensures voter aggregation and preparation remain consistent and prevents last‑minute changes.
+                            </p>
+
+
                             <div className="flex justify-center">
                                 <PrimaryButton
                                     className="mt-4 w-1/2 flex justify-center"
