@@ -73,14 +73,23 @@ class ElectionController extends Controller
      */
     public function show(Election $election)
     {
-        $election = $this->electionViewService->forShow($election);
+        $electionData = $this->electionViewService->forShow($election);
 
-        return Inertia::render('Admin/Election/ManageElection', [
-            'election' => $election['election'],
-            'setup' => $election['setup'],
-            'schoolOptions' => $election['schoolOptions'],
-        ]);
+        return match ($election->status) {
+            ElectionStatus::Draft => Inertia::render('Admin/Election/ManageElection', [
+                'election' => $electionData['election'],
+                'setup' => $electionData['setup'],
+                'schoolOptions' => $electionData['schoolOptions'],
+            ]),
+            ElectionStatus::Upcoming => Inertia::render('Admin/Election/UpcomingElection', [
+                'election' => $electionData['election'],
+                'setup' => $electionData['setup'],
+                'schoolOptions' => $electionData['schoolOptions'],
+            ]),
+            default => abort(404),
+        };
     }
+
 
 
     /**
