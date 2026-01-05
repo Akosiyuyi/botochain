@@ -23,7 +23,6 @@ export default function CandidateList({ candidates = [], actions, state }) {
         }));
     };
 
-
     return (
         <div className="space-y-4">
             {grouped.map(([positionName, list]) => {
@@ -31,25 +30,24 @@ export default function CandidateList({ candidates = [], actions, state }) {
                 return (
                     <section
                         key={positionName}
-                        className="rounded-lg border border-green-600 dark:border-green-700 bg-white dark:bg-gray-900"
+                        className="rounded-lg border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-900"
                     >
                         {/* Position header */}
                         <button
                             type="button"
                             onClick={() => togglePosition(positionName)}
                             className={`w-full flex justify-between items-center px-4 py-3 
-            bg-green-50 dark:bg-green-900/30
-            ${isOpen ? "border-b border-green-600 dark:border-green-700" : ""}
+            bg-gray-100 dark:bg-gray-700
+            ${isOpen ? "border-b border-gray-400 dark:border-gray-500" : "rounded-lg"}
             focus:outline-none rounded-t-lg`}
-
                         >
-                            <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                                 {positionName}
                             </h2>
                             {isOpen ? (
-                                <ChevronUp size={18} className="text-green-700 dark:text-green-200" />
+                                <ChevronUp size={18} className="text-gray-700 dark:text-gray-200" />
                             ) : (
-                                <ChevronDown size={18} className="text-green-700 dark:text-green-200" />
+                                <ChevronDown size={18} className="text-gray-700 dark:text-gray-200" />
                             )}
                         </button>
 
@@ -60,33 +58,43 @@ export default function CandidateList({ candidates = [], actions, state }) {
                         >
                             <div className="p-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 {list.map((c) => {
-                                    const isSelected = state?.isEditing && state?.selectedId === c.id;
+                                    const isSelected =
+                                        state?.isEditing && state?.selectedId === c.id;
 
                                     return (
                                         <div
                                             key={c.id}
                                             className={`rounded-md border p-3 
-                                                    ${isSelected ? "bg-yellow-50 dark:bg-yellow-900/30 border-yellow-600 dark:border-yellow-700" :
-                                                    "bg-gray-50 border-gray-200 dark:border-gray-700 dark:bg-gray-800"}`}
+                                                    ${isSelected
+                                                    ? "bg-yellow-50 dark:bg-yellow-900/30 border-yellow-600 dark:border-yellow-700"
+                                                    : "bg-gray-50 border-gray-200 dark:border-gray-700 dark:bg-gray-800"
+                                                }`}
                                         >
                                             <div className="text-sm">
                                                 <div
-                                                    className={`font-medium ${isSelected ? "text-yellow-700 dark:text-yellow-300" : "text-gray-900 dark:text-white"
+                                                    className={`font-medium ${isSelected
+                                                            ? "text-yellow-700 dark:text-yellow-300"
+                                                            : "text-gray-900 dark:text-white"
                                                         }`}
                                                 >
                                                     {c.name}
                                                 </div>
                                                 <div
-                                                    className={`mt-1 ${isSelected ? "text-yellow-700 dark:text-yellow-300" : "text-gray-700 dark:text-gray-300"
+                                                    className={`mt-1 ${isSelected
+                                                            ? "text-yellow-700 dark:text-yellow-300"
+                                                            : "text-gray-700 dark:text-gray-300"
                                                         }`}
                                                 >
                                                     {c.partylist?.name || "—"}
                                                 </div>
                                                 <div
-                                                    className={`mt-2 text-xs ${isSelected ? "text-yellow-700 dark:text-yellow-300" : "text-gray-500 dark:text-gray-400"
+                                                    className={`mt-2 text-xs ${isSelected
+                                                            ? "text-yellow-700 dark:text-yellow-300"
+                                                            : "text-gray-500 dark:text-gray-400"
                                                         } max-h-28 overflow-y-auto break-words`}
                                                 >
-                                                    {c.description || "No description provided."}
+                                                    {c.description ||
+                                                        "No description provided."}
                                                 </div>
                                             </div>
 
