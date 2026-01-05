@@ -51,6 +51,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     // election resource route
     Route::patch('/admin/election/{election}/finalize', [ElectionController::class, 'finalize'])
         ->name('election.finalize');
+    Route::patch('/admin/election/{election}/restoreToDraft', [ElectionController::class, 'restoreToDraft'])
+        ->name('election.restoreToDraft');
     Route::resource('election', ElectionController::class);
     Route::resource('election.positions', PositionController::class);
     Route::resource('election.partylists', PartylistController::class);

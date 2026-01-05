@@ -1,6 +1,6 @@
 import { Ellipsis } from "lucide-react";
 import OptionsMenu from "../OptionsMenu";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Undo2 } from "lucide-react";
 import { useState, useRef } from "react";
 
 export default function ManageElectionHeader({ election, setConfirmingElectionDeletion }) {
@@ -18,23 +18,46 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
         setConfirmingElectionDeletion(true);
     };
 
-    const ellipsisOptions = [
-        {
-            route: route("admin.election.edit", election.id),
-            icon: <Pencil />,
-            name: "Edit Election",
-            color: "gray",
-            isModalLink: true,
-        },
-        {
-            route: route("admin.election.destroy", election.id),
-            icon: <Trash2 />,
-            name: "Delete Election",
-            color: "red",
-            isButton: true,
-            onClick: () => handleDelete(election.id), // without (), handle delete will run while rendering
-        },
-    ];
+
+    const getEllipsisOptions = (election) => {
+        switch (election.status) {
+            case "draft":
+                return [
+                    {
+                        route: route("admin.election.edit", election.id),
+                        icon: <Pencil />,
+                        name: "Edit Election",
+                        color: "gray",
+                        isModalLink: true,
+                    },
+                    {
+                        route: route("admin.election.destroy", election.id),
+                        icon: <Trash2 />,
+                        name: "Delete Election",
+                        color: "red",
+                        isButton: true,
+                        onClick: () => handleDelete(election.id),
+                    },
+                ];
+
+            case "upcoming":
+                return [
+                    {
+                        route: route("admin.election.restoreToDraft", election.id),
+                        icon: <Undo2 />,
+                        name: "Restore to Draft",
+                        color: "red",
+                        isButton: true,
+                        onClick: () => handleDelete(election.id),
+                    },
+                ];
+
+            default:
+                return [];
+        }
+    };
+    const ellipsisOptions = getEllipsisOptions(election);
+
 
     const getDateLabel = () => {
         switch (election.status) {

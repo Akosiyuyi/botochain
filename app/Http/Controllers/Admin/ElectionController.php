@@ -154,4 +154,22 @@ class ElectionController extends Controller
         return redirect()->route('admin.election.index')
             ->with('success', 'Election finalized.');
     }
+
+    public function restoreToDraft(Election $election)
+    {
+        $setup = $election->setup;
+
+        // Only allow restoring if it was finalized
+        if ($setup->setup_finalized) {
+            $setup->setup_finalized = false;
+            $setup->save();
+
+            $election->status = ElectionStatus::Draft;
+            $election->save();
+        }
+
+        return redirect()->route('admin.election.index')
+            ->with('success', 'Election restored to draft.');
+    }
+
 }
