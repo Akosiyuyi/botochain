@@ -1,23 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
 import WarningModal from '@/Components/WarningModal';
+import PartylistSelectionView from '@/Components/Election/Partylist/PartylistSelectionView';
 
-export default function UpcomingElection({ election, setup, schoolOptions }) {
-    const { positions = [], partylists = [], candidates = [], schedule = [], flags } = setup;
-    const { yearLevelOptions, courseOptions, positionOptions, partylistOptions } = schoolOptions;
+export default function UpcomingElection({ election, setup }) {
+    const { positions = [], partylists = [], candidates = [] } = setup;
 
     const [confirm, setConfirm] = useState(false);
-
-    const finalizeElection = (e) => {
-        e.preventDefault();
-        patch(route('admin.election.finalize', election.id), {
-            preserveScroll: true,
-        });
-    };
-
-    const allFlagsTrue = flags.position && flags.partylist && flags.candidate && flags.schedule;
 
     return (
         <>
@@ -25,6 +16,7 @@ export default function UpcomingElection({ election, setup, schoolOptions }) {
 
             <div className="mx-auto max-w-7xl">
                 <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirm} />
+                <PartylistSelectionView partylists={partylists} positions={positions} candidates={candidates} />
             </div>
 
             <WarningModal
