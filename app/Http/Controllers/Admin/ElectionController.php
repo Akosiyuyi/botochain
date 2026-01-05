@@ -198,6 +198,18 @@ class ElectionController extends Controller
 
         // Only allow restoring if it was finalized
         if ($setup->setup_finalized) {
+            // Guard: block restore if start_time is within 24 hours
+            if ($setup->start_time) {
+                $hoursUntilStart = Carbon::now()->diffInHours(Carbon::parse($setup->start_time), false);
+
+                if ($hoursUntilStart <= 24) {
+                    return redirect()
+                        ->route('admin.election.show', $election->id)
+                        ->with('error', 'Election cannot be restored to draft because the start date is less than 24 hours away.');
+                }
+            }
+
+            // Proceed with restore
             $setup->setup_finalized = false;
             $setup->start_time = null;
             $setup->end_time = null;
