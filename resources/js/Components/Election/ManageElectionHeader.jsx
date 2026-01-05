@@ -36,6 +36,17 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
         },
     ];
 
+    const getDateLabel = () => {
+        switch (election.status) {
+            case "draft": return { label: "Created", value: election.display_date || "No Date" };
+            case "upcoming": return { label: "Starts", value: election.display_date || "TBA" };
+            case "ongoing": return { label: "Ends", value: election.display_date || "TBA" };
+            case "ended": return { label: "Ended", value: election.display_date || "TBA" };
+            default: return { label: "Date", value: election.display_date };
+        }
+    };
+    const { label, value } = getDateLabel();
+
     return (
         <div className="relative h-40 overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg">
             <img
@@ -49,7 +60,7 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
                     <div>
                         <h5 className="text-lg font-bold text-white">{election.title}</h5>
                         <h1 className="text-sm text-gray-100">
-                            Created <span>{election.created_at}</span>
+                            {label} <span>{value}</span>
                         </h1>
                     </div>
                     <button

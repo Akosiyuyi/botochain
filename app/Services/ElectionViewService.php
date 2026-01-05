@@ -56,7 +56,13 @@ class ElectionViewService
             'candidates.partylist',
         );
 
-        $created_at = $this->dateFormat($election->created_at);
+        $displayDate = match ($election->status) {
+            ElectionStatus::Draft => $this->dateFormat($election->created_at),
+            ElectionStatus::Upcoming => $this->dateFormat($election->setup->start_time),
+            ElectionStatus::Ongoing => $this->dateFormat($election->setup->start_time) . ' → ' . $this->dateFormat($election->setup->end_time),
+            ElectionStatus::Ended => $this->dateFormat($election->setup->end_time),
+            default => $this->dateFormat($election->created_at),
+        };
 
         $electionData = [
             'id' => $election->id,
@@ -70,7 +76,8 @@ class ElectionViewService
                 ])
                 ->values()
                 ->toArray(),
-            'created_at' => $created_at,
+            'display_date' => $displayDate,
+            'status' => $election->status,
         ];
 
         $positions = $election->positions->map(function ($position) {
@@ -221,7 +228,7 @@ class ElectionViewService
         }
 
         $days = floor($date->diffInDays(Carbon::now())); // always 2–6
-        if ($days >=2 && $days <= 6) {
+        if ($days >= 2 && $days <= 6) {
             return "{$days} days ago";
         }
 
