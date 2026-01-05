@@ -21,10 +21,10 @@ export default function ElectionCard({
     // Decide label + value based on mode 
     const getDateLabel = () => {
         switch (mode) {
-            case "draft": return { label: "Created", value: date || "No Date" };
-            case "upcoming": return { label: "Starts", value: date || "TBA" };
-            case "ongoing": return { label: "Ends", value: date || "TBA" };
-            case "ended": return { label: "Ended", value: date || "TBA" };
+            case "draft": return { label: "Created Date:", value: date || "No Date" };
+            case "upcoming": return { label: "Start Date:", value: date || "TBA" };
+            case "ongoing": return { label: "Open Date:", value: date || "TBA" };
+            case "ended": return { label: "End Date:", value: date || "TBA" };
             default: return { label: "Date", value: date };
         }
     };

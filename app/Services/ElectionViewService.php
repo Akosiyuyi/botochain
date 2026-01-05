@@ -64,6 +64,12 @@ class ElectionViewService
             default => $this->dateFormat($election->created_at),
         };
 
+        $displayTime = match ($election->status) {
+            ElectionStatus::Upcoming => $this->timeFormat($election->setup->start_time),
+            ElectionStatus::Ongoing => $this->timeFormat($election->setup->start_time) . ' → ' . $this->timeFormat($election->setup->end_time),
+            default => "",
+        };
+
         $electionData = [
             'id' => $election->id,
             'title' => $election->title,
@@ -77,6 +83,7 @@ class ElectionViewService
                 ->values()
                 ->toArray(),
             'display_date' => $displayDate,
+            'display_time' => $displayTime,
             'status' => $election->status,
         ];
 
@@ -219,20 +226,19 @@ class ElectionViewService
             return null;
         }
 
-        if ($date->isToday()) {
-            return 'Today';
-        }
-
-        if ($date->isYesterday()) {
-            return 'Yesterday';
-        }
-
-        $days = floor($date->diffInDays(Carbon::now())); // always 2–6
-        if ($days >= 2 && $days <= 6) {
-            return "{$days} days ago";
-        }
-
         return $date->format('M d, Y');
+    }
+
+    private function timeFormat(?Carbon $time)
+    {
+        if (!$time) {
+            return null;
+        }
+
+        $extractedTime = $time->format('h:i A');
+        // Output: 02:30:00 PM
+
+        return $extractedTime;
     }
 
 }

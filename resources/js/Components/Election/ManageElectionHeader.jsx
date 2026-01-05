@@ -1,6 +1,6 @@
 import { Ellipsis } from "lucide-react";
 import OptionsMenu from "../OptionsMenu";
-import { Pencil, Trash2, Undo2 } from "lucide-react";
+import { Pencil, Trash2, Undo2, Calendar, Clock } from "lucide-react";
 import { useState, useRef } from "react";
 
 export default function ManageElectionHeader({ election, setConfirmingElectionDeletion }) {
@@ -61,14 +61,23 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
 
     const getDateLabel = () => {
         switch (election.status) {
-            case "draft": return { label: "Created", value: election.display_date || "No Date" };
-            case "upcoming": return { label: "Starts", value: election.display_date || "TBA" };
-            case "ongoing": return { label: "Ends", value: election.display_date || "TBA" };
-            case "ended": return { label: "Ended", value: election.display_date || "TBA" };
-            default: return { label: "Date", value: election.display_date };
+            case "draft": return { label: "Created Date:", value: election.display_date || "No Date" };
+            case "upcoming": return { label: "Start Date:", value: election.display_date || "TBA" };
+            case "ongoing": return { label: "Open Date:", value: election.display_date || "TBA" };
+            case "ended": return { label: "End Date:", value: election.display_date || "TBA" };
+            default: return { label: "Date:", value: election.display_date };
         }
     };
     const { label, value } = getDateLabel();
+
+    const getTimeLabel = () => {
+        switch (election.status) {
+            case "upcoming": return { time_label: "Start Time:", time_value: election.display_time || "TBA" };
+            case "ongoing": return { time_label: "During:", time_value: election.display_time || "TBA" };
+            default: return { time_label: null, time_value: null }
+        }
+    }
+    const { time_label, time_value } = getTimeLabel();
 
     return (
         <div className="relative h-40 overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg">
@@ -82,9 +91,21 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
                 <div className="flex justify-between relative" ref={menuRef}>
                     <div>
                         <h5 className="text-lg font-bold text-white">{election.title}</h5>
-                        <h1 className="text-sm text-gray-100">
-                            {label} <span>{value}</span>
+
+                        {/* Date */}
+                        <h1 className="text-sm text-gray-100 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-blue-400" />
+                            {label} <span className="text-blue-400 font-medium">{value}</span>
                         </h1>
+
+                        {/* Time */}
+                        {time_label && (
+                            <h1 className="text-sm text-gray-100 flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-green-400" />
+                                {time_label} <span className="text-green-400 font-medium">{time_value}</span>
+                            </h1>
+                        )}
+
                     </div>
                     <button
                         type="button"
