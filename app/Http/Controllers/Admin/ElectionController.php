@@ -162,10 +162,14 @@ class ElectionController extends Controller
         // Only allow restoring if it was finalized
         if ($setup->setup_finalized) {
             $setup->setup_finalized = false;
+            $setup->start_time = null;
+            $setup->end_time = null;
             $setup->save();
 
             $election->status = ElectionStatus::Draft;
             $election->save();
+
+            $election->setup->refreshSetupFlags();
         }
 
         return redirect()->route('admin.election.index')

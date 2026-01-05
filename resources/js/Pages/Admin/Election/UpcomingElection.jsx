@@ -34,7 +34,7 @@ export default function UpcomingElection({ election, setup, schoolOptions }) {
                 handleState={{ confirm, setConfirm }}
                 method='patch'
                 modalTitle='Restore Election to Draft'
-                description='Reverting to draft means the election is editable once more. It will not be visible as upcoming or ongoing until you finalize it again.'
+                description="Restoring this election to draft will make it editable again. It will no longer appear as upcoming or ongoing until re‑finalized, and its schedule will be cleared and must be set up again."
             />
         </>
     );
