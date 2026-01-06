@@ -22,7 +22,7 @@ export default function StudentsList({ students, stats }) {
                             header={[
                                 { key: "student_id", label: "Student ID", sortable: true },
                                 { key: "name", label: "Name", sortable: true },
-                                { key: "school_level", label: "School Level" },
+                                { key: "school_level", label: "School Level", sortable: true },
                                 { key: "year_level", label: "Year Level" },
                                 { key: "course", label: "Course" },
                                 { key: "section", label: "Section" },
