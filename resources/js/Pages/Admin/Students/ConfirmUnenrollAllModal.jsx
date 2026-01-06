@@ -2,6 +2,7 @@ import { Modal } from '@inertiaui/modal-react';
 import { X } from "lucide-react";
 import { useForm } from '@inertiajs/react';
 import DangerButton from '@/Components/DangerButton';
+import SecondaryButton from '@/Components/SecondaryButton';
 
 export default function ConfirmUnenrollAllModal() {
     const { patch } = useForm({});
@@ -36,18 +37,14 @@ export default function ConfirmUnenrollAllModal() {
                             role="alert"
                             className="mt-1 text-sm text-gray-600 dark:text-gray-400"
                         >
-                            Once all students are set to <span className="font-semibold">Unenrolled</span>, 
+                            Once all students are set to <span className="font-semibold">Unenrolled</span>,
                             their corresponding accounts will also be deactivated and access to the system revoked.
                         </p>
 
                         <div className="mt-6 flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={close}
-                                className="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
-                            >
+                            <SecondaryButton onClick={close}>
                                 Cancel
-                            </button>
+                            </SecondaryButton>
                             <DangerButton onClick={submit}>
                                 Confirm Unenroll All
                             </DangerButton>
