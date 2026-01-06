@@ -53,6 +53,11 @@ class Election extends Model
         return $this->hasMany(Candidate::class);
     }
 
+    public function eligibleVoters()
+    {
+        return $this->hasMany(EligibleVoter::class);
+    }
+
     // Helper: get school_levels as plain array
     public function getSchoolLevelListAttribute()
     {

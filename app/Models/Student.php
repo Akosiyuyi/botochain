@@ -20,10 +20,16 @@ class Student extends Model
     ];
 
     protected $casts = [
-        'year_level'=> 'string',
+        'year_level' => 'string',
     ];
 
-    public function scopeOfSchoolLevel($query, $level){
+    public function scopeOfSchoolLevel($query, $level)
+    {
         return $query->where('school_level', $level);
+    }
+
+    public function eligibleVoters()
+    {
+        return $this->hasMany(EligibleVoter::class);
     }
 }
