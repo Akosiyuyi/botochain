@@ -66,14 +66,15 @@ class BulkUploadController extends Controller
     private function runImport(Request $request, string $mode)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,csv',
+            'file' => 'required|file|mimes:xlsx,csv,txt'
         ]);
 
-        // 👉 Extract the top-level category from row 1 (A1)
         $spreadsheet = IOFactory::load($request->file('file')->getRealPath());
-        $expectedSchoolLevel = $spreadsheet->getActiveSheet()->getCell('A1')->getValue();
+        $raw = $spreadsheet->getActiveSheet()->getCell('A1')->getValue();
+        $expectedSchoolLevel = $raw instanceof \PhpOffice\PhpSpreadsheet\RichText\RichText
+            ? trim($raw->getPlainText())
+            : trim((string) $raw);
 
-        // 👉 Run import in preview mode
         $import = new StudentsImport($mode, $expectedSchoolLevel);
         Excel::import($import, $request->file('file'));
 
