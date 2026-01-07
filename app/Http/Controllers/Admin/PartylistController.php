@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Election;
 use Illuminate\Http\Request;
 use App\Models\Partylist;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
 
 class PartylistController extends Controller
 {

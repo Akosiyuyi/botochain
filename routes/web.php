@@ -8,10 +8,10 @@ use App\Http\Controllers\Admin\ElectionSetupController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PartylistController;
+use App\Http\Controllers\Admin\PartylistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VoterController;
 
