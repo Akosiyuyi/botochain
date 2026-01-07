@@ -11,7 +11,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function ResponsiveHorizontalBarChart({ labels, values }) {
+export default function ResponsiveHorizontalBarChart({ labels, values, eligibleVoters }) {
     const hasData = labels.length > 0 && values.length > 0;
 
     const data = {
@@ -33,6 +33,17 @@ export default function ResponsiveHorizontalBarChart({ labels, values }) {
         plugins: {
             legend: {
                 display: false, // 👈 disables the legend ("Votes") 
+            },
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: eligibleVoters, // 👈 your custom last number 
+                ticks: { 
+                    font: {
+                        size: 14,
+                    },
+                },
             },
         },
     };

@@ -16,9 +16,9 @@ export default function OngoingElection({ election, setup }) {
 
     // Dummy data const 
     const dummyData = {
-        title: "President",
-        labels: [],
-        values: [],
+        eligibleVoters: 200,
+        labels: ["Hello", "Hi"],
+        values: [30, 40],
     };
 
     return (
@@ -40,7 +40,7 @@ export default function OngoingElection({ election, setup }) {
                 ${showResult ? 'p-6 mt-2 h-auto opacity-100 translate-y-0' :
                         'p-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`} >
                     <h1 className="text-xl font-bold mb-4 dark:text-white">President</h1>
-                    <HorizontalBarChart labels={dummyData.labels} values={dummyData.values} title={dummyData.title} />
+                    <HorizontalBarChart labels={dummyData.labels} values={dummyData.values} eligibleVoters={dummyData.eligibleVoters} />
                 </div>
 
                 <LongDropdown
