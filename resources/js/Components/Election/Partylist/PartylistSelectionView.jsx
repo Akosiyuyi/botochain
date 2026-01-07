@@ -6,6 +6,7 @@ export default function PartylistSelectionView({
     partylists,
     positions,
     candidates,
+    useWhite,
 }) {
     const [selectedPartylistId, setSelectedPartylistId] = useState(null);
 
@@ -37,8 +38,9 @@ export default function PartylistSelectionView({
 
                 {/* Right fade indicator */}
                 <div
-                    className="pointer-events-none absolute top-0 right-0 h-full w-12 
-            bg-gradient-to-l from-gray-100 dark:from-gray-900 to-transparent"
+                    className={`pointer-events-none absolute top-0 right-0 h-full w-12 
+        bg-gradient-to-l ${useWhite ? 'from-white dark:from-gray-800 ' : 'from-gray-100 dark:from-gray-900 '} 
+         to-transparent`}
                 />
             </div>
 
