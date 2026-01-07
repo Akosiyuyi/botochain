@@ -32,4 +32,9 @@ class Student extends Model
     {
         return $this->hasMany(EligibleVoter::class);
     }
+
+    public function votes()
+    {
+        $this->hasMany(Vote::class);
+    }
 }
