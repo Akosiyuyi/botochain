@@ -107,17 +107,21 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
                         )}
 
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowMenu(!showMenu)}
-                        className="flex items-start"
-                    >
-                        <Ellipsis className="text-white transition-transform duration-200 hover:scale-125" />
-                    </button>
+                    {ellipsisOptions.length > 0 && (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => setShowMenu(!showMenu)}
+                                className="flex items-start"
+                            >
+                                <Ellipsis className="text-white transition-transform duration-200 hover:scale-125" />
+                            </button>
 
-                    {showMenu && (
+                            {showMenu && (
 
-                        <OptionsMenu menuId="election-menu" menuRef={menuRef} setShowMenu={setShowMenu} options={ellipsisOptions} />
+                                <OptionsMenu menuId="election-menu" menuRef={menuRef} setShowMenu={setShowMenu} options={ellipsisOptions} />
+                            )}
+                        </>
                     )}
                 </div>
 
