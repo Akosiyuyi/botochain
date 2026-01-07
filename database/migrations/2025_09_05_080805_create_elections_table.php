@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title')->unique();
             $table->enum('status', ['draft', 'upcoming', 'ongoing', 'ended'])->default('draft');
+            $table->timestamp('eligibility_aggregated_at')->nullable();
             $table->char('final_hash', 100)->nullable();
             $table->timestamps();
 

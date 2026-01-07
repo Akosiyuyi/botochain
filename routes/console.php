@@ -9,5 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::job(new UpdateElectionStatuses)
+Schedule::job(UpdateElectionStatuses::class)
     ->everyMinute();
+
+Schedule::command('elections:aggregate-eligible')->everyMinute();
