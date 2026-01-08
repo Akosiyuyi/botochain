@@ -30,4 +30,9 @@ class Position extends Model
     {
         return $this->hasMany(EligibleVoter::class);
     }
+
+    public function voteDetails()
+    {
+        return $this->hasMany(VoteDetail::class);
+    }
 }

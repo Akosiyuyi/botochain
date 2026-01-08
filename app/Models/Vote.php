@@ -23,4 +23,9 @@ class Vote extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function voteDetails()
+    {
+        return $this->hasMany(VoteDetail::class);
+    }
 }
