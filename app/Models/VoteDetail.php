@@ -26,4 +26,11 @@ class VoteDetail extends Model
     {
         return $this->belongsTo(Candidate::class);
     }
+
+    protected static function booted()
+    {
+        static::updating(fn() => false);
+        static::deleting(fn() => false);
+    }
+
 }

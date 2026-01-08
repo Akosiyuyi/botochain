@@ -28,4 +28,11 @@ class Vote extends Model
     {
         return $this->hasMany(VoteDetail::class);
     }
+
+    protected static function booted()
+    {
+        static::updating(fn() => false);
+        static::deleting(fn() => false);
+    }
+
 }
