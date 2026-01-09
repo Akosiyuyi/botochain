@@ -8,22 +8,50 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Student;
 use App\Models\Vote;
 use App\Models\VoteDetail;
+use App\Jobs\SealVoteHash;
+use Illuminate\Validation\ValidationException;
 
 class VoteService
 {
-    public function create(Election $election, array $choices, Student $student): void
+    public function create(Election $election, array $choices, Student $student): Vote
     {
+        // exit if  election is not ongoing
         if ($election->status !== ElectionStatus::Ongoing) {
-            throw new \Exception('This election is not ongoing.');
+            throw ValidationException::withMessages([
+                'election' => 'This election is not ongoing.',
+            ]);
         }
 
-        DB::transaction(function ($election, $student, $choices) {
+        // exit if  student vote already
+        if (
+            Vote::where('election_id', $election->id)
+                ->where('student_id', $student->id)
+                ->exists()
+        ) {
+            throw ValidationException::withMessages([
+                'vote' => 'You have already voted.',
+            ]);
+        }
+
+        // check if each position exists
+        foreach ($choices as $positionId => $candidateId) {
+            if (
+                !$election->positions()
+                    ->where('id', $positionId)
+                    ->exists()
+            ) {
+                throw ValidationException::withMessages([
+                    'vote' => 'Invalid position.',
+                ]);
+            }
+        }
+
+
+        $vote = DB::transaction(function () use ($election, $student, $choices) {
+
             $vote = Vote::create([
                 'election_id' => $election->id,
                 'student_id' => $student->id,
-                'payload_hash' => '',
-                'previous_hash' => '',
-                'current_hash' => '',
             ]);
 
             foreach ($choices as $positionId => $candidateId) {
@@ -34,14 +62,15 @@ class VoteService
                 ]);
             }
 
-            $payload = $vote->details()
-                ->orderBy('position_id')
-                ->get(['position_id', 'candidate_id'])
-                ->toJson();
-
-            $payloadHash = hash('sha256', $payload);
+            return $vote;
         });
 
+        // Queue sealing
+        SealVoteHash::dispatch($vote->id);
+
+        return $vote;
     }
 }
+
+
 

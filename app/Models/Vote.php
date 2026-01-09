@@ -31,7 +31,14 @@ class Vote extends Model
 
     protected static function booted()
     {
-        static::updating(fn() => false);
+        static::updating(function ($vote) {
+            return $vote->isDirty([
+                'payload_hash',
+                'previous_hash',
+                'current_hash'
+            ]);
+        });
+
         static::deleting(fn() => false);
     }
 
