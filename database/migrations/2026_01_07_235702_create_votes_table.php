@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('election_id')->constrained('elections')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('students')->restrictOnDelete();
-            $table->string('payload_hash');
+            $table->string('payload_hash')->nullable();
             $table->string('previous_hash')->nullable();
-            $table->string('current_hash');
+            $table->string('current_hash')->nullable();
             $table->timestamps();
 
             $table->unique(['election_id', 'student_id']);
