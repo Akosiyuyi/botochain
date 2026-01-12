@@ -33,7 +33,16 @@ class ElectionResult extends Model
 
     protected static function booted()
     {
-        static::updating(fn() => false);
-        static::deleting(fn() => false);
+        static::updating(function (ElectionResult $result) {
+            if ($result->election->status === \App\Enums\ElectionStatus::Finalized) {
+                return false; // prevent update when finalized
+            }
+        });
+
+        static::deleting(function (ElectionResult $result) {
+            if ($result->election->status === \App\Enums\ElectionStatus::Finalized) {
+                return false; // prevent delete when finalized
+            }
+        });
     }
 }
