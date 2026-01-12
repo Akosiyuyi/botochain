@@ -34,11 +34,13 @@ class ElectionFactory extends Factory
         ]);
     }
 
-    // State for closed elections
-    public function closed()
+    // State for ended elections
+    public function ended()
     {
         return $this->state(fn() => [
             'status' => ElectionStatus::Ended,
+            'finalized_at' => null,
+            'final_hash' => null,
         ]);
     }
 
