@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Default Super Admin',
-            'id_number' => '1000-00000',
+            'id_number' => '10000000',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'is_active' => true,
