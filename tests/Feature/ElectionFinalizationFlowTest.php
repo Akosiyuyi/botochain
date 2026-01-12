@@ -66,6 +66,34 @@ class ElectionFinalizationFlowTest extends TestCase
         ]);
     }
 
+    public function test_it_finalizes_election_with_zero_votes()
+    {
+        // Mock integrity service to always pass
+        $mock = $this->createMock(\App\Services\VoteIntegrityService::class);
+        $mock->method('verifyElection')->willReturn([
+            'valid' => true,
+            'final_hash' => null,
+        ]);
+        $this->app->instance(\App\Services\VoteIntegrityService::class, $mock);
+
+        $election = Election::factory()->create([
+            'status' => ElectionStatus::Ended,
+            'finalized_at' => null,
+        ]);
+
+        // No votes created
+
+        FinalizeElection::dispatchSync();
+
+        $election->refresh();
+        $this->assertEquals(ElectionStatus::Finalized, $election->status);
+        $this->assertNotNull($election->finalized_at);
+        $this->assertNull($election->final_hash); // no votes, so no hash
+        $this->assertDatabaseMissing('election_results', [
+            'election_id' => $election->id,
+        ]);
+    }
+
     public function test_it_marks_election_as_compromised_if_vote_integrity_fails()
     {
         $election = Election::factory()->create([
