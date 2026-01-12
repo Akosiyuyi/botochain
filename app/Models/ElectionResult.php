@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ElectionResult extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'election_id',
         'position_id',
@@ -29,5 +29,11 @@ class ElectionResult extends Model
     public function candidate()
     {
         return $this->belongsTo(Candidate::class);
+    }
+
+    protected static function booted()
+    {
+        static::updating(fn() => false);
+        static::deleting(fn() => false);
     }
 }
