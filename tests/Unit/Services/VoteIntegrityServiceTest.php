@@ -37,7 +37,13 @@ class VoteIntegrityServiceTest extends TestCase
     public function test_it_detects_unsealed_vote()
     {
         $election = Election::factory()->create();
-        $vote = Vote::factory()->create(['election_id' => $election->id]);
+
+        $vote = Vote::factory()->create([
+            'election_id' => $election->id,
+            'payload_hash' => 'dummyhash',   // ensure payload_hash is set
+            'previous_hash' => null,          // first vote in chain
+            'current_hash' => null,          // unsealed
+        ]);
 
         $result = $this->service->verifyElection($election);
 
@@ -45,6 +51,7 @@ class VoteIntegrityServiceTest extends TestCase
         $this->assertEquals($vote->id, $result['vote_id']);
         $this->assertEquals('Vote not sealed yet', $result['reason']);
     }
+
 
     public function test_it_verifies_a_valid_vote_chain()
     {
