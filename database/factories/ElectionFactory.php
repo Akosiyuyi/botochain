@@ -41,4 +41,12 @@ class ElectionFactory extends Factory
             'status' => ElectionStatus::Ended,
         ]);
     }
+
+    // State for finalized elections
+    public function finalized()
+    {
+        return $this->state(fn() => [
+            'status' => ElectionStatus::Finalized,
+        ]);
+    }
 }
