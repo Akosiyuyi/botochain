@@ -49,4 +49,12 @@ class ElectionFactory extends Factory
             'status' => ElectionStatus::Finalized,
         ]);
     }
+
+    // State for compromised elections
+    public function compromised()
+    {
+        return $this->state(fn() => [
+            'status' => ElectionStatus::Compromised,
+        ]);
+    }
 }
