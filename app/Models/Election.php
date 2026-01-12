@@ -14,6 +14,7 @@ class Election extends Model
         'title',
         'status',
         'final_hash',
+        'finalized_at',
     ];
 
     protected $attributes = [
