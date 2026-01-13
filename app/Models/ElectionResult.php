@@ -16,6 +16,8 @@ class ElectionResult extends Model
         'vote_count',
     ];
 
+    protected $casts = ['vote_count' => 'integer'];
+
     public function election()
     {
         return $this->belongsTo(Election::class);
