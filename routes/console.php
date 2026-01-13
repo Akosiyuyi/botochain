@@ -1,6 +1,5 @@
 <?php
 
-use App\Jobs\FinalizeElection;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -15,4 +14,4 @@ Schedule::job(UpdateElectionStatuses::class)
 
 Schedule::command('elections:aggregate-eligible')->everyMinute();
 
-Schedule::job(FinalizeElection::class)->everyMinute();
+Schedule::command('elections:dispatch-finalization')->everyMinute();
