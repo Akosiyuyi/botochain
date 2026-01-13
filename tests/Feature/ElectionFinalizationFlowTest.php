@@ -117,7 +117,10 @@ class ElectionFinalizationFlowTest extends TestCase
         $this->assertEquals(ElectionStatus::Ended, $election->status);
 
         // Now simulate compromised vote
-        $vote->update(['current_hash' => 'wrong']);
+        Vote::withoutEvents(function () use ($vote) {
+            $vote->update(['current_hash' => 'wrong']);
+        });
+        
         FinalizeElection::dispatchSync();
 
         $election->refresh();

@@ -63,11 +63,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash = hash('sha256', $payload);
         $currentHash = hash('sha256', $payloadHash);
 
-        $vote->update([
-            'payload_hash' => $payloadHash,
-            'previous_hash' => null,
-            'current_hash' => $currentHash,
-        ]);
+        $this->updateVoteHashes($vote, null, $payloadHash, $currentHash);
 
         $result = $this->service->verifyElection($election);
 
@@ -82,11 +78,7 @@ class VoteIntegrityServiceTest extends TestCase
         [$vote] = $this->createVoteWithDetail($election);
 
         // Seal with wrong hash to simulate tampering
-        $vote->update([
-            'payload_hash' => 'tampered',
-            'previous_hash' => null,
-            'current_hash' => 'wrong',
-        ]);
+        $this->updateVoteHashes($vote, null, 'tampered', 'wrong');
 
         $result = $this->service->verifyVote($election, $vote);
 
@@ -108,14 +100,7 @@ class VoteIntegrityServiceTest extends TestCase
 
         $payloadHash1 = hash('sha256', $payload1);
         $currentHash1 = hash('sha256', $payloadHash1);
-        $vote1->update(
-            [
-                'payload_hash' => $payloadHash1,
-                'previous_hash' => null,
-                'current_hash' => $currentHash1,
-            ]
-        );
-
+        $this->updateVoteHashes($vote1, null, $payloadHash1, $currentHash1);
 
         // --- Second vote --- 
         [$vote2, $position2, $candidate2] = $this->createVoteWithDetail($election);
@@ -129,12 +114,7 @@ class VoteIntegrityServiceTest extends TestCase
         ]);
         $payloadHash2 = hash('sha256', $payload2);
         $currentHash2 = hash('sha256', $payloadHash2 . $currentHash1);
-        $vote2->update([
-            'payload_hash' => $payloadHash2,
-            'previous_hash' => $currentHash1,
-            'current_hash' => $currentHash2,
-        ]);
-
+        $this->updateVoteHashes($vote2, $currentHash1, $payloadHash2, $currentHash2);
 
         // Verify election chain 
         $result = $this->service->verifyElection($election);
@@ -155,11 +135,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash1 = hash('sha256', $payload1);
         $currentHash1 = hash('sha256', $payloadHash1);
 
-        $vote1->update([
-            'payload_hash' => $payloadHash1,
-            'previous_hash' => null,
-            'current_hash' => $currentHash1,
-        ]);
+        $this->updateVoteHashes($vote1, null, $payloadHash1, $currentHash1);
 
         // Second vote tampered (wrong previous_hash) 
         [$vote2, $position2, $candidate2] = $this->createVoteWithDetail($election);
@@ -168,12 +144,8 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash2 = hash('sha256', $payload2);
         $currentHash2 = hash('sha256', $payloadHash2 . 'wrong_previous');
 
-        $vote2->update([
-            'payload_hash' => $payloadHash2,
-            'previous_hash' => 'wrong_previous',
-            'current_hash' => $currentHash2,
-        ]);
-
+        $this->updateVoteHashes($vote2, 'wrong_previous', $payloadHash2, $currentHash2);
+        
         $result = $this->service->verifyElection($election);
         $this->assertFalse($result['valid']);
         $this->assertEquals($vote2->id, $result['vote_id']);
@@ -193,12 +165,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash1 = hash('sha256', $payload1);
         $currentHash1 = hash('sha256', $payloadHash1);
 
-        $vote1->update([
-            'payload_hash' => $payloadHash1,
-            'previous_hash' => null,
-            'current_hash' => $currentHash1,
-        ]);
-
+        $this->updateVoteHashes($vote1, null, $payloadHash1, $currentHash1);
 
         [$vote2, $position2, $candidate2] = $this->createVoteWithDetail($election);
 
@@ -208,11 +175,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash2 = hash('sha256', $payload2);
         $currentHash2 = hash('sha256', $payloadHash2 . $currentHash1);
 
-        $vote2->update([
-            'payload_hash' => $payloadHash2,
-            'previous_hash' => $currentHash1,
-            'current_hash' => $currentHash2,
-        ]);
+        $this->updateVoteHashes($vote2, $currentHash1, $payloadHash2, $currentHash2);
 
         // Verify the second vote individually 
         $result = $this->service->verifyVote($election, $vote2);
@@ -234,11 +197,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash1 = hash('sha256', $payload1);
         $currentHash1 = hash('sha256', $payloadHash1);
 
-        $vote1->update([
-            'payload_hash' => $payloadHash1,
-            'previous_hash' => null,
-            'current_hash' => $currentHash1,
-        ]);
+        $this->updateVoteHashes($vote1, null, $payloadHash1, $currentHash1);
 
         // Second vote chained but tampered current hash
         [$vote2, $position2, $candidate2] = $this->createVoteWithDetail($election);
@@ -249,11 +208,7 @@ class VoteIntegrityServiceTest extends TestCase
         $payloadHash2 = hash('sha256', $payload2);
 
         // Tamper only current_hash
-        $vote2->update([
-            'payload_hash' => $payloadHash2,   // correct
-            'previous_hash' => $currentHash1,  // correct chain link
-            'current_hash' => 'wrong',         // tampered
-        ]);
+        $this->updateVoteHashes($vote2, $currentHash1, $payloadHash2, 'wrong');
 
         $result = $this->service->verifyVote($election, $vote2);
 
@@ -277,6 +232,17 @@ class VoteIntegrityServiceTest extends TestCase
         ]);
 
         return [$vote, $position, $candidate];
+    }
+
+    private function updateVoteHashes(Vote $vote, ?string $previousHash = null, ?string $payloadHash = null, ?string $currentHash = null): void
+    {
+        Vote::withoutEvents(function () use ($vote, $previousHash, $payloadHash, $currentHash) {
+            $vote->update([
+                'payload_hash' => $payloadHash,
+                'previous_hash' => $previousHash,
+                'current_hash' => $currentHash,
+            ]);
+        });
     }
 
 }
