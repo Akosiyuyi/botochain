@@ -28,6 +28,7 @@ class VoteFactory extends Factory
             'payload_hash' => $this->faker->sha256,
             'current_hash' => $this->faker->sha256, // sealed by default 
             'previous_hash' => $this->faker->sha256, // optional chain
+            'tallied' => false,
         ];
     }
 

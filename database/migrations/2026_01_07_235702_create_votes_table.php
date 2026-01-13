@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('payload_hash')->nullable();
             $table->string('previous_hash')->nullable();
             $table->string('current_hash')->nullable();
+            $table->boolean('tallied')->default(false)->index();
             $table->timestamps();
 
             $table->unique(['election_id', 'student_id']);
