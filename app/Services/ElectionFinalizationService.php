@@ -19,7 +19,6 @@ class ElectionFinalizationService
     {
         DB::transaction(function () use ($election) {
             // get fresh attributes and lock election for update
-            $election->refresh();
             $election = Election::whereKey($election->id)
                 ->lockForUpdate()
                 ->first();
