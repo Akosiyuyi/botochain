@@ -17,6 +17,7 @@ class SealVoteHash implements ShouldQueue
 
     public function __construct(public int $voteId)
     {
+        $this->queue = 'vote_sealing';
     }
 
     public function handle(): void
