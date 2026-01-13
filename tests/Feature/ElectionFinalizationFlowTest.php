@@ -10,7 +10,6 @@ use App\Models\Candidate;
 use App\Models\Vote;
 use App\Models\VoteDetail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class ElectionFinalizationFlowTest extends TestCase
@@ -50,7 +49,7 @@ class ElectionFinalizationFlowTest extends TestCase
         $this->assertEquals(1, $election->votes()->count());
 
         // Act
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         // Assert
         $election->refresh();
@@ -83,7 +82,7 @@ class ElectionFinalizationFlowTest extends TestCase
 
         // No votes created
 
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         $election->refresh();
         $this->assertEquals(ElectionStatus::Finalized, $election->status);
@@ -110,7 +109,7 @@ class ElectionFinalizationFlowTest extends TestCase
         ]);
 
         // Act
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         // Assert: election remains Ended (because unsealed votes exist)
         $election->refresh();
@@ -121,7 +120,7 @@ class ElectionFinalizationFlowTest extends TestCase
             $vote->update(['current_hash' => 'wrong']);
         });
         
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         $election->refresh();
         $this->assertEquals(ElectionStatus::Compromised, $election->status);
@@ -134,7 +133,7 @@ class ElectionFinalizationFlowTest extends TestCase
             'finalized_at' => null,
         ]);
 
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         $election->refresh();
         $this->assertEquals(ElectionStatus::Ongoing, $election->status);
@@ -154,7 +153,7 @@ class ElectionFinalizationFlowTest extends TestCase
             'current_hash' => null,
         ]);
 
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         $election->refresh();
         $this->assertEquals(ElectionStatus::Ended, $election->status);
@@ -190,7 +189,7 @@ class ElectionFinalizationFlowTest extends TestCase
             'current_hash' => null,
         ]);
 
-        FinalizeElection::dispatchSync();
+        $this->artisan('elections:dispatch-finalization')->run();
 
         $validElection->refresh();
         $compromisedElection->refresh();
