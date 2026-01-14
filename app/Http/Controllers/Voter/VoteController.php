@@ -4,9 +4,19 @@ namespace App\Http\Controllers\Voter;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Election;
+use App\Services\VoteService;
 
 class VoteController extends Controller
 {
+
+    public function __construct(
+        protected VoteService $voteService,
+    ) {
+
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -14,6 +24,7 @@ class VoteController extends Controller
     {
         //
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -23,13 +34,24 @@ class VoteController extends Controller
         //
     }
 
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Election $election)
     {
-        //
+        try {
+            $this->voteService->create($election, $request->choices, $request->student);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Grab the first error message
+            $message = collect($e->errors())->flatten()->first();
+
+            return back()->with('error', $message);
+        }
+
+        return back()->with('success', 'Vote submitted successfully.');
     }
+
 
     /**
      * Display the specified resource.

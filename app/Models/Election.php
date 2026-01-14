@@ -14,6 +14,7 @@ class Election extends Model
         'title',
         'status',
         'final_hash',
+        'finalized_at',
     ];
 
     protected $attributes = [
@@ -60,7 +61,12 @@ class Election extends Model
 
     public function votes()
     {
-        $this->hasMany(Vote::class);
+        return $this->hasMany(Vote::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(ElectionResult::class);
     }
 
     // Helper: get school_levels as plain array

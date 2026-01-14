@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\ElectionStatus;
 
 return new class extends Migration {
     /**
@@ -13,9 +14,10 @@ return new class extends Migration {
         Schema::create('elections', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
-            $table->enum('status', ['draft', 'upcoming', 'ongoing', 'ended'])->default('draft');
+            $table->string('status')->default(ElectionStatus::Draft->value);
             $table->timestamp('eligibility_aggregated_at')->nullable();
             $table->char('final_hash', 100)->nullable();
+            $table->timestamp('finalized_at')->nullable();
             $table->timestamps();
 
             // indexes

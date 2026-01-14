@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Position extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'election_id',
         'name',
@@ -35,4 +38,10 @@ class Position extends Model
     {
         return $this->hasMany(VoteDetail::class);
     }
+
+    public function results()
+    {
+        return $this->hasMany(ElectionResult::class);
+    }
+
 }

@@ -21,7 +21,7 @@ class ElectionViewService
                     ElectionStatus::Draft => $this->dateFormat($election->created_at),
                     ElectionStatus::Upcoming => $this->dateFormat($election->setup->start_time),
                     ElectionStatus::Ongoing => $this->dateFormat($election->setup->start_time) . ' → ' . $this->dateFormat($election->setup->end_time),
-                    ElectionStatus::Ended => $this->dateFormat($election->setup->end_time),
+                    ElectionStatus::Finalized => $this->dateFormat($election->setup->end_time),
                     default => $this->dateFormat($election->created_at),
                 };
 
@@ -60,7 +60,7 @@ class ElectionViewService
             ElectionStatus::Draft => $this->dateFormat($election->created_at),
             ElectionStatus::Upcoming => $this->dateFormat($election->setup->start_time),
             ElectionStatus::Ongoing => $this->dateFormat($election->setup->start_time) . ' → ' . $this->dateFormat($election->setup->end_time),
-            ElectionStatus::Ended => $this->dateFormat($election->setup->end_time),
+            ElectionStatus::Finalized => $this->dateFormat($election->setup->end_time),
             default => $this->dateFormat($election->created_at),
         };
 

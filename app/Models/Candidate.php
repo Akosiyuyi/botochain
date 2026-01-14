@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Candidate extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'election_id',
         'partylist_id',
@@ -33,4 +36,10 @@ class Candidate extends Model
     {
         return $this->hasMany(VoteDetail::class);
     }
+
+    public function results()
+    {
+        return $this->hasMany(ElectionResult::class);
+    }
+
 }

@@ -8,6 +8,8 @@ enum ElectionStatus: string
     case Upcoming = 'upcoming';
     case Ongoing = 'ongoing';
     case Ended = 'ended';
+    case Finalized = 'finalized';
+    case Compromised = 'compromised';
 
     /**
      * Return all values as array for validation or select options.

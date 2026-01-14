@@ -13,3 +13,5 @@ Schedule::job(UpdateElectionStatuses::class)
     ->everyMinute();
 
 Schedule::command('elections:aggregate-eligible')->everyMinute();
+
+Schedule::command('elections:dispatch-finalization')->everyMinute();
