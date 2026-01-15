@@ -3,7 +3,7 @@ import OptionsMenu from "../OptionsMenu";
 import { Pencil, Trash2, Undo2, Calendar, Clock } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function ManageElectionHeader({ election, setConfirmingElectionDeletion }) {
+export default function ManageElectionHeader({ election, setConfirmingElectionDeletion, className = "" }) {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
@@ -80,7 +80,7 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
     const { time_label, time_value } = getTimeLabel();
 
     return (
-        <div className="relative h-40 overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div className={`relative h-40 overflow-hidden bg-white dark:bg-gray-800 shadow-sm rounded-lg ${className}`}>
             <img
                 className="w-full h-40 object-cover object-right"
                 src={election.image_path}
