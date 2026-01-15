@@ -102,7 +102,7 @@ export default function PositionResultsChart({ position, candidates }) {
         scales: {
             x: {
                 beginAtZero: true,
-                max: maxVotes * 1.1,
+                max: Math.ceil(maxVotes * 1.1),
                 grid: {
                     color: 'rgba(0, 0, 0, 0.05)',
                     drawBorder: false,
@@ -112,8 +112,10 @@ export default function PositionResultsChart({ position, candidates }) {
                         size: 11,
                         weight: '500',
                     },
+                    stepSize: 20,
+                    precision: 0,
                     callback: function(value) {
-                        return value;
+                        return Math.floor(value);
                     }
                 },
             },
