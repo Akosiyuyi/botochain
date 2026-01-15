@@ -89,6 +89,7 @@ class ElectionController extends Controller
             ElectionStatus::Ongoing => Inertia::render('Admin/Election/OngoingElection', [
                 'election' => $electionData['election'],
                 'setup' => $electionData['setup'],
+                'results' => $electionData['results'],
             ]),
             default => abort(404),
         };
