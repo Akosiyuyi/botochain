@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PartylistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VoterController;
+use App\Http\Controllers\VoteIntegrityController;
 
 Route::redirect('/', '/login');
 
@@ -67,11 +68,21 @@ Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
 });
 
 
-// shared routes
+// Shared routes - accessible to both voter and admin
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Election integrity verification (both voter & admin)
+    Route::get('/election/{election}/verify', [VoteIntegrityController::class, 'verifyElection'])
+        ->name('election.verify');
+
+    // Vote integrity verification (voter only - via policy)
+    Route::get('/election/{election}/vote/{vote}/verify', [VoteIntegrityController::class, 'verifyVote'])
+        ->name('vote.verify');
 });
 
 require __DIR__ . '/auth.php';

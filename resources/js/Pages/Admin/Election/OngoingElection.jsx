@@ -6,6 +6,7 @@ import WarningModal from '@/Components/WarningModal';
 import PartylistSelectionView from '@/Components/Election/Partylist/PartylistSelectionView';
 import LongDropdown from '@/Components/LongDropdown';
 import ElectionResultsView from '@/Components/Election/Results/ElectionResultsView';
+import IntegrityChecker from '@/Components/Election/VoteIntegrity/IntegrityChecker';
 
 // Dummy data for testing
 const dummyResults = {
@@ -69,14 +70,20 @@ export default function OngoingElection({ election, setup, results }) {
     const [showResults, setShowResults] = useState(false);
 
     // Use dummy data for testing - remove this line when using real data
-    const resultsData =  dummyResults;
+    const resultsData = dummyResults;
 
     return (
         <>
             <Head title={election.title} />
 
             <div className="mx-auto max-w-7xl">
-                <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirm} />
+                <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirm} className="mb-4" />
+
+                {/* Integrity Checker Section */}
+                <IntegrityChecker
+                    election={election}
+                    isVoter={false}
+                />
 
                 {/* Results Section */}
                 <LongDropdown
