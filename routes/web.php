@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PartylistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VoterController;
 use App\Http\Controllers\VoteIntegrityController;
+use App\Http\Controllers\Admin\ElectionExportController;
 
 Route::redirect('/', '/login');
 
@@ -49,11 +50,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/login_logs', [LoginLogsController::class, 'index'])->name('login_logs');
 
 
-    // election resource route
+    // election custom route
     Route::patch('/admin/election/{election}/finalize', [ElectionController::class, 'finalize'])
         ->name('election.finalize');
     Route::patch('/admin/election/{election}/restoreToDraft', [ElectionController::class, 'restoreToDraft'])
         ->name('election.restoreToDraft');
+
+    Route::get('/election/{election}/export/excel', [ElectionExportController::class, 'exportExcel'])
+        ->name('election.export.excel');
+    Route::get('/election/{election}/export/pdf', [ElectionExportController::class, 'exportPdf'])
+        ->name('election.export.pdf');
+
+    // election resource route
     Route::resource('election', ElectionController::class);
     Route::resource('election.positions', PositionController::class);
     Route::resource('election.partylists', PartylistController::class);
