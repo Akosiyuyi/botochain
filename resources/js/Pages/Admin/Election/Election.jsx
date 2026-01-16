@@ -16,7 +16,7 @@ export default function Election({ elections, routes }) {
 
     const renderElection = (status) => {
         return (
-            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="mt-2 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                 {elections.some(election => election.status === status) ? (
                     elections
                         .filter(election => election.status === status)
@@ -32,13 +32,13 @@ export default function Election({ elections, routes }) {
                             />
                         ))
                 ) : (
-                    <div className="col-span-full flex flex-col items-center justify-center text-center py-12">
+                    <div className="col-span-2 md:col-span-2 lg:col-span-3 xl:col-span-4 flex flex-col items-center justify-center text-center py-12">
                         <img
                             src={noElectionsFlat}
                             alt="No Elections"
-                            className="w-80"
+                            className="w-40 md:w-60 lg:w-80"
                         />
-                        <div className="text-gray-500 dark:text-gray-200 text-lg">
+                        <div className="text-gray-500 dark:text-gray-200 text-sm md:text-lg">
                             There are no {status} elections.
                         </div>
                     </div>
