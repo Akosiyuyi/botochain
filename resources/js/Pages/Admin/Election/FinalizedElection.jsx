@@ -103,7 +103,7 @@ export default function FinalizedElection({ election, setup, results }) {
                 {/* Partylists Section */}
                 <LongDropdown
                     className="mt-4"
-                    componentName={"Partylists"}
+                    componentName={"Party Lists"}
                     showComponent={showPartylists}
                     setShowComponent={setShowPartylists}
                 />
