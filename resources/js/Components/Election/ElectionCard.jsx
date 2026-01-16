@@ -24,7 +24,8 @@ export default function ElectionCard({
             case "draft": return { label: "Created Date:", value: date || "No Date" };
             case "upcoming": return { label: "Start Date:", value: date || "TBA" };
             case "ongoing": return { label: "Open Date:", value: date || "TBA" };
-            case "ended": return { label: "End Date:", value: date || "TBA" };
+            case "finalized": return { label: "End Date:", value: date || "TBA" };
+            case "compromised": return { label: "End Date:", value: date || "TBA" };
             default: return { label: "Date", value: date };
         }
     };
@@ -35,7 +36,8 @@ export default function ElectionCard({
             case "draft": return { btn_label: "Manage" };
             case "upcoming": return { btn_label: "View" };
             case "ongoing": return { btn_label: "View" };
-            case "ended": return { btn_label: "View" };
+            case "finalized": return { btn_label: "View" };
+            case "compromised": return { btn_label: "View" };
             default: return { btn_label: "Manage" };
         }
     }
