@@ -64,7 +64,7 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
             case "draft": return { label: "Created Date:", value: election.display_date || "No Date" };
             case "upcoming": return { label: "Start Date:", value: election.display_date || "TBA" };
             case "ongoing": return { label: "Open Date:", value: election.display_date || "TBA" };
-            case "ended": return { label: "End Date:", value: election.display_date || "TBA" };
+            case "finalized": return { label: "End Date:", value: election.display_date || "TBA" };
             default: return { label: "Date:", value: election.display_date };
         }
     };

@@ -58,7 +58,7 @@ export default function Election({ elections, routes }) {
                 <LongDropdown className="mt-4" componentName={"Ongoing Elections"} showComponent={showOngoing} setShowComponent={setShowOngoing} />
                 {showOngoing && renderElection("ongoing")}
 
-                <LongDropdown className="mt-4" componentName={"Archived Elections"} showComponent={showFinalized} setShowComponent={setShowFinalized} />
+                <LongDropdown className="mt-4" componentName={"Finalized Elections"} showComponent={showFinalized} setShowComponent={setShowFinalized} />
                 {showFinalized && renderElection("finalized")}
             </div>
         </>

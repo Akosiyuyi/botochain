@@ -91,6 +91,11 @@ class ElectionController extends Controller
                 'setup' => $electionData['setup'],
                 'results' => $electionData['results'],
             ]),
+            ElectionStatus::Finalized => Inertia::render('Admin/Election/FinalizedElection', [
+                'election' => $electionData['election'],
+                'setup' => $electionData['setup'],
+                'results' => $electionData['results'],
+            ]),
             default => abort(404),
         };
     }
