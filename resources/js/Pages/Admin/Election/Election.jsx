@@ -12,6 +12,7 @@ export default function Election({ elections, routes }) {
     const [showUpcoming, setShowUpcoming] = useState(false);
     const [showOngoing, setShowOngoing] = useState(false);
     const [showFinalized, setShowFinalized] = useState(false);
+    const [showCompromised, setShowCompromised] = useState(false);
 
     const renderElection = (status) => {
         return (
@@ -60,6 +61,9 @@ export default function Election({ elections, routes }) {
 
                 <LongDropdown className="mt-4" componentName={"Finalized Elections"} showComponent={showFinalized} setShowComponent={setShowFinalized} />
                 {showFinalized && renderElection("finalized")}
+
+                <LongDropdown className="mt-4" componentName={"Compromised Elections"} showComponent={showCompromised} setShowComponent={setShowCompromised} />
+                {showCompromised && renderElection("compromised")}
             </div>
         </>
     );

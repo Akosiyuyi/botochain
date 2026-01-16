@@ -256,6 +256,10 @@ class ElectionViewService
                 $this->dateFormat($end) ?? $this->dateFormat($election->created_at),
                 '',
             ],
+            ElectionStatus::Compromised => [
+                $this->dateFormat($end) ?? $this->dateFormat($election->created_at),
+                '',
+            ],
             default => [
                 $this->dateFormat($election->created_at),
                 '',
