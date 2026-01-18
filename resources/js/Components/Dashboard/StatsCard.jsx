@@ -20,14 +20,14 @@ export default function StatsCard({ icon, label, value, color = 'blue', subtext 
                     {icon}
                 </div>
             </div>
-            <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <p className={`text-xs md:text-sm font-semibold ${iconColors[color]} mb-1`}>
                 {label}
             </p>
-            <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            <p className={`text-2xl md:text-3xl font-bold ${iconColors[color]}`}>
                 {value}
             </p>
             {subtext && (
-                <p className="text-xs mt-2 text-gray-500 dark:text-gray-400">
+                <p className={`text-xs mt-2 font-thin ${iconColors[color]}`}>
                     {subtext}
                 </p>
             )}
