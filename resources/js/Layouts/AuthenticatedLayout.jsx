@@ -51,13 +51,18 @@ export default function AuthenticatedLayout({ header, children, button = false }
                 <div className="mt-12 pt-6 px-6 lg:px-12">
                     {header && (
                         <header>
-                            <div className="w-full py-4 flex justify-between items-center">
-                                {header}
-                                {button && (
-                                    <div>
-                                        {button}
+                            {/* Responsive header: stack on mobile, side-by-side on md+ */}
+                            <div className="w-full py-4">
+                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div className="flex-1">
+                                        {header}
                                     </div>
-                                )}
+                                    {button && (
+                                        <div className="mt-2 md:mt-0 w-full md:w-auto">
+                                            {button}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </header>
                     )}
