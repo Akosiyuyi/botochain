@@ -35,14 +35,14 @@ export default function ElectionCard({
         ongoing: {
             label: "Ongoing",
             icon: Zap,
-            color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-            borderColor: "border-green-300 dark:border-green-700",
+            color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300",
+            borderColor: "border-teal-300 dark:border-teal-700",
         },
         finalized: {
             label: "Finalized",
             icon: CheckCircle,
-            color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300",
-            borderColor: "border-teal-300 dark:border-teal-700",
+            color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+            borderColor: "border-green-300 dark:border-green-700",
         },
         compromised: {
             label: "Compromised",
