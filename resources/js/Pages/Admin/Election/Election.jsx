@@ -6,6 +6,7 @@ import { ModalLink } from '@inertiaui/modal-react';
 import noElectionsFlat from '@images/NoElectionsFlat.png';
 import { useState } from 'react';
 import LongDropdown from '@/Components/LongDropdown';
+import { PlusIcon } from 'lucide-react';
 
 export default function Election({ elections, routes }) {
     const [showPending, setShowPending] = useState(false);
@@ -77,13 +78,19 @@ Election.layout = (page) => {
     );
 
     const button = (
-        <ModalLink
-            href={route("admin.election.create")}
-            closeButton={false}
-            panelClasses="bg-white dark:bg-gray-800 rounded-lg"
-        >
-            <PrimaryButton>Add Election</PrimaryButton>
-        </ModalLink>
+        <>
+            <ModalLink
+                href={route("admin.election.create")}
+                closeButton={false}
+                panelClasses="bg-white dark:bg-gray-800 rounded-lg"
+            >
+                <PrimaryButton className="inline-flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <PlusIcon className="w-4 h-4" />
+                    Add Election
+                </PrimaryButton>
+            </ModalLink>
+        </>
+
     );
 
     return <AuthenticatedLayout header={header} button={button}>{page}</AuthenticatedLayout>;
