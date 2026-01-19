@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import SelectInput from "./SelectInput";
 import SearchInput from "./SearchInput";
 
@@ -62,6 +62,7 @@ export default function Table({
     const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
     const start = (page - 1) * rowsPerPage;
     const paginated = filtered.slice(start, start + rowsPerPage);
+    const totalResults = filtered.length;
 
     // 🧠 Dynamic Header
     const headerTitle = getHeaderTitle ? getHeaderTitle(option) : "Table List";
@@ -69,11 +70,11 @@ export default function Table({
 
     // 🔹 Utility to show chevron
     const renderSortIcon = (key) => {
-        if (sortConfig.key !== key) return <ChevronUp className="w-4 h-4 opacity-30" />;
+        if (sortConfig.key !== key) return <ChevronUp className="w-4 h-4 opacity-20" />;
         return sortConfig.direction === "asc" ? (
-            <ChevronUp className="w-4 h-4" />
+            <ChevronUp className="w-4 h-4 opacity-100" />
         ) : (
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="w-4 h-4 opacity-100" />
         );
     };
 
@@ -81,111 +82,156 @@ export default function Table({
         value !== null && value !== undefined && value !== "" ? value : "-";
 
     return (
-        <div className="rounded-lg overflow-hidden">
-            {/* 🔹 Header */}
-            <div className="p-4 bg-white dark:bg-gray-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <div className="font-semibold text-lg dark:text-white">{headerTitle}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">{headerSubtitle}</div>
-                </div>
+        <div className="space-y-4">
+            {/* 🔹 Header with Filters */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-6">
+                <div className="flex flex-col gap-4">
+                    {/* Title Section */}
+                    <div>
+                        <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
+                            {headerTitle}
+                        </h3>
+                        {headerSubtitle && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                {headerSubtitle}
+                            </p>
+                        )}
+                    </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                    <SelectInput
-                        id="role-filter"
-                        value={option}
-                        onChange={(val) => {
-                            setOption(val);
-                            setPage(1);
-                        }}
-                        options={optionList}
-                    />
+                    {/* Filters */}
+                    <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:items-center flex-1">
+                            <SelectInput
+                                id="role-filter"
+                                value={option}
+                                onChange={(val) => {
+                                    setOption(val);
+                                    setPage(1);
+                                }}
+                                options={optionList}
+                            />
+                        </div>
 
-                    <SearchInput
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                            setPage(1);
-                        }}
-                        placeholder={searchPlaceholder}
-                    />
+                        <SearchInput
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            }}
+                            placeholder={searchPlaceholder}
+                        />
+                    </div>
+
+                    {/* Results Count */}
+                    <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Showing <span className="text-gray-900 dark:text-white font-semibold">{paginated.length}</span> of{" "}
+                        <span className="text-gray-900 dark:text-white font-semibold">{totalResults}</span> results
+                    </div>
                 </div>
             </div>
 
-            {/* 🔹 Table */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
-                    <thead className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100">
-                        <tr>
-                            {header.map((col) => (
-                                <th
-                                    key={col.key}
-                                    onClick={col.sortable ? () => handleSort(col.key) : undefined}
-                                    className={`px-4 py-2 font-bold ${col.sortable ? "cursor-pointer" : ""}`}
-                                >
-                                    <div className="flex items-center gap-1">
-                                        {col.label}
-                                        {col.sortable && renderSortIcon(col.key)}
-                                    </div>
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-
-                    <tbody className="bg-white dark:bg-gray-800">
-                        {paginated.map((row, idx) => (
-                            <tr key={idx} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+            {/* 🔹 Table Container */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left text-gray-700 dark:text-gray-300">
+                        <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                            <tr>
                                 {header.map((col) => (
-                                    <td key={col.key} className="px-4 py-2">
-                                        {safeRender(renderCell ? renderCell(row, col.key, { onEdit }) : row[col.key])}
-                                    </td>
+                                    <th
+                                        key={col.key}
+                                        onClick={col.sortable ? () => handleSort(col.key) : undefined}
+                                        className={`px-4 md:px-6 py-3 md:py-4 font-semibold text-gray-900 dark:text-gray-100 ${
+                                            col.sortable ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600/50 transition-colors" : ""
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2 select-none">
+                                            <span>{col.label}</span>
+                                            {col.sortable && renderSortIcon(col.key)}
+                                        </div>
+                                    </th>
                                 ))}
                             </tr>
-                        ))}
+                        </thead>
 
-                        {paginated.length === 0 && (
-                            <tr>
-                                <td colSpan={header.length} className="px-4 py-6 text-center text-gray-500">
-                                    No records found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {paginated.map((row, idx) => (
+                                <tr
+                                    key={idx}
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
+                                >
+                                    {header.map((col) => (
+                                        <td key={col.key} className="px-4 md:px-6 py-3 md:py-4 text-sm">
+                                            {safeRender(
+                                                renderCell ? renderCell(row, col.key, { onEdit }) : row[col.key]
+                                            )}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
 
-            {/* 🔹 Footer */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 text-sm bg-white dark:bg-gray-800 border-t dark:border-gray-600">
-                <div className="flex items-center gap-3">
-                    <span className="dark:text-white">Page {page} of {totalPages}</span>
-                    <div className="flex items-center gap-2">
-                        <label htmlFor="rows-per-page" className="text-gray-600 dark:text-gray-400">
-                            Rows per page:
+                            {paginated.length === 0 && (
+                                <tr>
+                                    <td
+                                        colSpan={header.length}
+                                        className="px-4 md:px-6 py-8 md:py-12 text-center text-gray-500 dark:text-gray-400"
+                                    >
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Search className="w-8 h-8 opacity-30" />
+                                            <span className="font-medium">No records found</span>
+                                            <span className="text-xs">Try adjusting your search or filter criteria</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* 🔹 Footer - Pagination */}
+                <div className="border-t border-gray-200 dark:border-gray-700 px-4 md:px-6 py-4 md:py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    {/* Left: Rows per page */}
+                    <div className="flex items-center gap-3 text-sm">
+                        <label htmlFor="rows-per-page" className="text-gray-600 dark:text-gray-400 font-medium">
+                            Per page:
                         </label>
                         <SelectInput
                             id="rows-per-page"
                             value={rowsPerPage}
-                            onChange={(val) => setRowsPerPage(val)}
+                            onChange={(val) => {
+                                setRowsPerPage(val);
+                                setPage(1);
+                            }}
                             options={[10, 25, 50, 100]}
                             disabled={rows.length < 10}
                         />
                     </div>
-                </div>
 
-                <div className="space-x-2">
-                    <button
-                        onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                        disabled={page === 1}
-                        className="px-3 py-1 rounded bg-white dark:text-white dark:bg-gray-900 border disabled:opacity-50 enabled:hover:border-green-600"
-                    >
-                        Prev
-                    </button>
-                    <button
-                        onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                        disabled={page === totalPages}
-                        className="px-3 py-1 rounded bg-white dark:text-white dark:bg-gray-900 border disabled:opacity-50 enabled:hover:border-green-600"
-                    >
-                        Next
-                    </button>
+                    {/* Center: Page Info */}
+                    <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        Page <span className="text-gray-900 dark:text-white font-semibold">{page}</span> of{" "}
+                        <span className="text-gray-900 dark:text-white font-semibold">{totalPages}</span>
+                    </div>
+
+                    {/* Right: Navigation Buttons */}
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                            disabled={page === 1}
+                            className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-150 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                            <span className="hidden sm:inline">Prev</span>
+                        </button>
+
+                        <button
+                            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                            disabled={page === totalPages}
+                            className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-150 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span className="hidden sm:inline">Next</span>
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
