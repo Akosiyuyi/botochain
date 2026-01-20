@@ -112,6 +112,7 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
                                             {item.children.map((child, cIdx) => (
                                                 <li key={cIdx}>
                                                     <Link
+                                                        onClick={() => setShowSidebar(false)}
                                                         href={route(child.route)}
                                                         className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white 
                      hover:bg-green-600 hover:text-white"
@@ -131,6 +132,7 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
                                 </>
                             ) : (
                                 <Link
+                                    onClick={() => setShowSidebar(false)}
                                     href={route(item.route)}
                                     className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white 
                                                hover:bg-green-600 hover:text-white"

@@ -5,44 +5,101 @@ import ManageElectionHeader from '@/Components/Election/ManageElectionHeader';
 import WarningModal from '@/Components/WarningModal';
 import PartylistSelectionView from '@/Components/Election/Partylist/PartylistSelectionView';
 import LongDropdown from '@/Components/LongDropdown';
-import HorizontalBarChart from '@/Components/Charts/HorizontalBarChart';
+import ElectionResultsView from '@/Components/Election/Results/ElectionResultsView';
+import IntegrityChecker from '@/Components/Election/VoteIntegrity/IntegrityChecker';
 
-export default function OngoingElection({ election, setup }) {
+// Dummy data for testing
+const dummyResults = {
+    positions: [
+        {
+            id: 1,
+            name: "President",
+            position_total_votes: 245,
+            eligible_voter_count: 450,
+            candidates: [
+                {
+                    id: 1,
+                    name: "Juan dela Cruz",
+                    partylist: "Unity Party",
+                    vote_count: 142,
+                    percent_of_position: 57.96
+                },
+                {
+                    id: 2,
+                    name: "Maria Santos",
+                    partylist: "Progressive Alliance",
+                    vote_count: 103,
+                    percent_of_position: 42.04
+                }
+            ]
+        },
+        {
+            id: 2,
+            name: "Vice President",
+            position_total_votes: 238,
+            eligible_voter_count: 450,
+            candidates: [
+                {
+                    id: 3,
+                    name: "Carlos Reyes",
+                    partylist: "Unity Party",
+                    vote_count: 156,
+                    percent_of_position: 65.55
+                },
+                {
+                    id: 4,
+                    name: "Ana Rodriguez",
+                    partylist: "Progressive Alliance",
+                    vote_count: 82,
+                    percent_of_position: 34.45
+                }
+            ]
+        }
+    ],
+    metrics: {
+        eligibleVoterCount: 450,
+        votesCast: 483,
+        progressPercent: 107.33
+    }
+};
+
+export default function OngoingElection({ election, setup, results }) {
     const { positions = [], partylists = [], candidates = [] } = setup;
-
     const [confirm, setConfirm] = useState(false);
     const [showPartylists, setShowPartylists] = useState(false);
-    const [showResult, setShowResult] = useState(false);
+    const [showResults, setShowResults] = useState(false);
 
-    // Dummy data const 
-    const dummyData = {
-        eligibleVoters: 200,
-        labels: ["Hello", "Hi"],
-        values: [30, 40],
-    };
+    // Use dummy data for testing - remove this line when using real data
+    const resultsData = dummyResults;
 
     return (
         <>
             <Head title={election.title} />
 
             <div className="mx-auto max-w-7xl">
-                <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirm} />
+                <ManageElectionHeader election={election} setConfirmingElectionDeletion={setConfirm} className="mb-4" />
 
-                <LongDropdown
-                    className="mt-4"
-                    componentName={"Result"}
-                    showComponent={showResult}
-                    setShowComponent={setShowResult}
+                {/* Integrity Checker Section */}
+                <IntegrityChecker
+                    election={election}
+                    isVoter={false}
                 />
 
-                <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg   
-                transition-all duration-300 ease-out overflow-hidden 
-                ${showResult ? 'p-6 mt-2 h-auto opacity-100 translate-y-0' :
-                        'p-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`} >
-                    <h1 className="text-xl font-bold mb-4 dark:text-white">President</h1>
-                    <HorizontalBarChart labels={dummyData.labels} values={dummyData.values} eligibleVoters={dummyData.eligibleVoters} />
+                {/* Results Section */}
+                <LongDropdown
+                    className="mt-4"
+                    componentName={"Results"}
+                    showComponent={showResults}
+                    setShowComponent={setShowResults}
+                />
+
+                <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg transition-all duration-300 ease-out overflow-hidden 
+                    ${showResults ? 'p-6 mt-2 h-auto opacity-100 translate-y-0' :
+                        'p-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`}>
+                    <ElectionResultsView results={resultsData} />
                 </div>
 
+                {/* Partylists Section */}
                 <LongDropdown
                     className="mt-4"
                     componentName={"Partylists"}
@@ -50,13 +107,10 @@ export default function OngoingElection({ election, setup }) {
                     setShowComponent={setShowPartylists}
                 />
 
-                <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg  
-                transition-all duration-300 ease-out overflow-hidden 
-                ${showPartylists ? 'px-6 pb-5 mt-2 h-auto opacity-100 translate-y-0' :
-                        'px-0 pb-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`} >
-
+                <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg transition-all duration-300 ease-out overflow-hidden 
+                    ${showPartylists ? 'px-6 pb-5 mt-2 h-auto opacity-100 translate-y-0' :
+                        'px-0 pb-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`}>
                     <PartylistSelectionView partylists={partylists} positions={positions} candidates={candidates} useWhite='true' />
-
                 </div>
             </div>
 

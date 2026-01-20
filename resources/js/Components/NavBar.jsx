@@ -100,6 +100,7 @@ export default function NavBar({ showSidebar, setShowSidebar }) {
                                     <hr className="border-gray-200 dark:border-gray-500 mb-2" />
                                     <div className='flex flex-col items-center'>
                                         <Link
+                                            onClick={() => setShowUserMenu(false)}
                                             href={route("profile.edit")}
                                             className="w-56 text-left px-4 py-2 text-sm rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600"
                                         >

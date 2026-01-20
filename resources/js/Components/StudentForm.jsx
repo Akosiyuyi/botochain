@@ -3,15 +3,16 @@ import TextInput from "./TextInput";
 import InputLabel from "./InputLabel";
 import InputError from "./InputError";
 import PrimaryButton from "./PrimaryButton";
+import DangerButton from "./DangerButton";
 
 export default function StudentForm({ data, setData, errors, onSubmit, processing, isEdit, schoolOptions }) {
     const isElemOrJhs = data.school_level === "Grade School" || data.school_level === "Junior High";
     const { schoolLevelOptions, yearLevelOptions, courseOptions } = schoolOptions;
 
-    const statusOptions = [
-        { label: "Enrolled", value: "Enrolled" },
-        { label: "Unenrolled", value: "Unenrolled" },
-    ];
+    const toggleStatus = () => {
+        const newStatus = data.status === "Enrolled" ? "Unenrolled" : "Enrolled";
+        setData("status", newStatus);
+    };
 
     return (
         <form onSubmit={onSubmit} className="space-y-4">
@@ -103,23 +104,21 @@ export default function StudentForm({ data, setData, errors, onSubmit, processin
                 </div>
             </div>
 
-            {isEdit && (
-                <div>
-                    <InputLabel htmlFor="status" value="Status" />
-                    <SelectInputForForms
-                        id="status"
-                        options={statusOptions}
-                        value={data.status}
-                        onChange={(val) => setData("status", val)}
-                        className="mt-1"
-                    />
-                    <InputError message={errors.status} className="mt-2" />
-                </div>
-            )}
-
-            <PrimaryButton type="submit" disabled={processing}>
-                {processing ? "Saving..." : "Save"}
-            </PrimaryButton>
+            {/* Submit Button */}
+            <div className="mt-2 flex flex-row gap-4">
+                <PrimaryButton type="submit" disabled={processing}>
+                    {processing ? "Saving..." : "Save"}
+                </PrimaryButton>
+                {isEdit && (
+                    <DangerButton
+                        type="button"
+                        variant={data.status ? 'danger' : 'reactivate'}
+                        onClick={toggleStatus}
+                    >
+                        {data.status ? 'Unenroll' : 'Reenroll'}
+                    </DangerButton>
+                )}
+            </div>
         </form>
     );
 }

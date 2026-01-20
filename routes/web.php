@@ -14,6 +14,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PartylistController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VoterController;
+use App\Http\Controllers\VoteIntegrityController;
+use App\Http\Controllers\Admin\ElectionExportController;
 
 Route::redirect('/', '/login');
 
@@ -48,11 +50,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
     Route::get('/login_logs', [LoginLogsController::class, 'index'])->name('login_logs');
 
 
-    // election resource route
+    // election custom route
     Route::patch('/admin/election/{election}/finalize', [ElectionController::class, 'finalize'])
         ->name('election.finalize');
     Route::patch('/admin/election/{election}/restoreToDraft', [ElectionController::class, 'restoreToDraft'])
         ->name('election.restoreToDraft');
+
+    Route::get('/election/{election}/export/excel', [ElectionExportController::class, 'exportExcel'])
+        ->name('election.export.excel');
+    Route::get('/election/{election}/export/pdf', [ElectionExportController::class, 'exportPdf'])
+        ->name('election.export.pdf');
+
+    // election resource route
     Route::resource('election', ElectionController::class);
     Route::resource('election.positions', PositionController::class);
     Route::resource('election.partylists', PartylistController::class);
@@ -67,11 +76,21 @@ Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
 });
 
 
-// shared routes
+// Shared routes - accessible to both voter and admin
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Election integrity verification (both voter & admin)
+    Route::get('/election/{election}/verify', [VoteIntegrityController::class, 'verifyElection'])
+        ->name('election.verify');
+
+    // Vote integrity verification (voter only - via policy)
+    Route::get('/election/{election}/vote/{vote}/verify', [VoteIntegrityController::class, 'verifyVote'])
+        ->name('vote.verify');
 });
 
 require __DIR__ . '/auth.php';
