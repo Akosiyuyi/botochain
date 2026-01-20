@@ -40,7 +40,13 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
             title: "Dashboard",
             route: "voter.dashboard",
             icon: LayoutDashboard,
-        },];
+        },
+        {
+            title: "Guidelines",
+            route: "voter.guidelines",
+            icon: BookUser,
+        },
+    ];
 
     const sidebarButtons =
         userRoles.includes("admin") || userRoles.includes("super-admin")

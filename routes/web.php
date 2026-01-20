@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VoterController;
 use App\Http\Controllers\VoteIntegrityController;
 use App\Http\Controllers\Admin\ElectionExportController;
+use App\Http\Controllers\Voter\GuidelinesController;
 
 Route::redirect('/', '/login');
 
@@ -71,8 +72,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
 
 // voter routes
-Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
-    Route::get('/voter/dashboard', [VoterController::class, 'dashboard'])->name('voter.dashboard');
+Route::prefix('voter')->name('voter.')->middleware(['auth', 'verified', 'role:voter'])->group(function () {
+    Route::get('/dashboard', [VoterController::class, 'dashboard'])->name('dashboard');
+    Route::get('/guidelines', [GuidelinesController::class, 'index'])->name('guidelines');
 });
 
 
