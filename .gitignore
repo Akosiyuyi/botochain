@@ -56,6 +56,7 @@ Thumbs.db
 auth.json
 Homestead.json
 Homestead.yaml
+documentation/
 
 # Optional: Composer or npm lock if you choose not to commit them
 # composer.lock
