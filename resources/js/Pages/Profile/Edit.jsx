@@ -41,7 +41,7 @@ export default function Edit({ mustVerifyEmail, status, recentLogins }) {
 
 Edit.layout = (page) => {
     const user = page.props.auth.user;
-    const role = user.roles[0]?.name || 'voter';
+    const role = user.roles[0];
     
     const roleColors = {
         "super-admin": "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300",
@@ -85,7 +85,7 @@ Edit.layout = (page) => {
                             <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
                                 roleColors[role] || "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300"
                             }`}>
-                                {role.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                {role ? role.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Voter'}
                             </span>
                         </div>
 
