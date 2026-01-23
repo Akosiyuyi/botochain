@@ -55,7 +55,7 @@ class ElectionViewService
     /**
      * Format a single election for list display.
      */
-    private function formatElectionListItem(Election $election): array
+    public function formatElectionListItem(Election $election): array
     {
         [$displayDate] = $this->buildDisplayDateTime($election);
 
