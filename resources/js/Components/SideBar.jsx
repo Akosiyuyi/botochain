@@ -42,6 +42,11 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
             icon: LayoutDashboard,
         },
         {
+            title: "Elections",
+            route: "voter.election.index",
+            icon: VoteIcon,
+        },
+        {
             title: "Guidelines",
             route: "voter.guidelines",
             icon: BookUser,

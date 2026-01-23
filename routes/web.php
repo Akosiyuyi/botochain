@@ -75,6 +75,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 Route::prefix('voter')->name('voter.')->middleware(['auth', 'verified', 'role:voter'])->group(function () {
     Route::get('/dashboard', [VoterController::class, 'dashboard'])->name('dashboard');
     Route::get('/guidelines', [GuidelinesController::class, 'index'])->name('guidelines');
+    Route::resource('election', App\Http\Controllers\Voter\ElectionController::class)
+        ->only(['index', 'show']);
 });
 
 
