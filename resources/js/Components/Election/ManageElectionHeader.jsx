@@ -3,7 +3,7 @@ import OptionsMenu from "../OptionsMenu";
 import { Pencil, Trash2, Undo2, Calendar, Clock } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function ManageElectionHeader({ election, setConfirmingElectionDeletion, className = "" }) {
+export default function ManageElectionHeader({ election, setConfirmingElectionDeletion, className = "", isVoter = false }) {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
@@ -20,6 +20,9 @@ export default function ManageElectionHeader({ election, setConfirmingElectionDe
 
 
     const getEllipsisOptions = (election) => {
+        if (isVoter) {
+            return [];
+        }
         switch (election.status) {
             case "draft":
                 return [
