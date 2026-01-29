@@ -102,6 +102,9 @@ export default function IntegrityChecker({ election, vote = null, isVoter = fals
 
     const isValid = result.valid === true;
     const hasVotes = result.total_votes > 0;
+    
+    // For individual vote verification, use expected_current_hash as final_hash
+    const displayFinalHash = result.final_hash || result.expected_current_hash;
 
     return (
         <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
@@ -201,25 +204,25 @@ export default function IntegrityChecker({ election, vote = null, isVoter = fals
                             {/* Chain Status */}
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
                                 <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Chain Status</p>
-                                <p className={`text-sm font-bold mt-2 ${result.final_hash
+                                <p className={`text-sm font-bold mt-2 ${displayFinalHash
                                     ? 'text-green-600 dark:text-green-400'
                                     : 'text-gray-500 dark:text-gray-400'
                                     }`}>
-                                    {result.final_hash ? '✓ Valid Chain' : 'No chain yet'}
+                                    {displayFinalHash ? '✓ Valid Chain' : 'No chain yet'}
                                 </p>
                             </div>
                         </div>
 
                         {/* Hash Display */}
                         <div className="space-y-3">
-                            {/* Final Hash */}
+                            {/* Final Hash / Current Hash */}
                             <div>
                                 <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider block mb-2">
-                                    Final Hash
+                                    {isVoter ? 'Current Hash' : 'Final Hash'}
                                 </label>
-                                {result.final_hash ? (
+                                {displayFinalHash ? (
                                     <code className="block bg-gray-900 dark:bg-black text-green-400 p-2 sm:p-3 rounded-lg text-xs break-all font-mono overflow-x-auto border border-gray-700">
-                                        {result.final_hash}
+                                        {displayFinalHash}
                                     </code>
                                 ) : (
                                     <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
