@@ -9,6 +9,7 @@ use App\Services\ElectionViewService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\Vote;
 
 class ElectionController extends Controller
 {
@@ -89,7 +90,13 @@ class ElectionController extends Controller
      */
     public function show(Election $election)
     {
-        $payload = $this->electionViewService->forShow($election);
+        $student = \App\Models\Student::where('student_id', Auth::user()->id_number)->first();
+        $payload = $this->electionViewService->forShow($election, $student);
+        
+        // Fetch the voter's vote if it exists
+        $vote = $student ? Vote::where('election_id', $election->id)
+            ->where('student_id', $student->id)
+            ->first() : null;
 
         // Reuse admin payload; voters will consume the same info (positions, schedule, etc.)
         return match ($election->status) {
@@ -101,16 +108,19 @@ class ElectionController extends Controller
                 'election' => $payload['election'],
                 'setup' => $payload['setup'],
                 'results' => $payload['results'],
+                'vote' => $vote,
             ]),
             ElectionStatus::Finalized => Inertia::render('Voter/Election/FinalizedElection', [
                 'election' => $payload['election'],
                 'setup' => $payload['setup'],
                 'results' => $payload['results'],
+                'vote' => $vote,
             ]),
             ElectionStatus::Compromised => Inertia::render('Voter/Election/CompromisedElection', [
                 'election' => $payload['election'],
                 'setup' => $payload['setup'],
                 'results' => $payload['results'],
+                'vote' => $vote,
             ]),
             default => abort(404),
         };

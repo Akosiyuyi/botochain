@@ -77,6 +77,8 @@ Route::prefix('voter')->name('voter.')->middleware(['auth', 'verified', 'role:vo
     Route::get('/guidelines', [GuidelinesController::class, 'index'])->name('guidelines');
     Route::resource('election', App\Http\Controllers\Voter\ElectionController::class)
         ->only(['index', 'show']);
+    Route::resource('election.vote', App\Http\Controllers\Voter\VoteController::class)
+        ->only(['create', 'store', 'show']);
 });
 
 
