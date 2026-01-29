@@ -7,7 +7,7 @@ import LongDropdown from '@/Components/LongDropdown';
 import ElectionResultsView from '@/Components/Election/Results/ElectionResultsView';
 import IntegrityChecker from '@/Components/Election/VoteIntegrity/IntegrityChecker';
 
-export default function FinalizedElection({ election, setup, results }) {
+export default function FinalizedElection({ election, setup, results, vote }) {
     const { positions = [], partylists = [], candidates = [] } = setup;
     const [confirm, setConfirm] = useState(false);
     const [showPartylists, setShowPartylists] = useState(false);
@@ -23,6 +23,7 @@ export default function FinalizedElection({ election, setup, results }) {
                 {/* Integrity Checker Section */}
                 <IntegrityChecker
                     election={election}
+                    vote={vote}
                     isVoter={true}
                 />
 
