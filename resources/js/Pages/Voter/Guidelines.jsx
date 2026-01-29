@@ -8,7 +8,7 @@ export default function Guidelines() {
         {
             icon: Shield,
             title: "Eligibility",
-            description: "Only registered students of the institution are allowed to vote using the EBOTO system.",
+            description: "Only registered students of the institution are allowed to vote using the BotoChain system.",
         },
         {
             icon: Lock,
