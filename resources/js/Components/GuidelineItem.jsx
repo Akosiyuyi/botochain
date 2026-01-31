@@ -9,11 +9,11 @@ export default function GuidelineItem({
     children
 }) {
     return (
-        <div className="group backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-5 transition-all duration-200 hover:shadow-lg hover:border-green-500/30 dark:hover:border-green-600/30">
+        <div className="group backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-5 transition-all duration-200">
             <div className="flex gap-3 sm:gap-4">
                 {/* Icon or Number Badge */}
                 <div className="flex-shrink-0">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
                         {number ? (
                             <span className="text-white font-bold text-sm sm:text-base">
                                 {number}
