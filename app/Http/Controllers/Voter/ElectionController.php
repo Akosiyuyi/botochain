@@ -6,6 +6,7 @@ use App\Enums\ElectionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Services\ElectionViewService;
+use App\Services\StudentLookupService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ class ElectionController extends Controller
 
     public function __construct(
         protected ElectionViewService $electionViewService,
+        protected StudentLookupService $studentLookup,
     )
     {
     }
@@ -25,10 +27,8 @@ class ElectionController extends Controller
      */
     public function index()
     {
-        $userIdNumber = Auth::user()->id_number;
-        
         // Get the student using id_number
-        $student = \App\Models\Student::where('student_id', $userIdNumber)->first();
+        $student = $this->studentLookup->findByUser(Auth::user());
         
         // If no student found, return empty
         if (!$student) {
@@ -90,7 +90,7 @@ class ElectionController extends Controller
      */
     public function show(Election $election)
     {
-        $student = \App\Models\Student::where('student_id', Auth::user()->id_number)->first();
+        $student = $this->studentLookup->findByUser(Auth::user());
         $payload = $this->electionViewService->forShow($election, $student);
         
         // Fetch the voter's vote if it exists

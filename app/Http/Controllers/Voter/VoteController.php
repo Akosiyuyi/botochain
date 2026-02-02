@@ -11,6 +11,7 @@ use App\Services\VoteService;
 use App\Services\ElectionViewService;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use App\Services\StudentLookupService;
 
 class VoteController extends Controller
 {
@@ -18,6 +19,7 @@ class VoteController extends Controller
     public function __construct(
         protected VoteService $voteService,
         protected ElectionViewService $electionViewService,
+        protected StudentLookupService $studentLookup,
     ) {
 
     }
@@ -121,7 +123,6 @@ class VoteController extends Controller
 
     private function getVoterStudent()
     {
-        $voterAccount = Auth::user();
-        return Student::where('student_id', $voterAccount->id_number)->firstOrFail();
+        return $this->studentLookup->findByUserOrFail(Auth::user());
     }
 }
