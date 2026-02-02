@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ElectionCard from "@/Components/Election/ElectionCard";
 import { CalendarDays, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
 import noElectionsFlat from '@images/NoElectionsFlat.png';
+import { Head } from '@inertiajs/react';
 
 function EmptyState({ message = "No elections available" }) {
   return (
@@ -64,8 +65,8 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
             key={page}
             onClick={() => onPageChange(page)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${currentPage === page
-                ? 'bg-emerald-600 dark:bg-emerald-600 text-white'
-                : 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
+              ? 'bg-emerald-600 dark:bg-emerald-600 text-white'
+              : 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
           >
             {page}
@@ -139,70 +140,74 @@ export default function Election() {
   const { elections } = usePage().props;
 
   return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <div className="rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 sm:p-8">
-        <div className="flex items-start gap-4">
-          <div className="p-3 rounded-xl bg-emerald-600 text-white shadow">
-            <CalendarDays className="h-6 w-6" />
-          </div>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Elections</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-              Browse upcoming and ongoing elections. Finalized results are available for review.
-            </p>
+    <>
+      <Head title="Elections" />
+
+      <div className="space-y-8">
+        {/* Hero */}
+        <div className="rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 sm:p-8">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-emerald-600 text-white shadow">
+              <CalendarDays className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Elections</h2>
+              <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                Browse upcoming and ongoing elections. Finalized results are available for review.
+              </p>
+            </div>
           </div>
         </div>
+
+        {/* Ongoing */}
+        <ElectionSection
+          title="Ongoing"
+          items={elections.ongoing}
+          mode="ongoing"
+          emptyMessage="No ongoing elections at the moment."
+          itemsPerPage={6}
+        />
+
+        {/* Upcoming */}
+        <ElectionSection
+          title="Upcoming"
+          items={elections.upcoming}
+          mode="upcoming"
+          emptyMessage="No upcoming elections scheduled."
+          itemsPerPage={6}
+        />
+
+        {/* Finalized */}
+        <ElectionSection
+          title="Finalized"
+          items={elections.finalized}
+          mode="finalized"
+          emptyMessage="No finalized elections yet."
+          itemsPerPage={9}
+        />
+
+        {/* Notices: Compromised */}
+        {elections.compromised?.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notices</h3>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+              The following elections were marked as compromised. Voting is disabled.
+            </p>
+
+            <ElectionSection
+              title=""
+              items={elections.compromised}
+              mode="compromised"
+              emptyMessage=""
+              itemsPerPage={6}
+            />
+          </section>
+        )}
       </div>
-
-      {/* Ongoing */}
-      <ElectionSection
-        title="Ongoing"
-        items={elections.ongoing}
-        mode="ongoing"
-        emptyMessage="No ongoing elections at the moment."
-        itemsPerPage={6}
-      />
-
-      {/* Upcoming */}
-      <ElectionSection
-        title="Upcoming"
-        items={elections.upcoming}
-        mode="upcoming"
-        emptyMessage="No upcoming elections scheduled."
-        itemsPerPage={6}
-      />
-
-      {/* Finalized */}
-      <ElectionSection
-        title="Finalized"
-        items={elections.finalized}
-        mode="finalized"
-        emptyMessage="No finalized elections yet."
-        itemsPerPage={9}
-      />
-
-      {/* Notices: Compromised */}
-      {elections.compromised?.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notices</h3>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-            The following elections were marked as compromised. Voting is disabled.
-          </p>
-
-          <ElectionSection
-            title=""
-            items={elections.compromised}
-            mode="compromised"
-            emptyMessage=""
-            itemsPerPage={6}
-          />
-        </section>
-      )}
-    </div>
+    </>
   );
 }
 

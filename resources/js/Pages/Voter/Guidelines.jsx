@@ -1,6 +1,7 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GuidelineItem from '@/Components/GuidelineItem';
+import { Head } from '@inertiajs/react';
 import { BookUser, AlertCircle, CheckCircle, Shield, Lock, Mail, Eye, Users, Calendar, AlertTriangle, Zap } from 'lucide-react';
 
 export default function Guidelines() {
@@ -59,6 +60,7 @@ export default function Guidelines() {
 
     return (
         <div>
+            <Head title="Guidelines" />
             {/* Header Section */}
             <div className="rounded-xl mb-6 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 px-4 sm:px-6 py-6 sm:py-8 shadow-lg">
                 <div className="flex items-start gap-3 sm:gap-4">
