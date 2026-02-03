@@ -1,6 +1,6 @@
 import { usePage, Link } from "@inertiajs/react";
 import { useRef, useEffect, useState } from "react";
-import { ChevronDown, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon } from "lucide-react";
+import { ChevronDown, LayoutDashboard, GraduationCap, Upload, BookUser, User, VoteIcon, CalendarDays } from "lucide-react";
 
 export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpenMenu }) {
     const sidebarRef = useRef(null);
@@ -44,6 +44,11 @@ export default function SideBar({ showSidebar, setShowSidebar, openMenu, setOpen
         {
             title: "Elections",
             route: "voter.election.index",
+            icon: CalendarDays,
+        },
+        {
+            title: "Vote History",
+            route: "voter.vote-history.index",
             icon: VoteIcon,
         },
         {

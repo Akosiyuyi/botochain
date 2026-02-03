@@ -17,6 +17,7 @@ use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\VoteIntegrityController;
 use App\Http\Controllers\Admin\ElectionExportController;
 use App\Http\Controllers\Voter\GuidelinesController;
+use App\Http\Controllers\VoteHistoryController;
 
 Route::redirect('/', '/login');
 
@@ -79,6 +80,9 @@ Route::prefix('voter')->name('voter.')->middleware(['auth', 'verified', 'role:vo
         ->only(['index', 'show']);
     Route::resource('election.vote', App\Http\Controllers\Voter\VoteController::class)
         ->only(['create', 'store', 'show']);
+    Route::resource('vote-history', VoteHistoryController::class)
+        ->parameters(['vote-history' => 'vote'])
+        ->only(['index', 'show']);
 });
 
 
