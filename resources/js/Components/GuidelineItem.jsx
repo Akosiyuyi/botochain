@@ -9,7 +9,7 @@ export default function GuidelineItem({
     children
 }) {
     return (
-        <div className="group backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-5 transition-all duration-200">
+        <div className="group backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-5">
             <div className="flex gap-3 sm:gap-4">
                 {/* Icon or Number Badge */}
                 <div className="flex-shrink-0">

@@ -144,21 +144,6 @@ export default function Election() {
       <Head title="Elections" />
 
       <div className="space-y-8">
-        {/* Hero */}
-        <div className="rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 sm:p-8">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-emerald-600 text-white shadow">
-              <CalendarDays className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Elections</h2>
-              <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                Browse upcoming and ongoing elections. Finalized results are available for review.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Ongoing */}
         <ElectionSection
           title="Ongoing"

@@ -61,50 +61,31 @@ export default function Guidelines() {
     return (
         <div>
             <Head title="Guidelines" />
-            {/* Header Section */}
-            <div className="rounded-xl mb-6 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 px-4 sm:px-6 py-6 sm:py-8 shadow-lg">
-                <div className="flex items-start gap-3 sm:gap-4">
-                    <div className="p-2 sm:p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                        <BookUser className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div>
-                        <h3 className="text-lg sm:text-2xl font-bold text-white mb-1">
-                            Important Voter Guidelines
-                        </h3>
-                        <p className="text-sm text-white/90">
-                            Please read and understand these guidelines to ensure a smooth voting experience
-                        </p>
-                    </div>
-                </div>
+
+            <div className="grid gap-3 sm:gap-4">
+                {guidelines.map((guideline, idx) => (
+                    <GuidelineItem
+                        key={idx}
+                        number={idx + 1}
+                        icon={guideline.icon}
+                        title={guideline.title}
+                        description={guideline.description}
+                    />
+                ))}
             </div>
 
-            {/* Guidelines Container */}
-            <div className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 shadow-xl rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-6 lg:p-8">
-                <div className="grid gap-3 sm:gap-4">
-                    {guidelines.map((guideline, idx) => (
-                        <GuidelineItem
-                            key={idx}
-                            number={idx + 1}
-                            icon={guideline.icon}
-                            title={guideline.title}
-                            description={guideline.description}
-                        />
-                    ))}
+            {/* Footer Notice */}
+            <div className="mt-6 backdrop-blur-sm bg-green-50/80 dark:bg-green-900/20 rounded-xl border border-green-300 dark:border-green-700 p-4 sm:p-5">
+                <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-gray-700 dark:text-gray-200">
+                        <span className="font-semibold">Ready to vote?</span> Make sure you've reviewed all guidelines before proceeding to cast your vote.
+                    </p>
                 </div>
-
-                {/* Footer Notice */}
-                <div className="mt-6 backdrop-blur-sm bg-green-50/80 dark:bg-green-900/20 rounded-xl border border-green-300 dark:border-green-700 p-4 sm:p-5">
-                    <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-gray-700 dark:text-gray-200">
-                            <span className="font-semibold">Ready to vote?</span> Make sure you've reviewed all guidelines before proceeding to cast your vote.
-                        </p>
-                    </div>
-                </div>
-                {/* add Caritas Christi Urget Nos here */}
-                <div className="mt-6 text-center text-xl text-gray-500 dark:text-gray-400 italic">
-                    Caritas Christi Urget Nos
-                </div>
+            </div>
+            {/* add Caritas Christi Urget Nos here */}
+            <div className="mt-6 text-center text-xl text-gray-500 dark:text-gray-400 italic">
+                Caritas Christi Urget Nos
             </div>
         </div>
     );
