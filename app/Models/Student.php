@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $student_id
+ * @property string $name
+ * @property string $school_level
+ * @property string $year_level
+ * @property string $course
+ * @property string $section
+ * @property string $status
+ */
 class Student extends Model
 {
     use HasFactory;
