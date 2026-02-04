@@ -132,6 +132,15 @@ class ElectionController extends Controller
     {
         $election = Election::findOrFail($id);
 
+        // Prevent editing of elections that are ongoing or beyond
+        if ($election->status === ElectionStatus::Ongoing || 
+            $election->status === ElectionStatus::Ended || 
+            $election->status === ElectionStatus::Finalized ||
+            $election->status === ElectionStatus::Compromised) {
+            return redirect()->route('admin.election.show', $election->id)
+                ->with('error', 'Cannot edit election that is ongoing or has already ended.');
+        }
+
         $validated = $request->validate([
             'title' => [
                 'required',
@@ -152,6 +161,12 @@ class ElectionController extends Controller
      */
     public function destroy(Election $election)
     {
+        // Prevent deletion of elections that are ongoing or beyond
+        if ($election->status !== ElectionStatus::Draft && $election->status !== ElectionStatus::Upcoming) {
+            return redirect()->route('admin.election.index')
+                ->with('error', 'Can only delete draft or upcoming elections.');
+        }
+
         $election->delete();
         return redirect()
             ->route('admin.election.index')
@@ -163,10 +178,11 @@ class ElectionController extends Controller
      */
     public function finalize(Election $election)
     {
+        $election->load('setup'); // Ensure setup is loaded
         $setup = $election->setup;
 
         // Check schedule validity
-        if ($setup->start_time && $setup->end_time) {
+        if ($setup && $setup->start_time && $setup->end_time) {
             $now = Carbon::now();
 
             if (Carbon::parse($setup->end_time)->lt($now)) {
@@ -227,10 +243,11 @@ class ElectionController extends Controller
 
     public function restoreToDraft(Election $election)
     {
+        $election->load('setup'); // Ensure setup is loaded
         $setup = $election->setup;
 
         // Only allow restoring if it was finalized
-        if ($setup->setup_finalized) {
+        if ($setup && $setup->setup_finalized) {
             // Guard: block restore if start_time is within 24 hours
             if ($setup->start_time) {
                 $hoursUntilStart = Carbon::now()->diffInHours(Carbon::parse($setup->start_time), false);
