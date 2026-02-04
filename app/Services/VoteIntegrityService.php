@@ -30,6 +30,7 @@ class VoteIntegrityService
 
 
         // check each vote
+        /** @var Vote $vote */
         foreach ($votes as $vote) {
             // if vote is not sealed yet
             if (!$vote->current_hash || !$vote->payload_hash) {
