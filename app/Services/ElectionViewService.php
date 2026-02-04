@@ -17,7 +17,7 @@ class ElectionViewService
     {
         return Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->get()
-            ->map(fn($election) => $this->formatElectionListItem($election));
+            ->map(fn(Election $election) => $this->formatElectionListItem($election));
     }
 
     /**
