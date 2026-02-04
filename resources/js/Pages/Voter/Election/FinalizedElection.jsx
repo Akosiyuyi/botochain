@@ -23,8 +23,6 @@ export default function FinalizedElection({ election, setup, results, vote }) {
                 {/* Integrity Checker Section */}
                 <IntegrityChecker
                     election={election}
-                    vote={vote}
-                    isVoter={true}
                 />
 
                 {/* Results Section */}

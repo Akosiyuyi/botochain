@@ -25,9 +25,7 @@ export default function OngoingElection({ election, setup, results, vote }) {
 
                 {/* Integrity Checker Section */}
                 <IntegrityChecker
-                    election={election}
-                    vote={vote}
-                    isVoter={true}
+                    election={election}     
                 />
 
                 {/* Results Section */}
