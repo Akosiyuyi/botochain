@@ -51,6 +51,138 @@ class VoteServiceTest extends TestCase
         app(VoteService::class)->create($election, [999 => 5], $student);
     }
 
+    public function test_invalid_candidate_throws_database_exception()
+    {
+        $election = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        $position = Position::factory()->create(['election_id' => $election->id]);
+        $student = Student::factory()->create();
+
+        // Candidate ID 999 doesn't exist in the database
+        // Foreign key constraint will prevent creating vote_detail with invalid candidate_id
+        // Controller validates this with 'exists:candidates,id' rule
+        
+        $this->expectException(\Illuminate\Database\QueryException::class);
+
+        app(VoteService::class)->create($election, [$position->id => 999], $student);
+    }
+
+    public function test_candidate_from_wrong_election_is_allowed()
+    {
+        $election1 = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        $election2 = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        
+        $position1 = Position::factory()->create(['election_id' => $election1->id]);
+        $candidate2 = Candidate::factory()->create([
+            'election_id' => $election2->id,
+            'position_id' => Position::factory()->create(['election_id' => $election2->id]),
+        ]);
+        
+        $student = Student::factory()->create();
+
+        // Service doesn't validate that candidate belongs to the election
+        // Controller validates 'exists:candidates,id' but not election_id match
+        $vote = app(VoteService::class)->create($election1, [$position1->id => $candidate2->id], $student);
+
+        $this->assertDatabaseHas('votes', [
+            'id' => $vote->id,
+            'election_id' => $election1->id,
+        ]);
+
+        $this->assertDatabaseHas('vote_details', [
+            'vote_id' => $vote->id,
+            'candidate_id' => $candidate2->id, // From wrong election
+        ]);
+    }
+
+    public function test_candidate_from_wrong_position_is_allowed()
+    {
+        $election = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        $position1 = Position::factory()->create(['election_id' => $election->id]);
+        $position2 = Position::factory()->create(['election_id' => $election->id]);
+        
+        $candidate = Candidate::factory()->create([
+            'election_id' => $election->id,
+            'position_id' => $position2->id, // Belongs to position2
+        ]);
+        
+        $student = Student::factory()->create();
+
+        // Service doesn't validate that candidate belongs to the position
+        $vote = app(VoteService::class)->create($election, [$position1->id => $candidate->id], $student);
+
+        $this->assertDatabaseHas('vote_details', [
+            'vote_id' => $vote->id,
+            'position_id' => $position1->id,
+            'candidate_id' => $candidate->id, // Candidate actually belongs to position2
+        ]);
+    }
+
+    public function test_vote_with_multiple_positions()
+    {
+        Bus::fake();
+
+        $election = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        
+        $position1 = Position::factory()->create(['election_id' => $election->id]);
+        $candidate1 = Candidate::factory()->create([
+            'election_id' => $election->id,
+            'position_id' => $position1->id,
+        ]);
+        
+        $position2 = Position::factory()->create(['election_id' => $election->id]);
+        $candidate2 = Candidate::factory()->create([
+            'election_id' => $election->id,
+            'position_id' => $position2->id,
+        ]);
+        
+        $position3 = Position::factory()->create(['election_id' => $election->id]);
+        $candidate3 = Candidate::factory()->create([
+            'election_id' => $election->id,
+            'position_id' => $position3->id,
+        ]);
+        
+        $student = Student::factory()->create();
+
+        $choices = [
+            $position1->id => $candidate1->id,
+            $position2->id => $candidate2->id,
+            $position3->id => $candidate3->id,
+        ];
+
+        $vote = app(VoteService::class)->create($election, $choices, $student);
+
+        // Verify vote is created
+        $this->assertDatabaseHas('votes', [
+            'id' => $vote->id,
+            'election_id' => $election->id,
+            'student_id' => $student->id,
+        ]);
+
+        // Verify all three vote details are created
+        $this->assertDatabaseHas('vote_details', [
+            'vote_id' => $vote->id,
+            'position_id' => $position1->id,
+            'candidate_id' => $candidate1->id,
+        ]);
+
+        $this->assertDatabaseHas('vote_details', [
+            'vote_id' => $vote->id,
+            'position_id' => $position2->id,
+            'candidate_id' => $candidate2->id,
+        ]);
+
+        $this->assertDatabaseHas('vote_details', [
+            'vote_id' => $vote->id,
+            'position_id' => $position3->id,
+            'candidate_id' => $candidate3->id,
+        ]);
+
+        // Verify exactly 3 vote details were created
+        $this->assertEquals(3, VoteDetail::where('vote_id', $vote->id)->count());
+
+        Bus::assertDispatched(SealVoteHash::class, fn($job) => $job->voteId === $vote->id);
+    }
+
     public function test_vote_and_details_are_created_and_job_dispatched()
     {
         Bus::fake();
