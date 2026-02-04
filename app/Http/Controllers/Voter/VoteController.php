@@ -24,16 +24,6 @@ class VoteController extends Controller
 
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -88,39 +78,9 @@ class VoteController extends Controller
         return redirect()->route('voter.election.show', $election->id)->with('success', 'Vote submitted successfully.');
     }
 
-
     /**
-     * Display the specified resource.
+     * Helper to get the voter student based on the authenticated user.
      */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     private function getVoterStudent()
     {
         return $this->studentLookup->findByUserOrFail(Auth::user());
