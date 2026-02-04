@@ -10,6 +10,14 @@ class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Seed roles
+        $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
+    }
+
     public function test_confirm_password_screen_can_be_rendered(): void
     {
         $user = User::factory()->create();
@@ -22,6 +30,7 @@ class PasswordConfirmationTest extends TestCase
     public function test_password_can_be_confirmed(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('voter');
 
         $response = $this->actingAs($user)->post('/confirm-password', [
             'password' => 'password',
