@@ -29,6 +29,7 @@ class VoteHistoryController extends Controller
             ->map(function ($vote) {
                 return [
                     'id' => $vote->id,
+                    'election_id' => $vote->election_id,
                     'election_title' => $vote->election?->title,
                     'created_at' => $vote->created_at->format('M d, Y h:i A'),
                 ];
