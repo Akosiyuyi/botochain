@@ -88,7 +88,6 @@ export default function Dashboard({ stats, electionStatusOverview, recentActivit
                         label="Votes Cast"
                         value={stats.totalVotes}
                         color="indigo"
-                        subtext={`${stats.turnoutRate}% turnout`}
                     />
                 </div>
 

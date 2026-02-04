@@ -42,19 +42,14 @@ class AdminDashboardViewService
             ', [ElectionStatus::Ongoing->value, ElectionStatus::Finalized->value])
             ->first();
 
-        $totalVoters = Student::count();
+        $totalStudents = Student::count();
         $totalVotes = Vote::count();
-        
-        $turnoutRate = $totalVoters > 0 
-            ? round(($totalVotes / $totalVoters) * 100, 1) 
-            : 0;
 
         return [
             'totalElections' => (int) $stats->total,
             'activeElections' => (int) $stats->active,
-            'totalVoters' => $totalVoters,
+            'totalVoters' => $totalStudents,
             'totalVotes' => $totalVotes,
-            'turnoutRate' => $turnoutRate,
             'completedElections' => (int) $stats->completed,
         ];
     }
@@ -109,7 +104,7 @@ class AdminDashboardViewService
             ->orderByDesc('latest_vote')
             ->limit(2)
             ->get()
-            ->map(function($record) {
+            ->map(function ($record) {
                 return [
                     'type' => 'vote_cast',
                     'title' => "{$record->vote_count} votes cast in {$record->title}",
@@ -167,12 +162,12 @@ class AdminDashboardViewService
         $hasCompromised = Election::where('status', ElectionStatus::Compromised)->exists();
         $activeElections = Election::where('status', ElectionStatus::Ongoing)->count();
 
-        $dbLatencyMs   = $this->measureDbLatencyMs();
-        $loadAvg       = $this->getSystemLoadAvg();
-        $queueBacklog  = $this->getQueueBacklog();
-        $failedJobs    = $this->getFailedJobsCount();
+        $dbLatencyMs = $this->measureDbLatencyMs();
+        $loadAvg = $this->getSystemLoadAvg();
+        $queueBacklog = $this->getQueueBacklog();
+        $failedJobs = $this->getFailedJobsCount();
 
-        $performanceStatus  = $this->evaluatePerformanceStatus($dbLatencyMs, $loadAvg, $queueBacklog, $failedJobs);
+        $performanceStatus = $this->evaluatePerformanceStatus($dbLatencyMs, $loadAvg, $queueBacklog, $failedJobs);
         $performanceMessage = $this->buildPerformanceMessage($dbLatencyMs, $loadAvg, $queueBacklog, $failedJobs);
 
         return [
@@ -231,31 +226,44 @@ class AdminDashboardViewService
     private function evaluatePerformanceStatus(?float $dbLatencyMs, ?float $loadAvg, ?int $queueBacklog, ?int $failedJobs): string
     {
         $warning = false;
-        $active  = false;
+        $active = false;
 
-        if ($failedJobs !== null && $failedJobs > 0) $warning = true;
-        if ($dbLatencyMs !== null && $dbLatencyMs > 300) $warning = true;
-        if ($loadAvg !== null && $loadAvg > 3.0) $warning = true;
-        if ($queueBacklog !== null && $queueBacklog > 100) $warning = true;
+        if ($failedJobs !== null && $failedJobs > 0)
+            $warning = true;
+        if ($dbLatencyMs !== null && $dbLatencyMs > 300)
+            $warning = true;
+        if ($loadAvg !== null && $loadAvg > 3.0)
+            $warning = true;
+        if ($queueBacklog !== null && $queueBacklog > 100)
+            $warning = true;
 
         if (!$warning) {
-            if ($dbLatencyMs !== null && $dbLatencyMs > 150) $active = true;
-            if ($loadAvg !== null && $loadAvg > 1.5) $active = true;
-            if ($queueBacklog !== null && $queueBacklog > 0) $active = true;
+            if ($dbLatencyMs !== null && $dbLatencyMs > 150)
+                $active = true;
+            if ($loadAvg !== null && $loadAvg > 1.5)
+                $active = true;
+            if ($queueBacklog !== null && $queueBacklog > 0)
+                $active = true;
         }
 
-        if ($warning) return 'warning';
-        if ($active) return 'active';
+        if ($warning)
+            return 'warning';
+        if ($active)
+            return 'active';
         return 'optimal';
     }
 
     private function buildPerformanceMessage(?float $dbLatencyMs, ?float $loadAvg, ?int $queueBacklog, ?int $failedJobs): ?string
     {
         $parts = [];
-        if ($dbLatencyMs !== null) $parts[] = "DB latency {$dbLatencyMs}ms";
-        if ($loadAvg !== null)     $parts[] = "load avg " . number_format($loadAvg, 2);
-        if ($queueBacklog !== null) $parts[] = "queue {$queueBacklog}";
-        if ($failedJobs !== null && $failedJobs > 0) $parts[] = "{$failedJobs} failed";
+        if ($dbLatencyMs !== null)
+            $parts[] = "DB latency {$dbLatencyMs}ms";
+        if ($loadAvg !== null)
+            $parts[] = "load avg " . number_format($loadAvg, 2);
+        if ($queueBacklog !== null)
+            $parts[] = "queue {$queueBacklog}";
+        if ($failedJobs !== null && $failedJobs > 0)
+            $parts[] = "{$failedJobs} failed";
 
         return count($parts) ? implode(' • ', $parts) : null;
     }
@@ -263,10 +271,14 @@ class AdminDashboardViewService
     private function buildPerformanceDetails(?float $dbLatencyMs, ?float $loadAvg, ?int $queueBacklog, ?int $failedJobs): array
     {
         $details = [];
-        if ($dbLatencyMs !== null)  $details[] = "DB latency: {$dbLatencyMs} ms";
-        if ($loadAvg !== null)      $details[] = "Load avg (1m): " . number_format($loadAvg, 2);
-        if ($queueBacklog !== null) $details[] = "Queue backlog: {$queueBacklog}";
-        if ($failedJobs !== null)   $details[] = "Failed jobs: {$failedJobs}";
+        if ($dbLatencyMs !== null)
+            $details[] = "DB latency: {$dbLatencyMs} ms";
+        if ($loadAvg !== null)
+            $details[] = "Load avg (1m): " . number_format($loadAvg, 2);
+        if ($queueBacklog !== null)
+            $details[] = "Queue backlog: {$queueBacklog}";
+        if ($failedJobs !== null)
+            $details[] = "Failed jobs: {$failedJobs}";
         return $details;
     }
 
@@ -274,7 +286,7 @@ class AdminDashboardViewService
     {
         return Election::where('status', ElectionStatus::Draft)
             ->where('created_at', '<', now()->subDays(7))
-            ->exists() || 
+            ->exists() ||
             Election::where('status', ElectionStatus::Compromised)->exists();
     }
 
