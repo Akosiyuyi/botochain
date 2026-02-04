@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ElectionStatus;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property ElectionStatus $status
+ * @property string|null $final_hash
+ * @property \Carbon\Carbon|null $finalized_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
+
 class Election extends Model
 {
     use HasFactory;
