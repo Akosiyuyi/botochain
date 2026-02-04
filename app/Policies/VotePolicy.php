@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Election;
 use App\Models\User;
 use App\Models\Vote;
+use App\Models\Student;
 
 class VotePolicy
 {
@@ -14,7 +15,14 @@ class VotePolicy
         if (!$user->hasRole('voter')) {
             return false;
         }
-        return $vote->student_id === $user->id_number;
+        
+        $student = app(\App\Services\StudentLookupService::class)->findByUser($user);
+        
+        if (!$student) {
+            return false;
+        }
+
+        return $vote->student_id === $student->id;
     }
 
     public function eligibleVoter(User $user, Election $election): bool
@@ -23,7 +31,14 @@ class VotePolicy
         if (!$user->hasRole('voter')) {
             return false;
         }
+        
         // Check if the user is in the election's eligible voters list
-        return $election->eligibleVoters()->contains('student_id', $user->id_number);
+        $student = app(\App\Services\StudentLookupService::class)->findByUser($user);
+        
+        if (!$student) {
+            return false;
+        }
+        
+        return $election->eligibleVoters()->contains('student_id', $student->id);
     }
 }

@@ -119,6 +119,7 @@ class VoteIntegrityService
         return [
             'valid' => true,
             'vote_id' => $vote->id,
+            'total_votes' => $election->votes()->count(),
             'expected_payload_hash' => $payloadHash,
             'expected_current_hash' => $expectedHash,
         ];

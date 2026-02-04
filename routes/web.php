@@ -13,9 +13,11 @@ use App\Http\Controllers\LoginLogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PartylistController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\VoterController;
+use App\Http\Controllers\Voter\VoterDashboardController;
 use App\Http\Controllers\VoteIntegrityController;
 use App\Http\Controllers\Admin\ElectionExportController;
+use App\Http\Controllers\Voter\GuidelinesController;
+use App\Http\Controllers\VoteHistoryController;
 
 Route::redirect('/', '/login');
 
@@ -71,8 +73,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
 
 // voter routes
-Route::middleware(['auth', 'verified', 'role:voter'])->group(function () {
-    Route::get('/voter/dashboard', [VoterController::class, 'dashboard'])->name('voter.dashboard');
+Route::prefix('voter')->name('voter.')->middleware(['auth', 'verified', 'role:voter'])->group(function () {
+    Route::get('/dashboard', [VoterDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/guidelines', [GuidelinesController::class, 'index'])->name('guidelines');
+    Route::resource('election', App\Http\Controllers\Voter\ElectionController::class)
+        ->only(['index', 'show']);
+    Route::resource('election.vote', App\Http\Controllers\Voter\VoteController::class)
+        ->only(['create', 'store', 'show']);
+    Route::resource('vote-history', VoteHistoryController::class)
+        ->parameters(['vote-history' => 'vote'])
+        ->only(['index', 'show']);
 });
 
 

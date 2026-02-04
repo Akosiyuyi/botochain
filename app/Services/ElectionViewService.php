@@ -17,20 +17,20 @@ class ElectionViewService
     {
         return Election::with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->get()
-            ->map(fn($election) => $this->formatElectionListItem($election));
+            ->map(fn(Election $election) => $this->formatElectionListItem($election));
     }
 
     /**
      * Get specified election details.
      */
-    public function forShow(Election $election)
+    public function forShow(Election $election, $student = null)
     {
         $election = $this->loadRelationsForShow($election);
         [$displayDate, $displayTime] = $this->buildDisplayDateTime($election);
 
         return [
             'election' => $this->buildElectionMeta($election, $displayDate, $displayTime),
-            'setup' => $this->buildSetup($election),
+            'setup' => $this->buildSetup($election, $student),
             'schoolOptions' => $this->buildSchoolOptions($election),
             'results' => $this->buildResults($election),
         ];
@@ -55,7 +55,7 @@ class ElectionViewService
     /**
      * Format a single election for list display.
      */
-    private function formatElectionListItem(Election $election): array
+    public function formatElectionListItem(Election $election): array
     {
         [$displayDate] = $this->buildDisplayDateTime($election);
 
@@ -75,12 +75,12 @@ class ElectionViewService
     /**
      * Build setup section for forShow response.
      */
-    private function buildSetup(Election $election): array
+    private function buildSetup(Election $election, $student = null): array
     {
         return [
-            'positions' => $this->getPositionsPayload($election),
+            'positions' => $this->getPositionsPayload($election, $student),
             'partylists' => $this->getPartylistsPayload($election),
-            'candidates' => $this->getCandidatesPayload($election),
+            'candidates' => $this->getCandidatesPayload($election, $student),
             'schedule' => $this->buildSetupSchedule($election),
             'flags' => $this->buildSetupFlags($election),
         ];
@@ -112,7 +112,7 @@ class ElectionViewService
 
         $positionsPayload = $this->buildPositionsPayload($election, $candidateVoteMap, $eligibleCounts);
         $overallEligibleVoterCount = $this->getOverallEligibleVoterCount($election);
-        $votesCast = (int) $resultsRows->sum('vote_count');
+        $votesCast = (int) $election->votes()->count();
         $progressPercent = $overallEligibleVoterCount > 0
             ? round(($votesCast / $overallEligibleVoterCount) * 100, 2)
             : 0.0;
@@ -311,9 +311,23 @@ class ElectionViewService
     /**
      * Get positions payload.
      */
-    private function getPositionsPayload(Election $election): array
+    private function getPositionsPayload(Election $election, $student = null): array
     {
-        return $election->positions->map(function ($position) {
+        $positions = $election->positions;
+        
+        // Filter positions by student eligibility if student is provided
+        if ($student) {
+            $eligiblePositionIds = EligibleVoter::where('election_id', $election->id)
+                ->where('student_id', $student->id)
+                ->pluck('position_id')
+                ->toArray();
+            
+            $positions = $positions->filter(function ($position) use ($eligiblePositionIds) {
+                return in_array($position->id, $eligiblePositionIds);
+            });
+        }
+
+        return $positions->map(function ($position) {
             return [
                 'id' => $position->id,
                 'name' => $position->name,
@@ -361,9 +375,23 @@ class ElectionViewService
     /**
      * Get candidates payload.
      */
-    private function getCandidatesPayload(Election $election): array
+    private function getCandidatesPayload(Election $election, $student = null): array
     {
-        return $election->candidates->map(fn($candidate) => [
+        $candidates = $election->candidates;
+        
+        // Filter candidates by student eligibility if student is provided
+        if ($student) {
+            $eligiblePositionIds = EligibleVoter::where('election_id', $election->id)
+                ->where('student_id', $student->id)
+                ->pluck('position_id')
+                ->toArray();
+            
+            $candidates = $candidates->filter(function ($candidate) use ($eligiblePositionIds) {
+                return in_array($candidate->position_id, $eligiblePositionIds);
+            });
+        }
+
+        return $candidates->map(fn($candidate) => [
             'id' => $candidate->id,
             'partylist' => [
                 'id' => $candidate->partylist_id,
@@ -375,7 +403,7 @@ class ElectionViewService
             ],
             'name' => $candidate->name,
             'description' => $candidate->description,
-        ])->toArray();
+        ])->values()->toArray();
     }
 
     /**

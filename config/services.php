@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'realtime' => [
+        'results_broadcast_interval_seconds' => (int) env('REALTIME_RESULTS_INTERVAL_SECONDS', 5),
+    ],
+
 ];

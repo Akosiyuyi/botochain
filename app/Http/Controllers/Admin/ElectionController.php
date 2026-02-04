@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 use App\Models\Election;
+use App\Models\EligibleVoter;
 use App\Services\ElectionService;
 use App\Services\SchoolOptionsService;
 use App\Services\ElectionViewService;
+use App\Services\EligibilityService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ElectionController extends Controller
 {
@@ -21,6 +24,7 @@ class ElectionController extends Controller
     public function __construct(
         protected ElectionViewService $electionViewService,
         protected ElectionService $electionService,
+        protected EligibilityService $eligibilityService,
     ) {
     }
 
@@ -128,6 +132,15 @@ class ElectionController extends Controller
     {
         $election = Election::findOrFail($id);
 
+        // Prevent editing of elections that are ongoing or beyond
+        if ($election->status === ElectionStatus::Ongoing || 
+            $election->status === ElectionStatus::Ended || 
+            $election->status === ElectionStatus::Finalized ||
+            $election->status === ElectionStatus::Compromised) {
+            return redirect()->route('admin.election.show', $election->id)
+                ->with('error', 'Cannot edit election that is ongoing or has already ended.');
+        }
+
         $validated = $request->validate([
             'title' => [
                 'required',
@@ -148,6 +161,12 @@ class ElectionController extends Controller
      */
     public function destroy(Election $election)
     {
+        // Prevent deletion of elections that are ongoing or beyond
+        if ($election->status !== ElectionStatus::Draft && $election->status !== ElectionStatus::Upcoming) {
+            return redirect()->route('admin.election.index')
+                ->with('error', 'Can only delete draft or upcoming elections.');
+        }
+
         $election->delete();
         return redirect()
             ->route('admin.election.index')
@@ -159,10 +178,11 @@ class ElectionController extends Controller
      */
     public function finalize(Election $election)
     {
+        $election->load('setup'); // Ensure setup is loaded
         $setup = $election->setup;
 
         // Check schedule validity
-        if ($setup->start_time && $setup->end_time) {
+        if ($setup && $setup->start_time && $setup->end_time) {
             $now = Carbon::now();
 
             if (Carbon::parse($setup->end_time)->lt($now)) {
@@ -194,11 +214,25 @@ class ElectionController extends Controller
 
         // Proceed only if setup is valid
         if ($setup->canFinalize()) {
-            $setup->setup_finalized = true;
-            $setup->save();
+            try {
+                DB::transaction(function () use ($setup, $election) {
+                    // Mark setup as finalized
+                    $setup->setup_finalized = true;
+                    $setup->save();
 
-            $election->status = ElectionStatus::Upcoming; // or whatever status you want
-            $election->save();
+                    // Aggregate eligible voters for this election
+                    $this->eligibilityService->aggregateForElection($election);
+
+                    // Update election status
+                    $election->status = ElectionStatus::Upcoming;
+                    $election->eligibility_aggregated_at = now();
+                    $election->save();
+                });
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.election.show', $election->id)
+                    ->with('error', 'An error occurred while finalizing the election. Please try again.');
+            }
         }
 
         return redirect()
@@ -209,10 +243,11 @@ class ElectionController extends Controller
 
     public function restoreToDraft(Election $election)
     {
+        $election->load('setup'); // Ensure setup is loaded
         $setup = $election->setup;
 
         // Only allow restoring if it was finalized
-        if ($setup->setup_finalized) {
+        if ($setup && $setup->setup_finalized) {
             // Guard: block restore if start_time is within 24 hours
             if ($setup->start_time) {
                 $hoursUntilStart = Carbon::now()->diffInHours(Carbon::parse($setup->start_time), false);
@@ -225,15 +260,29 @@ class ElectionController extends Controller
             }
 
             // Proceed with restore
-            $setup->setup_finalized = false;
-            $setup->start_time = null;
-            $setup->end_time = null;
-            $setup->save();
+            try {
+                DB::transaction(function () use ($setup, $election) {
+                    // Delete eligible voters for this election
+                    EligibleVoter::where('election_id', $election->id)->delete();
 
-            $election->status = ElectionStatus::Draft;
-            $election->save();
+                    // Restore setup to unfinal state
+                    $setup->setup_finalized = false;
+                    $setup->start_time = null;
+                    $setup->end_time = null;
+                    $setup->save();
 
-            $election->setup->refreshSetupFlags();
+                    // Restore election to draft and clear aggregation flag
+                    $election->status = ElectionStatus::Draft;
+                    $election->eligibility_aggregated_at = null;
+                    $election->save();
+                });
+
+                $election->setup->refreshSetupFlags();
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.election.show', $election->id)
+                    ->with('error', 'An error occurred while restoring the election to draft. Please try again.');
+            }
         }
 
         return redirect()->route('admin.election.index')
