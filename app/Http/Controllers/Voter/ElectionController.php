@@ -70,7 +70,7 @@ class ElectionController extends Controller
             ])
             ->with('setup.colorTheme', 'schoolLevels.schoolLevel')
             ->get()
-            ->map(fn($election) => [
+            ->map(fn(Election $election) => [
                 ...$this->electionViewService->formatElectionListItem($election),
                 'link' => route('voter.election.show', ['election' => $election->id]),
             ]);
