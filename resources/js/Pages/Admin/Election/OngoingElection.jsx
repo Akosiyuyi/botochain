@@ -37,7 +37,7 @@ export default function OngoingElection({ election, setup, results }) {
                 <div className={`bg-white dark:bg-gray-800 shadow-sm rounded-lg transition-all duration-300 ease-out overflow-hidden 
                     ${showResults ? 'p-6 mt-2 h-auto opacity-100 translate-y-0' :
                         'p-0 mt-0 h-0 opacity-0 -translate-y-2 pointer-events-none'}`}>
-                    <ElectionResultsView results={results} />
+                    <ElectionResultsView results={results} electionId={election.id} enableRealtime={true} />
                 </div>
 
                 {/* Partylists Section */}

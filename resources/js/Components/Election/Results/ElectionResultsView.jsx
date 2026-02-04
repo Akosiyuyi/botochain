@@ -1,10 +1,72 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LongDropdown from '@/Components/LongDropdown';
 import PositionResultsChart from './PositionResultsChart';
 
-export default function ElectionResultsView({ results }) {
+export default function ElectionResultsView({ results, electionId = null, enableRealtime = false }) {
     const { positions = [], metrics = {} } = results;
+    const [livePositions, setLivePositions] = useState(positions);
+    const [liveMetrics, setLiveMetrics] = useState(metrics);
     const [expandedPositions, setExpandedPositions] = useState({});
+
+    useEffect(() => {
+        if (!enableRealtime || !electionId || !window.Echo) return;
+
+        const channel = window.Echo.private(`election.${electionId}`);
+        
+        channel.listen('.election.results.updated', (event) => {
+            const { updates, metrics: newMetrics } = event;
+
+            setLivePositions(prevPositions => {
+                return prevPositions.map(position => {
+                    const update = updates.find(u => Number(u.position_id) === Number(position.id));
+                    if (!update) return position;
+
+                    const updatedCandidates = position.candidates.map(candidate => {
+                        const candidateUpdate = update.candidates.find(c => Number(c.id) === Number(candidate.id));
+                        if (!candidateUpdate) return candidate;
+
+                        const newVoteCount = candidateUpdate.vote_count;
+                        const percentOfPosition = update.position_total_votes > 0
+                            ? Math.round((newVoteCount / update.position_total_votes) * 100 * 100) / 100
+                            : 0;
+
+                        return {
+                            ...candidate,
+                            vote_count: newVoteCount,
+                            percent_of_position: percentOfPosition,
+                        };
+                    }).sort((a, b) => b.vote_count - a.vote_count);
+
+                    return {
+                        ...position,
+                        candidates: updatedCandidates,
+                        position_total_votes: update.position_total_votes,
+                    };
+                });
+            });
+
+            if (newMetrics) {
+                setLiveMetrics(prev => ({
+                    ...prev,
+                    votesCast: newMetrics.votesCast,
+                    progressPercent: newMetrics.progressPercent,
+                }));
+            }
+        });
+
+        return () => {
+            channel.stopListening('.election.results.updated');
+            window.Echo.leave(`election.${electionId}`);
+        };
+    }, [electionId, enableRealtime]);
+
+    useEffect(() => {
+        setLivePositions(positions);
+    }, [positions]);
+
+    useEffect(() => {
+        setLiveMetrics(metrics);
+    }, [metrics]);
 
     const togglePosition = (positionId) => {
         setExpandedPositions(prev => ({
@@ -19,19 +81,21 @@ export default function ElectionResultsView({ results }) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <MetricCard 
                     label="Eligible Voters" 
-                    value={metrics.eligibleVoterCount || 0}
+                    value={liveMetrics.eligibleVoterCount || 0}
                     icon="👥"
                 />
                 <MetricCard 
                     label="Votes Cast" 
-                    value={metrics.votesCast || 0}
+                    value={liveMetrics.votesCast || 0}
                     icon="🗳️"
+                    realtime={enableRealtime}
                 />
                 <MetricCard 
                     label="Turnout Rate" 
-                    value={`${metrics.progressPercent || 0}%`}
+                    value={`${liveMetrics.progressPercent || 0}%`}
                     highlight={true}
                     icon="📈"
+                    realtime={enableRealtime}
                 />
             </div>
 
@@ -40,12 +104,12 @@ export default function ElectionResultsView({ results }) {
 
             {/* Position Results */}
             <div className="space-y-3">
-                {positions.length === 0 ? (
+                {livePositions.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-500 dark:text-gray-400">No positions available</p>
                     </div>
                 ) : (
-                    positions.map(position => (
+                    livePositions.map(position => (
                         <div key={position.id} className="group">
                             <LongDropdown
                                 className="mt-0"
@@ -84,7 +148,7 @@ export default function ElectionResultsView({ results }) {
     );
 }
 
-function MetricCard({ label, value, highlight = false, icon = "" }) {
+function MetricCard({ label, value, highlight = false, icon = "", realtime = false }) {
     return (
         <div className={`rounded-xl p-4 sm:p-5 shadow-sm border transition-all duration-200 ${
             highlight 
