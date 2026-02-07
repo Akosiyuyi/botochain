@@ -43,21 +43,27 @@ class UserControllerTest extends TestCase
 
     private function createSuperAdminUser()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'id_number' => '10000000',
+        ]);
         $user->assignRole('super-admin');
         return $user;
     }
 
     private function createAdminUser()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'id_number' => '10000001',
+        ]);
         $user->assignRole('admin');
         return $user;
     }
 
     private function createVoterUser()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'id_number' => '20000000',
+        ]);
         $user->assignRole('voter');
         return $user;
     }
@@ -229,7 +235,7 @@ class UserControllerTest extends TestCase
         $response = $this->actingAs($superAdmin)
             ->patch(route('admin.users.update', $admin->id), [
                 'name' => $admin->name,
-                'id_number' => $admin->id_number,
+                'id_number' => (int) $admin->id_number,
                 'email' => $admin->email,
                 'is_active' => false,
             ]);
@@ -243,7 +249,7 @@ class UserControllerTest extends TestCase
         $response = $this->actingAs($superAdmin)
             ->patch(route('admin.users.update', $admin->id), [
                 'name' => $admin->name,
-                'id_number' => $admin->id_number,
+                'id_number' => (int) $admin->id_number,
                 'email' => $admin->email,
                 'is_active' => true,
             ]);
@@ -498,7 +504,7 @@ class UserControllerTest extends TestCase
         $response = $this->actingAs($superAdmin)
             ->patch(route('admin.users.update', $admin->id), [
                 'name' => 'Updated Admin Name',
-                'id_number' => $admin->id_number,
+                'id_number' => (int) $admin->id_number,
                 'email' => $admin->email,
                 'is_active' => true,
             ]);
