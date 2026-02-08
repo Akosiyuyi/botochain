@@ -200,14 +200,27 @@ Covered:
 ✅ test_computation_rejected_for_ongoing_election()
 ```
 
-### 7. **Election Export** (No Tests)
+### 7. **Election Export** ✅ (Covered)
 **Files:** `ElectionExportController`, `ElectionResultsExport`, `ElectionPositionSheet`
+**Test File:** `tests/Feature/Controllers/Admin/ElectionExportControllerTest.php` (15 tests)
+
 ```
-Missing:
-- test_election_excel_export_structure()
-- test_pdf_export_with_results()
-- test_export_includes_all_candidates()
-- test_export_sorting_by_vote_count()
+Covered:
+✅ test_election_excel_export_downloads_file()
+✅ test_excel_export_contains_multiple_sheets()
+✅ test_pdf_export_downloads_file()
+✅ test_pdf_export_with_election_results()
+✅ test_export_includes_all_candidates()
+✅ test_export_sorting_by_vote_count()
+✅ test_export_handles_zero_votes()
+✅ test_unauthenticated_user_cannot_export()
+✅ test_export_includes_partylist_names()
+✅ test_pdf_export_calculates_correct_turnout()
+✅ test_excel_export_with_independent_candidates()
+✅ test_export_shows_position_breakdown()
+✅ test_export_filename_includes_election_id_and_timestamp()
+✅ test_pdf_export_filename_format()
+✅ test_export_handles_multiple_positions()
 ```
 
 ### 8. **Election Integrity & Verification** (Partial)
@@ -310,14 +323,14 @@ Missing:
 5. ~~**Dashboard Analytics**~~ ✅ **COMPLETED** (44 tests)
 6. ~~**User Management**~~ ✅ **COMPLETED** (19 tests)
 
-### Phase 2 (Important - Data Integrity) ✅ **COMPLETED**
+### Phase 2 (Important - Data Integrity) ✅ **COMPLETED** (25 tests)
 7. ~~**Election Results**~~ ✅ **COMPLETED** (10 tests)
+8. ~~**Election Export**~~ ✅ **COMPLETED** (15 tests)
 
 ### Phase 3 (Enhancement)
 9. **Login Logs & Audit** - `LoginLogsController`
 10. **Vote History** - `VoteHistoryController`
-11. **Export Functionality** - Excel/PDF exports
-12. **Voter Dashboard** - List & filtering
+11. **Voter Dashboard** - List & filtering
 
 ---
 
@@ -433,12 +446,12 @@ class ElectionServiceTest extends TestCase {
 | Bulk Upload | ✅ 90% | CRITICAL (Done) |
 | Dashboard Analytics | ✅ 88% | CRITICAL (Done) |
 | User Management | ✅ 95% | CRITICAL (Done) |
-| Results & Export | ✅ 80% | MEDIUM (Finalization Done) |
+| Results & Export | ✅ 95% | CRITICAL (Complete) |
 | Authorization/Policies | ❌ 0% | MEDIUM |
 | Audit & Logging | ❌ 0% | MEDIUM |
 
-**Current Estimate:** ~85%+ of critical paths covered  
+**Current Estimate:** ~90%+ of critical paths covered  
 **Phase 1 Complete:** 162 tests across 6 test suites  
-**Phase 2 Complete:** 10 tests for Election Results  
-**Total Tests:** 172  
-**Status:** Critical business logic fully tested - Ready for production
+**Phase 2 Complete:** 25 tests (10 Election Results + 15 Export)  
+**Total Tests:** 187  
+**Status:** Critical business logic and exports fully tested - Ready for production
