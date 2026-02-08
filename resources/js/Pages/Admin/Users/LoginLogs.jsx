@@ -69,8 +69,8 @@ export default function LoginLogs({ login_logs }) {
                     }}
                     filterFn={(row, option, defaultOption) => {
                         if (option === defaultOption) return true;
-                        if (option === "Successful") return row.status === 1;
-                        if (option === "Failed") return row.status === 0;
+                        if (option === "Successful") return row.status === true;
+                        if (option === "Failed") return row.status === false;
                         return true;
                     }}
                     getHeaderTitle={(option) => (option === "All" ? "All Login Attempts" : `${option} Attempts`)}
