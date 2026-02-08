@@ -41,26 +41,16 @@ class VoteHistoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Vote $vote)
     {
+        $student = $this->studentLookup->findByUser(Auth::user());
+
+        if (!$student || $vote->student_id !== $student->id) {
+            abort(403);
+        }
+
         // Eager load relationships
         $vote->load('election.positions.candidates.partylist', 'voteDetails');
 
@@ -100,29 +90,5 @@ class VoteHistoryController extends Controller
             'vote' => $voteData,
             'election' => $election,
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
