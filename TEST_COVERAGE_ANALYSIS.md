@@ -401,7 +401,7 @@ Covered:
 SERVICES NEEDING TESTS:
 - [x] ElectionService ✅ (13 tests - core election CRUD)
 - [x] ElectionViewService ✅ (7 tests - data filtering & aggregation)
-- [ ] AdminDashboardViewService (stats & performance)
+- [x] AdminDashboardViewService (stats & performance)
 - [x] EligibilityService ✅ (2 tests)
 - [x] PositionEligibilityService ✅ (2 tests)
 - [ ] StudentValidationService (bulk upload validation)
@@ -418,10 +418,10 @@ CONTROLLERS NEEDING TESTS:
 - [x] DashboardController ✅ (19 tests - dashboard data flow)
 - [ ] ElectionSetupController (setup flags)
 - [x] PartylistController (basic CRUD) ✅ (15 tests)
-- [ ] ElectionExportController (exports)
+- [x] ElectionExportController (exports)
 - [x] VoteHistoryController ✅ (5 tests)
 - [x] VoterDashboardController ✅ (12 tests - voter listing & eligibility)
-- [ ] LoginLogsController (log display)
+- [x] LoginLogsController (log display)
 ```
 
 ---
