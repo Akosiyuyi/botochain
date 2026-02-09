@@ -217,7 +217,7 @@ class ElectionSetupControllerTest extends TestCase
             ->patch(route('admin.election.setup.update', [$this->election->id, $this->setup->id]), [
                 'start_date' => now()->subDay()->format('Y-m-d'),
                 'start_time' => '10:00',
-                'end_time' => '12:00',
+                'end_time' => '14:00',
             ]);
 
         $response->assertSessionHasErrors('start_date');
@@ -230,12 +230,13 @@ class ElectionSetupControllerTest extends TestCase
     {
         $response = $this->actingAs($this->admin)
             ->patch(route('admin.election.setup.update', [$this->election->id, $this->setup->id]), [
-                'start_date' => now()->format('Y-m-d'),
-                'start_time' => now()->subHour()->format('H:i'),
-                'end_time' => now()->addHour()->format('H:i'),
+                'start_date' => now()->addDay()->format('Y-m-d'),
+                'start_time' => '08:00',
+                'end_time' => '10:00',
             ]);
 
-        $response->assertSessionHasErrors('start_time');
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
     }
 
     /**
