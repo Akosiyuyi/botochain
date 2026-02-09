@@ -11,16 +11,12 @@ class VoteIntegrityService
 
     public function verifyElection(Election $election): array
     {
-        $votes = Vote::where('election_id', $election->id)
-            ->orderBy('id')
-            ->with('voteDetails')
-            ->get();
-
+        $baseQuery = Vote::where('election_id', $election->id)->orderBy('id');
+        $totalVotes = (int) $baseQuery->count();
         $previousHash = null;
 
-
         // check if votes are empty
-        if ($votes->isEmpty()) {
+        if ($totalVotes === 0) {
             return [
                 'valid' => true,
                 'total_votes' => 0,
@@ -28,58 +24,66 @@ class VoteIntegrityService
             ];
         }
 
+        $result = null;
 
-        // check each vote
-        /** @var Vote $vote */
-        foreach ($votes as $vote) {
-            // if vote is not sealed yet
-            if (!$vote->current_hash || !$vote->payload_hash) {
-                return [
-                    'valid' => false,
-                    'vote_id' => $vote->id,
-                    'reason' => 'Vote not sealed yet',
-                ];
-            }
+        $baseQuery
+            ->with('voteDetails')
+            ->chunkById(500, function ($votes) use (&$previousHash, &$result) {
+                /** @var Vote $vote */
+                foreach ($votes as $vote) {
+                    // if vote is not sealed yet
+                    if (!$vote->current_hash || !$vote->payload_hash) {
+                        $result = [
+                            'valid' => false,
+                            'vote_id' => $vote->id,
+                            'reason' => 'Vote not sealed yet',
+                        ];
+                        return false;
+                    }
 
+                    // verify vote order consistency
+                    if ($vote->previous_hash !== $previousHash) {
+                        $result = [
+                            'valid' => false,
+                            'vote_id' => $vote->id,
+                            'reason' => 'Previous hash mismatch',
+                        ];
+                        return false;
+                    }
 
-            // verify vote order consistency
-            if ($vote->previous_hash !== $previousHash) {
-                return [
-                    'valid' => false,
-                    'vote_id' => $vote->id,
-                    'reason' => 'Previous hash mismatch',
-                ];
-            }
+                    // Rebuild payload
+                    $payload = $this->rebuildPayload($vote);
 
+                    $payloadHash = hash(self::HASH_ALGO, $payload);
+                    $expectedHash = hash(self::HASH_ALGO, $payloadHash . ($previousHash ?? ''));
 
-            // Rebuild payload
-            $payload = $this->rebuildPayload($vote);
+                    // check if there is any hash mismatch
+                    if (
+                        $vote->payload_hash !== $payloadHash ||
+                        $vote->previous_hash !== $previousHash ||
+                        $vote->current_hash !== $expectedHash
+                    ) {
+                        // Chain broken
+                        $result = [
+                            'valid' => false,
+                            'vote_id' => $vote->id,
+                            'reason' => 'Chain broken'
+                        ];
+                        return false;
+                    }
+                    // update previous hash for next vote
+                    $previousHash = $vote->current_hash;
+                }
+                return true;
+            });
 
-
-            $payloadHash = hash(self::HASH_ALGO, $payload);
-            $expectedHash = hash(self::HASH_ALGO, $payloadHash . ($previousHash ?? ''));
-
-
-            // check if there is any hash mismatch
-            if (
-                $vote->payload_hash !== $payloadHash ||
-                $vote->previous_hash !== $previousHash ||
-                $vote->current_hash !== $expectedHash
-            ) {
-                // Chain broken
-                return [
-                    'valid' => false,
-                    'vote_id' => $vote->id,
-                    'reason' => 'Chain broken'
-                ];
-            }
-            // update previous hash for next vote
-            $previousHash = $vote->current_hash;
+        if ($result !== null) {
+            return $result;
         }
 
         return [
             'valid' => true,
-            'total_votes' => $votes->count(),
+            'total_votes' => $totalVotes,
             'final_hash' => $previousHash,
         ];
         // Chain intact

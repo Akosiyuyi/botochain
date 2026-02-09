@@ -13,15 +13,22 @@ class EligibilityService
         foreach ($election->positions as $position) {
             $studentIds = $this->eligibleStudentsForPosition($position);
 
-            foreach ($studentIds as $id) {
-                EligibleVoter::updateOrCreate([
-                    'election_id' => $election->id,
-                    'position_id' => $position->id,
-                    'student_id' => $id,
-                ]);
-            }
+            // Build the rows to insert/update
+            $rows = collect($studentIds)->map(fn($id) => [
+                'election_id' => $election->id,
+                'position_id' => $position->id,
+                'student_id' => $id,
+            ])->toArray();
+
+            // Perform bulk upsert
+            EligibleVoter::upsert(
+                $rows,
+                ['election_id', 'position_id', 'student_id'], // unique keys
+                [] // columns to update if duplicate (none in this case)
+            );
         }
     }
+
 
     protected function eligibleStudentsForPosition($position)
     {
