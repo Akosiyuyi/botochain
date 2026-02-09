@@ -1,0 +1,137 @@
+// Authentication & User Management System
+// Copy this code to dbdiagram.io
+
+Table users {
+  id bigint [pk, increment]
+  name varchar [not null]
+  id_number varchar [unique, not null]
+  email varchar [unique, not null]
+  email_verified_at timestamp [null]
+  password varchar [not null]
+  is_active boolean [not null, default: true]
+  remember_token varchar(100) [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    id_number
+    email
+  }
+}
+
+Table students {
+  id bigint [pk, increment]
+  student_id varchar [unique, not null]
+  name varchar [not null]
+  school_level enum('Grade School', 'Junior High', 'Senior High', 'College') [not null]
+  year_level varchar [not null]
+  course varchar [null]
+  section varchar [null]
+  status varchar [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    student_id
+    (school_level, year_level)
+    course
+  }
+}
+
+Table permissions {
+  id bigint [pk, increment]
+  name varchar [not null]
+  guard_name varchar [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (name, guard_name) [unique]
+  }
+}
+
+Table roles {
+  id bigint [pk, increment]
+  name varchar [not null]
+  guard_name varchar [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (name, guard_name) [unique]
+  }
+}
+
+Table model_has_permissions {
+  permission_id bigint [not null]
+  model_type varchar [not null]
+  model_id bigint [not null, note: 'Polymorphic - references users.id or other models']
+  
+  indexes {
+    (model_id, model_type)
+    (permission_id, model_id, model_type) [pk]
+  }
+}
+
+Table model_has_roles {
+  role_id bigint [not null]
+  model_type varchar [not null]
+  model_id bigint [not null, note: 'Polymorphic - references users.id or other models']
+  
+  indexes {
+    (model_id, model_type)
+    (role_id, model_id, model_type) [pk]
+  }
+}
+
+Table role_has_permissions {
+  permission_id bigint [not null]
+  role_id bigint [not null]
+  
+  indexes {
+    (permission_id, role_id) [pk]
+  }
+}
+
+Table login_logs {
+  id bigint [pk, increment]
+  email varchar [not null]
+  ip_address varchar [null]
+  user_agent text [null]
+  status boolean [not null]
+  reason text [null]
+  login_attempt_time timestamp [not null]
+}
+
+Table one_time_passwords {
+  id bigint [pk, increment]
+  password varchar [not null]
+  origin_properties text [null]
+  expires_at datetime [not null]
+  authenticatable_type varchar [not null, note: 'Polymorphic - typically App\\Models\\User']
+  authenticatable_id bigint [not null, note: 'Polymorphic - references users.id']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (authenticatable_type, authenticatable_id)
+  }
+}
+
+// Relationships
+
+// Spatie Permission Package - Polymorphic Relationships
+Ref: permissions.id < model_has_permissions.permission_id [delete: cascade]
+Ref: roles.id < model_has_roles.role_id [delete: cascade]
+Ref: permissions.id < role_has_permissions.permission_id [delete: cascade]
+Ref: roles.id < role_has_permissions.role_id [delete: cascade]
+
+// Note: model_has_permissions.model_id and model_has_roles.model_id are polymorphic
+// They typically reference users.id but can reference other models
+// These relationships are managed by application logic, not foreign keys
+
+// Note: one_time_passwords.authenticatable_id is polymorphic
+// It typically references users.id
+// This relationship is managed by application logic, not foreign keys
+
+// Note: login_logs.email references users.email but no foreign key constraint exists
