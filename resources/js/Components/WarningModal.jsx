@@ -40,8 +40,6 @@ export default function WarningModal({
             case "delete":
                 router.delete(url, { preserveScroll: true, onSuccess: closeModal });
                 break;
-            default:
-                console.error(`Unsupported method: ${method}`);
         }
     };
 

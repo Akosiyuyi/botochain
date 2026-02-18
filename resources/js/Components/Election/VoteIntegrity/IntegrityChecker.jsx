@@ -21,7 +21,6 @@ export default function IntegrityChecker({ election, vote = null, isVoter = fals
             setResult(data);
             setDate(new Date().toLocaleString());
         } catch (error) {
-            console.error('Verification failed', error);
             setResult({ valid: false, reason: 'Verification failed - Network error' });
             setDate(new Date().toLocaleString());
         } finally {

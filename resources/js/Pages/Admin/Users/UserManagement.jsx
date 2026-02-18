@@ -53,7 +53,6 @@ export default function UserManagement({ users, stats, auth }) {
                         ].filter(Boolean)}
                         optionList={["All", "Super-admin", "Admin", "Voter"]}
                         defaultOption="All"
-                        onEdit={(user) => console.log("Edit user:", user)}
                         renderCell={(row, key) => {
                             if (key === "role") {
                                 return (

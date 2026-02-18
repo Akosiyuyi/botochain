@@ -45,7 +45,6 @@ export default function DragAndDropUploader({ setResults, setExpectedSchoolLevel
       setExpectedSchoolLevel(response.data.expectedSchoolLevel);
       toast.success("File processed successfully!");
     } catch (error) {
-      console.error(error);
       toast.error("Failed to process file. Please try again.");
     } finally {
       setIsProcessing(false);

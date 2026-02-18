@@ -39,7 +39,7 @@ export default function OTPResendButton({ expiresAt, onResend, className = '' })
                 setTimeLeft(Math.max(newExpiresAt - now, 0));
                 setCanResend(false);
             } catch (err) {
-                console.error("Failed to resend OTP:", err);
+                // Error handling - resend failed silently
             }
         }
     };
