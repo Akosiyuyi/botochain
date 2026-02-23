@@ -1,61 +1,151 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Botochain
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Botochain is a blockchain-verifiable election platform built with Laravel 12, Inertia.js, React, and Tailwind CSS.
 
-## About Laravel
+It provides:
+- Role-based portals for **super-admin/admin** and **voter** users
+- Election lifecycle management (draft, upcoming, ongoing, ended/finalized, compromised)
+- Eligibility-based voting and vote history
+- Hash-chain vote integrity verification
+- Realtime election result updates via Laravel Reverb
+- Export support for election reports (Excel and PDF)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Core Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Admin dashboard analytics** with election status overview, recent activity, system status, and 24-hour traffic trends
+- **Election setup workflow** for school levels, positions, candidates, and partylists
+- **Eligibility-aware voting** (voters only see elections/positions they can vote in)
+- **Auditability** with vote verification endpoints and login logs
+- **Realtime broadcasting** on election channels with role + eligibility checks
+- **Queue-backed jobs** for election status updates, vote sealing, and finalization dispatch
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **Backend:** Laravel 12, PHP 8.2+, MySQL, Laravel Reverb
+- **Frontend:** Inertia.js + React 18, Tailwind CSS, Lucide, Chart.js (`react-chartjs-2`)
+- **Auth/RBAC:** Laravel auth + Spatie permissions
+- **Exports:** `maatwebsite/excel`, `barryvdh/laravel-dompdf`
+- **Local Dev:** Laravel Sail / Docker
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Quick Start (Sail/Docker)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1) Install dependencies
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+composer install
+npm ci
+```
 
-## Laravel Sponsors
+### 2) Configure environment
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cp .env.example .env
+```
 
-### Premium Partners
+Set at least these values in `.env` before seeding:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```env
+APP_NAME=BotoChain
+DB_HOST=mysql
+DB_DATABASE=botochain
+DB_USERNAME=sail
+DB_PASSWORD=password
 
-## Contributing
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=change-me-immediately
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3) Start containers and bootstrap app
 
-## Code of Conduct
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4) Run development services
 
-## Security Vulnerabilities
+Use one terminal per process:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+./vendor/bin/sail npm run dev
+./vendor/bin/sail artisan queue:work
+./vendor/bin/sail artisan reverb:start
+./vendor/bin/sail artisan schedule:work
+```
+
+Or run the default Laravel dev stack (no Reverb/scheduler included):
+
+```bash
+composer dev
+```
+
+## Seeded Access
+
+`DatabaseSeeder` creates one initial super-admin account:
+- Email: `ADMIN_EMAIL` from `.env`
+- Password: `ADMIN_PASSWORD` from `.env`
+
+Change these values before first production seed.
+
+## Useful Commands
+
+```bash
+# Run tests
+php artisan test
+# or
+composer test
+
+# Queue worker
+php artisan queue:work
+
+# Realtime websocket server
+php artisan reverb:start
+
+# Build assets for production
+npm run build
+```
+
+## Realtime Setup
+
+Realtime election result updates are implemented with Laravel Reverb and private channels.
+
+- Channel auth is defined in `routes/channels.php`
+- Reverb config is in `config/reverb.php`
+- Setup guide: `REALTIME_SETUP.md`
+
+## Routing Overview
+
+- `/admin/*` → admin/super-admin routes (dashboard, elections, users, students, exports, setup)
+- `/voter/*` → voter routes (dashboard, elections, voting, vote history)
+- Shared authenticated routes for profile and vote/election verification
+
+## Testing
+
+Tests are organized under:
+- `tests/Feature`
+- `tests/Unit`
+
+For coverage and suite analysis, see:
+- `docs/TEST_COVERAGE_ANALYSIS.md`
+
+## Deployment & Operations
+
+- Full deployment walkthrough: `docs/DEPLOYMENT.md`
+- Production deployment script: `deploy.sh`
+- Health check script: `scripts/health-check.sh`
+- Rollback helper: `scripts/rollback.sh`
+
+Production env baseline is provided in:
+- `.env.production.example`
+
+## Project Documentation
+
+- `docs/DEPLOYMENT.md` – step-by-step server deployment
+- `docs/TEST_COVERAGE_ANALYSIS.md` – testing scope and quality
+- `docs/database/README.md` – ERD usage and schema overview
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
