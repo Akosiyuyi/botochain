@@ -89,6 +89,7 @@ class AdminDashboardViewService
                 'type' => 'election_created',
                 'title' => "{$election->title} created",
                 'time' => $election->created_at->diffForHumans(),
+                'time_raw' => $election->created_at->timestamp, // sort
                 'icon' => '📋',
             ]);
 
@@ -109,6 +110,7 @@ class AdminDashboardViewService
                     'type' => 'vote_cast',
                     'title' => "{$record->vote_count} votes cast in {$record->title}",
                     'time' => \Carbon\Carbon::parse($record->latest_vote)->diffForHumans(),
+                    'time_raw' => \Carbon\Carbon::parse($record->latest_vote)->timestamp, // sort
                     'icon' => '✅',
                 ];
             });
@@ -125,6 +127,7 @@ class AdminDashboardViewService
                 'type' => 'election_finalized',
                 'title' => "{$election->title} Finalized",
                 'time' => $election->updated_at->diffForHumans(),
+                'time_raw' => $election->updated_at->timestamp, // sort
                 'icon' => '🏁',
             ]);
 
@@ -140,6 +143,7 @@ class AdminDashboardViewService
                 'type' => 'compromised',
                 'title' => "Integrity issue detected in {$election->title}",
                 'time' => $election->updated_at->diffForHumans(),
+                'time_raw' => $election->updated_at->timestamp, // sort
                 'icon' => '⚠️',
             ]);
 
@@ -147,7 +151,7 @@ class AdminDashboardViewService
 
         // Return top 10 by recency
         return collect($activities)
-            ->sortByDesc(fn($a) => strtotime($a['time']))
+            ->sortByDesc(fn($a) => $a['time_raw'])
             ->take(10)
             ->values()
             ->toArray();

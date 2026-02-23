@@ -3,7 +3,7 @@ import { Link } from "@inertiajs/react";
 import { Calendar, AlertCircle, Clock, CheckCircle, Zap } from "lucide-react";
 
 export default function ElectionCard({
-    imagePath = "https://picsum.photos/seed/picsum/400/200",
+    imagePath,
     title = "Untitled Election",
     schoolLevels = [],
     date = "No date",
@@ -72,9 +72,6 @@ export default function ElectionCard({
                         className="w-full h-full object-cover object-right group-hover:scale-110 transition-transform duration-500"
                         src={imagePath}
                         alt={title}
-                        onError={(e) => {
-                            e.target.src = "https://picsum.photos/seed/election/400/200";
-                        }}
                     />
 
                     {/* Gradient Overlay */}

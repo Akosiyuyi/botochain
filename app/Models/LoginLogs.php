@@ -17,6 +17,7 @@ class LoginLogs extends Model
 
     protected $casts = [
         'login_attempt_time' => 'datetime',
+        'status' => 'boolean',
     ];
 
     public $timestamps = false;

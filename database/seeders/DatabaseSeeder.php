@@ -26,10 +26,10 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Default Super Admin',
+            'name' => 'System Administrator',
             'id_number' => '10000000',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('password'),
+            'email' => env('ADMIN_EMAIL', 'admin@yourdomain.com'),
+            'password' => bcrypt(env('ADMIN_PASSWORD', 'change-me-immediately')),
             'is_active' => true,
             'email_verified_at' => now(),
         ])->assignRole('super-admin');

@@ -21,6 +21,9 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->unique(['election_id', 'student_id']);
+            $table->index('election_id'); 
+            $table->index('created_at'); 
+            $table->index(['election_id', 'tallied']);
         });
     }
 

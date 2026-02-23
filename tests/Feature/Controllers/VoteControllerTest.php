@@ -52,6 +52,25 @@ class VoteControllerTest extends TestCase
         return ['user' => $user, 'student' => $student];
     }
 
+    private function makeStudentEligible($student, $election, $positions = null)
+    {
+        // Get all positions if not provided
+        if ($positions === null) {
+            $positions = $election->positions()->get();
+        } elseif (!is_array($positions) && !($positions instanceof \Illuminate\Database\Eloquent\Collection)) {
+            $positions = [$positions];
+        }
+
+        // Create EligibleVoter records for each position
+        foreach ($positions as $position) {
+            \App\Models\EligibleVoter::factory()->create([
+                'election_id' => $election->id,
+                'position_id' => $position->id,
+                'student_id' => $student->id,
+            ]);
+        }
+    }
+
     public function test_create_shows_voting_form_when_not_voted()
     {
         $election = $this->createElectionWithSetup(['status' => ElectionStatus::Ongoing]);
@@ -111,6 +130,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position]);
 
         $response = $this->actingAs($user)
             ->post(route('voter.election.vote.store', $election->id), [
@@ -148,6 +168,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position1, $position2]);
 
         $response = $this->actingAs($user)
             ->post(route('voter.election.vote.store', $election->id), [
@@ -178,6 +199,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position]);
 
         $response = $this->actingAs($user)
             ->post(route('voter.election.vote.store', $election->id), [
@@ -203,6 +225,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position]);
 
         // Create existing vote
         Vote::factory()->create([
@@ -277,6 +300,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position]);
 
         $response = $this->actingAs($user)
             ->post(route('voter.election.vote.store', $election->id), [
@@ -307,7 +331,10 @@ class VoteControllerTest extends TestCase
     {
         // Abstaining from all positions
         $election = Election::factory()->create(['status' => ElectionStatus::Ongoing]);
+        $position = Position::factory()->create(['election_id' => $election->id]);
+        
         ['user' => $user, 'student' => $student] = $this->createVoterUser();
+        $this->makeStudentEligible($student, $election, [$position]);
 
         $response = $this->actingAs($user)
             ->post(route('voter.election.vote.store', $election->id), [

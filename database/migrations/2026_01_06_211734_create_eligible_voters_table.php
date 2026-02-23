@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
             $table->foreignId('student_id')->nullable()->constrained('students')->nullOnDelete();
             $table->timestamps();
+
+            $table->index(['election_id', 'position_id', 'student_id']);
         });
     }
 

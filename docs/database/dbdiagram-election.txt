@@ -1,0 +1,242 @@
+// Election & Voting System
+// Copy this code to dbdiagram.io
+
+Table students {
+  id bigint [pk, increment]
+  student_id varchar [unique, not null]
+  name varchar [not null]
+  school_level enum('Grade School', 'Junior High', 'Senior High', 'College') [not null]
+  year_level varchar [not null]
+  course varchar [null]
+  section varchar [null]
+  status varchar [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    student_id
+    (school_level, year_level)
+    course
+  }
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar [not null]
+  id_number varchar [unique, not null]
+  email varchar [unique, not null]
+  email_verified_at timestamp [null]
+  password varchar [not null]
+  is_active boolean [not null, default: true]
+  remember_token varchar(100) [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    id_number
+    email
+  }
+}
+
+Table school_levels {
+  id bigint [pk, increment]
+  name varchar [not null, note: 'e.g. Grade School, Junior High, Senior High, College']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table school_units {
+  id bigint [pk, increment]
+  school_level_id bigint [not null]
+  year_level varchar [not null, note: 'e.g. Grade 1, Grade 7, 1st Year']
+  course varchar [null, note: 'e.g. STEM, BSCS']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table color_themes {
+  id bigint [pk, increment]
+  name varchar [unique, not null, note: 'e.g. green']
+  image_path varchar [not null, note: 'e.g. green.png']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    name
+  }
+}
+
+Table elections {
+  id bigint [pk, increment]
+  title varchar [unique, not null]
+  status varchar [not null, default: 'draft', note: 'draft, ongoing, completed, finalized']
+  eligibility_aggregated_at timestamp [null]
+  final_hash char(100) [null]
+  finalized_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    status
+  }
+}
+
+Table election_setup {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  theme_id bigint [null]
+  setup_positions boolean [not null, default: false]
+  setup_partylist boolean [not null, default: false]
+  setup_candidates boolean [not null, default: false]
+  setup_finalized boolean [not null, default: false]
+  start_time datetime [null]
+  end_time datetime [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    election_id
+  }
+}
+
+Table election_school_levels {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  school_level_id bigint [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (election_id, school_level_id) [unique]
+  }
+}
+
+Table positions {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  name varchar [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table position_eligible_units {
+  id bigint [pk, increment]
+  position_id bigint [not null]
+  school_unit_id bigint [not null]
+  
+  indexes {
+    (position_id, school_unit_id) [unique]
+  }
+}
+
+Table partylists {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  name varchar [not null]
+  description text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table candidates {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  partylist_id bigint [not null]
+  position_id bigint [not null]
+  name varchar [not null]
+  description text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table eligible_voters {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  position_id bigint [not null]
+  student_id bigint [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table votes {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  student_id bigint [not null]
+  payload_hash varchar [null, note: 'Blockchain hash of vote payload']
+  previous_hash varchar [null, note: 'Blockchain previous block hash']
+  current_hash varchar [null, note: 'Blockchain current block hash']
+  tallied boolean [not null, default: false]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (election_id, student_id) [unique]
+    tallied
+  }
+}
+
+Table vote_details {
+  id bigint [pk, increment]
+  vote_id bigint [not null]
+  position_id bigint [not null]
+  candidate_id bigint [null, note: 'Can be null if voter skips position']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (vote_id, position_id) [unique]
+  }
+}
+
+Table election_results {
+  id bigint [pk, increment]
+  election_id bigint [not null]
+  position_id bigint [not null]
+  candidate_id bigint [not null]
+  vote_count int unsigned [not null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+  
+  indexes {
+    (election_id, position_id, candidate_id) [unique]
+  }
+}
+
+// Relationships
+
+// School Structure
+Ref: school_levels.id < school_units.school_level_id [delete: cascade]
+
+// Election Core
+Ref: elections.id - election_setup.election_id [delete: cascade, note: 'One-to-One']
+Ref: color_themes.id < election_setup.theme_id [delete: set null]
+Ref: elections.id < election_school_levels.election_id [delete: cascade]
+Ref: school_levels.id < election_school_levels.school_level_id [delete: cascade]
+
+// Positions
+Ref: elections.id < positions.election_id [delete: cascade]
+Ref: positions.id < position_eligible_units.position_id [delete: cascade]
+Ref: school_units.id < position_eligible_units.school_unit_id [delete: cascade]
+
+// Partylists & Candidates
+Ref: elections.id < partylists.election_id [delete: cascade]
+Ref: elections.id < candidates.election_id [delete: cascade]
+Ref: partylists.id < candidates.partylist_id [delete: cascade]
+Ref: positions.id < candidates.position_id [delete: cascade]
+
+// Eligible Voters
+Ref: elections.id < eligible_voters.election_id [delete: cascade]
+Ref: positions.id < eligible_voters.position_id [delete: cascade]
+Ref: students.id < eligible_voters.student_id [delete: set null]
+
+// Voting
+Ref: elections.id < votes.election_id [delete: cascade]
+Ref: students.id < votes.student_id [delete: restrict]
+Ref: votes.id < vote_details.vote_id [delete: cascade]
+Ref: positions.id < vote_details.position_id [delete: restrict]
+Ref: candidates.id < vote_details.candidate_id [delete: restrict]
+
+// Results
+Ref: elections.id < election_results.election_id [delete: cascade]
+Ref: positions.id < election_results.position_id [delete: cascade]
+Ref: candidates.id < election_results.candidate_id [delete: cascade]

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Voter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
+use App\Models\EligibleVoter;
 use App\Models\Student;
 use App\Models\Vote;
 use App\Services\VoteService;
@@ -53,6 +54,9 @@ class VoteController extends Controller
      */
     public function store(Request $request, Election $election)
     {
+        // Ensure 'choices' is always an array, even if not provided
+        $request->merge([ 'choices' => $request->input('choices', []), ]);
+        
         // Validate request data
         $validated = $request->validate([
             'choices' => 'array',
@@ -65,6 +69,15 @@ class VoteController extends Controller
 
         // Get authenticated student
         $student = $this->getVoterStudent();
+
+        if (
+            EligibleVoter::where([
+                'election_id' => $election->id,
+                'student_id' => $student->id,
+            ])->doesntExist()
+        ) {
+            return back()->with('error', 'You are not eligible to vote in this election.');
+        }
 
         try {
             $this->voteService->create($election, $validated['choices'], $student);
