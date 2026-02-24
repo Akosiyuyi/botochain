@@ -28,12 +28,12 @@ class DatabaseSeeder extends Seeder
 
         $admin = User::updateOrCreate(
             [
-                'email' => env('ADMIN_EMAIL', 'admin@yourdomain.com'),
+                'email' => config('app.admin_email', 'admin@yourdomain.com'),
             ],
             [
                 'name' => 'System Administrator',
                 'id_number' => '10000000',
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'change-me-immediately')),
+                'password' => Hash::make(config('app.admin_password', 'change-me-immediately')),
                 'is_active' => true,
                 'email_verified_at' => now(),
             ]
