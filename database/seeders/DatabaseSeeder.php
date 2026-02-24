@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 
@@ -25,13 +26,21 @@ class DatabaseSeeder extends Seeder
 
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'System Administrator',
-            'id_number' => '10000000',
-            'email' => env('ADMIN_EMAIL', 'admin@yourdomain.com'),
-            'password' => bcrypt(env('ADMIN_PASSWORD', 'change-me-immediately')),
-            'is_active' => true,
-            'email_verified_at' => now(),
-        ])->assignRole('super-admin');
+        $admin = User::updateOrCreate(
+            [
+                'email' => env('ADMIN_EMAIL', 'admin@yourdomain.com'),
+            ],
+            [
+                'name' => 'System Administrator',
+                'id_number' => '10000000',
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'change-me-immediately')),
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        if (! $admin->hasRole('super-admin')) {
+            $admin->assignRole('super-admin');
+        }
     }
 }
