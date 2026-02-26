@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Student;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,10 @@ class AuthenticatedSessionController extends Controller
 
         // Check if user exists and password matches
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            event(new Failed('web', $user, [
+                'email' => $credentials['email'],
+            ]));
+
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
