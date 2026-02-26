@@ -21,6 +21,7 @@ NC='\033[0m' # No Color
 ENVIRONMENT=${1:-production}
 APP_DIR="/var/www/botochain"
 STORAGE_DIRS=("storage" "bootstrap/cache")
+APP_OWNER=${APP_OWNER:-deploy}
 
 echo -e "${GREEN}╔════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║   Botochain Deployment Script         ║${NC}"
@@ -35,7 +36,7 @@ if [ ! -d "$APP_DIR" ]; then
     exit 1
 fi
 
-cd $APP_DIR
+cd "$APP_DIR"
 
 # 1. Enable Maintenance Mode
 echo -e "${YELLOW}[1/10] Enabling maintenance mode...${NC}"
@@ -77,18 +78,28 @@ php artisan storage:link --force
 
 # 8. Set Permissions
 echo -e "${YELLOW}[8/10] Setting permissions...${NC}"
-chown -R www-data:www-data $APP_DIR
-chmod -R 755 $APP_DIR
+if id "$APP_OWNER" >/dev/null 2>&1; then
+    chown -R "$APP_OWNER":www-data "$APP_DIR"
+else
+    chown -R www-data:www-data "$APP_DIR"
+fi
+
+find "$APP_DIR" -type d -exec chmod 755 {} \;
 for dir in "${STORAGE_DIRS[@]}"; do
-    chmod -R 775 $APP_DIR/$dir
+    find "$APP_DIR/$dir" -type d -exec chmod 775 {} \;
+    find "$APP_DIR/$dir" -type f -exec chmod 664 {} \;
 done
 
 # 9. Restart Services
 echo -e "${YELLOW}[9/10] Restarting services...${NC}"
-supervisorctl restart botochain-queue:*
-supervisorctl restart botochain-reverb:*
-supervisorctl restart botochain-scheduler:*
-systemctl reload php8.2-fpm
+supervisorctl restart botochain:*
+
+if systemctl list-unit-files | grep -q '^php8.3-fpm\.service'; then
+    systemctl reload php8.3-fpm
+else
+    systemctl reload php8.2-fpm
+fi
+
 systemctl reload nginx
 
 # 10. Disable Maintenance Mode
