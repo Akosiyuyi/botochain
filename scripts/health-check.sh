@@ -30,21 +30,44 @@ check_service() {
 
 # Function to check supervisor program
 check_supervisor() {
-    local program=$1
-    local status=$(supervisorctl status $program 2>/dev/null | awk '{print $2}')
-    if [ "$status" == "RUNNING" ]; then
-        echo -e "${GREEN}✓${NC} $program is running"
+    local pattern=$1
+    local matches
+    matches=$(supervisorctl status 2>/dev/null | awk -v pat="$pattern" '$1 ~ pat {print $2}')
+
+    if [ -z "$matches" ]; then
+        echo -e "${RED}✗${NC} $pattern is not configured in Supervisor"
+        return 1
+    fi
+
+    local not_running
+    not_running=$(echo "$matches" | grep -v '^RUNNING$' || true)
+
+    if [ -z "$not_running" ]; then
+        echo -e "${GREEN}✓${NC} $pattern is running"
         return 0
     else
-        echo -e "${RED}✗${NC} $program is not running (status: $status)"
+        echo -e "${RED}✗${NC} $pattern has non-running processes"
+        supervisorctl status 2>/dev/null | awk -v pat="$pattern" '$1 ~ pat {print "   - " $0}'
         return 1
+    fi
+}
+
+# Function to detect running PHP-FPM service
+detect_php_fpm_service() {
+    local service
+    service=$(systemctl list-unit-files --type=service --no-legend 2>/dev/null | awk '/^php[0-9]+\.[0-9]+-fpm\.service/ {print $1}' | sed 's/\.service$//' | sort -V | tail -n1)
+
+    if [ -n "$service" ]; then
+        echo "$service"
+    else
+        echo "php8.2-fpm"
     fi
 }
 
 # Check system services
 echo "System Services:"
 check_service nginx
-check_service php8.2-fpm
+check_service "$(detect_php_fpm_service)"
 check_service mysql
 check_service redis-server
 check_service supervisor
@@ -52,9 +75,9 @@ echo ""
 
 # Check supervisor programs
 echo "Application Services:"
-check_supervisor "botochain-queue:*"
-check_supervisor "botochain-reverb:*"
-check_supervisor "botochain-scheduler:*"
+check_supervisor "^botochain:botochain-queue_"
+check_supervisor "^botochain:botochain-reverb"
+check_supervisor "^botochain:botochain-scheduler"
 echo ""
 
 # Check database connection
