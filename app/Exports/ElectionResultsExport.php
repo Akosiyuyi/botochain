@@ -5,10 +5,11 @@ namespace App\Exports;
 use App\Models\Election;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ElectionResultsExport implements FromArray, WithHeadings, WithStyles
+class ElectionResultsExport implements FromArray, WithHeadings, WithStyles, WithStrictNullComparison
 {
     public function __construct(private Election $election)
     {
@@ -19,19 +20,26 @@ class ElectionResultsExport implements FromArray, WithHeadings, WithStyles
         $data = [];
 
         foreach ($this->election->positions as $position) {
+            $eligibleVotersForPosition = $this->election->eligibleVoters()
+                ->where('position_id', $position->id)
+                ->distinct()
+                ->count('student_id');
+
             foreach ($position->candidates as $candidate) {
                 $votes = $this->election->results()
                     ->where('candidate_id', $candidate->id)
                     ->sum('vote_count');
 
+                $percentage = $eligibleVotersForPosition > 0
+                    ? round(($votes / $eligibleVotersForPosition) * 100, 2)
+                    : 0;
+
                 $data[] = [
                     'Position' => $position->name,
                     'Candidate Name' => $candidate->name,
                     'Party List' => $candidate->partylist?->name ?? 'N/A',
-                    'Votes Received' => $votes,
-                    'Percentage' => $position->position_total_votes > 0
-                        ? round(($votes / $position->position_total_votes) * 100, 2)
-                        : 0,
+                    'Votes Received' => (int) $votes,
+                    'Percentage' => number_format((float) $percentage, 2, '.', ''),
                 ];
             }
             $data[] = []; // Blank row between positions

@@ -17,7 +17,7 @@ class ElectionSummarySheet implements FromArray, WithHeadings, WithStyles, WithT
 
     public function array(): array
     {
-        $votesCast = $this->election->results()->sum('vote_count');
+        $votesCast = $this->election->votes()->distinct()->count('student_id');
         $eligibleVoters = $this->election->eligibleVoters()->distinct()->count('student_id');
         $turnoutRate = $eligibleVoters > 0 ? round(($votesCast / $eligibleVoters) * 100, 2) : 0;
 
