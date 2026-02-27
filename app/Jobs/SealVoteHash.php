@@ -104,6 +104,12 @@ class SealVoteHash implements ShouldQueue
             $lastBroadcastAt = (int) Cache::get($cacheKey, 0);
 
             if (time() - $lastBroadcastAt < $intervalSeconds) {
+                Log::info('Election results broadcast skipped due to throttle window', [
+                    'election_id' => $vote->election_id,
+                    'vote_id' => $vote->id,
+                    'interval_seconds' => $intervalSeconds,
+                    'last_broadcast_at' => $lastBroadcastAt,
+                ]);
                 return;
             }
 
@@ -156,10 +162,19 @@ class SealVoteHash implements ShouldQueue
                     'progressPercent' => $progressPercent,
                 ]
             ));
+
+            Log::info('Election results broadcast dispatched', [
+                'election_id' => $vote->election_id,
+                'vote_id' => $vote->id,
+                'updates_count' => count($updates),
+                'votes_cast' => $votesCast,
+                'progress_percent' => $progressPercent,
+            ]);
         } catch (\Exception $e) {
             // Log broadcast errors but don't fail the job
             Log::error('Failed to broadcast election results', [
                 'election_id' => $vote->election_id,
+                'vote_id' => $vote->id,
                 'error' => $e->getMessage(),
             ]);
         }
