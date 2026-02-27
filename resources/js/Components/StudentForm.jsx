@@ -112,10 +112,10 @@ export default function StudentForm({ data, setData, errors, onSubmit, processin
                 {isEdit && (
                     <DangerButton
                         type="button"
-                        variant={data.status ? 'danger' : 'reactivate'}
+                        variant={data.status === "Enrolled" ? 'danger' : 'reactivate'}
                         onClick={toggleStatus}
                     >
-                        {data.status ? 'Unenroll' : 'Reenroll'}
+                        {data.status === "Enrolled" ? 'Unenroll' : 'Reenroll'}
                     </DangerButton>
                 )}
             </div>
