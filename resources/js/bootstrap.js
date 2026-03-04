@@ -6,14 +6,9 @@ window.axios = axios;
 window.Pusher = Pusher;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-const csrfToken = document
-	.querySelector('meta[name="csrf-token"]')
-	?.getAttribute('content');
-
-if (csrfToken) {
-	window.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
-}
+window.axios.defaults.withCredentials = true;
+window.axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+window.axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
 
 window.Echo = new Echo({
 	broadcaster: 'reverb',
@@ -24,11 +19,22 @@ window.Echo = new Echo({
 	forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
 	authEndpoint: '/broadcasting/auth',
 	withCredentials: true,
-	auth: {
-		headers: {
-			'X-Requested-With': 'XMLHttpRequest',
-			...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
-		},
+	authorizer: (channel, options) => {
+		return {
+			authorize: (socketId, callback) => {
+				window.axios
+					.post(options.authEndpoint, {
+						socket_id: socketId,
+						channel_name: channel.name,
+					})
+					.then((response) => {
+						callback(null, response.data);
+					})
+					.catch((error) => {
+						callback(error);
+					});
+			},
+		};
 	},
 	enabledTransports: ['ws', 'wss'],
 });

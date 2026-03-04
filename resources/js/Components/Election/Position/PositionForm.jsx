@@ -2,6 +2,7 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 import DangerButton from "@/Components/DangerButton";
 import CheckboxGroup from "@/Components/CheckboxGroup";
 import { SCHOOL_LEVEL_ORDER } from "@/Constants/schoolLevel";
@@ -71,6 +72,25 @@ export default function PositionForm({ handleSubmit, handleCancelEdit, isEditing
             year_levels: cleanedYearLevels,
             courses: cleanedCourses,
         };
+    };
+
+    const handleSelectAll = () => {
+        const allSchoolLevels = (options.schoolLevelOptions ?? []).map(level => level.value);
+
+        const allYearLevels = allSchoolLevels.flatMap(
+            levelId => (options.yearLevelOptions[levelId] ?? []).map(year => year.value)
+        );
+
+        const allCourses = allSchoolLevels
+            .filter(levelId => levelId === 3 || levelId === 4)
+            .flatMap(levelId => (options.courseOptions[levelId] ?? []).map(course => course.value));
+
+        setData({
+            ...data,
+            school_levels: [...new Set(allSchoolLevels)],
+            year_levels: [...new Set(allYearLevels)],
+            courses: [...new Set(allCourses)],
+        });
     };
 
     return (
@@ -195,6 +215,11 @@ export default function PositionForm({ handleSubmit, handleCancelEdit, isEditing
                 <PrimaryButton type="submit" disabled={processing}>
                     {isEditing ? "Update Position" : "Create Position"}
                 </PrimaryButton>
+                {!isEditing && (
+                    <SecondaryButton type="button" onClick={handleSelectAll} disabled={processing}>
+                        Select All
+                    </SecondaryButton>
+                )}
                 {isEditing && (
                     <DangerButton type="button" onClick={handleCancelEdit}>
                         Cancel
