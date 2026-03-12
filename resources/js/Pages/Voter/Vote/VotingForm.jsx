@@ -14,8 +14,12 @@ export default function VotingForm({ election, setup }) {
 
     // Safely merge positions with their candidates (setup gives them separately)
     const positionsWithCandidates = useMemo(() => {
-        const positions = setup?.positions ?? [];
-        const candidates = setup?.candidates ?? [];
+        const positions = Array.isArray(setup?.positions)
+            ? setup.positions
+            : Object.values(setup?.positions ?? {});
+        const candidates = Array.isArray(setup?.candidates)
+            ? setup.candidates
+            : Object.values(setup?.candidates ?? {});
         const byPosition = candidates.reduce((acc, c) => {
             const pid = c.position?.id ?? c.position_id ?? c.positionId;
             if (!pid) return acc;

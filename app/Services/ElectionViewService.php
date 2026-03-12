@@ -327,7 +327,7 @@ class ElectionViewService
             });
         }
 
-        return $positions->map(function ($position) {
+        return $positions->values()->map(function ($position) {
             return [
                 'id' => $position->id,
                 'name' => $position->name,
@@ -336,7 +336,7 @@ class ElectionViewService
                     ->map(fn($units) => $this->formatSchoolLevelGroup($units))
                     ->values(),
             ];
-        })->toArray();
+        })->values()->toArray();
     }
 
     /**
